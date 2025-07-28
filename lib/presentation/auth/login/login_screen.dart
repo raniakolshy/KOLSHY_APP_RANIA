@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/auth/forgot_password/forgot_password.dart';
+import 'package:kolshy_app/presentation/auth/register/register_screen.dart';
+import 'package:kolshy_app/presentation/shared/home/home_screen.dart'; // <-- Ajouté ici
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -18,8 +21,66 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class LoginForm extends StatelessWidget {
+class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String? _validatePassword(String password) {
+    final hasNumber = RegExp(r'[0-9]').hasMatch(password);
+    if (password.length < 8) {
+      return 'Password must be at least 8 characters long.';
+    } else if (!hasNumber) {
+      return 'Password must contain at least one number.';
+    }
+    return null;
+  }
+
+  void _onLoginPressed() {
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (username.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Username or email cannot be empty.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final passwordError = _validatePassword(password);
+    if (passwordError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(passwordError),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // If everything is valid
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Login successful.'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    // Redirige vers HomeScreen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +91,14 @@ class LoginForm extends StatelessWidget {
         const Text('Welcome', style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900)),
         const Text('Back!', style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900)),
         const SizedBox(height: 30),
-        const CustomTextField(
+        CustomTextField(
+          controller: _usernameController,
           hintText: 'Username or Email',
           icon: Icons.person,
         ),
         const SizedBox(height: 16),
-        const CustomTextField(
+        CustomTextField(
+          controller: _passwordController,
           hintText: 'Password',
           icon: Icons.lock,
           isPassword: true,
@@ -43,7 +106,12 @@ class LoginForm extends StatelessWidget {
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+              );
+            },
             child: const Text('Forgot Password?', style: TextStyle(color: Colors.redAccent)),
           ),
         ),
@@ -58,7 +126,7 @@ class LoginForm extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            onPressed: () {},
+            onPressed: _onLoginPressed,
             child: const Text(
               'Login',
               style: TextStyle(
@@ -66,7 +134,6 @@ class LoginForm extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-
           ),
         ),
         const SizedBox(height: 190),
@@ -86,9 +153,14 @@ class LoginForm extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Create An Account "),
+            const Text("Don't have an account? "),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                );
+              },
               child: const Text("Sign Up", style: TextStyle(color: Colors.redAccent)),
             ),
           ],
@@ -102,12 +174,14 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final IconData icon;
   final bool isPassword;
+  final TextEditingController? controller;
 
   const CustomTextField({
     super.key,
     required this.hintText,
     required this.icon,
     this.isPassword = false,
+    this.controller,
   });
 
   @override
@@ -120,6 +194,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: widget.controller,
       obscureText: widget.isPassword ? _obscureText : false,
       decoration: InputDecoration(
         filled: true,
@@ -167,9 +242,9 @@ class SocialButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF5F7), // Light pink background
+        color: const Color(0xFFFFF5F7),
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.pinkAccent, width: 1), // Pink border
+        border: Border.all(color: Colors.pinkAccent, width: 1),
       ),
       child: Image.asset(
         icon,

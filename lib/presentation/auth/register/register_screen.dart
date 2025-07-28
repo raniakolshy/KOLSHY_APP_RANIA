@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
+import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
+import '../login/login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
+
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  bool _isChecked = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +36,13 @@ class RegisterScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.w900,
-
                 ),
               ),
               const SizedBox(height: 40),
 
               // Username or Email Field
               TextField(
+                controller: _usernameController,
                 decoration: InputDecoration(
                   hintText: 'Username or Email',
                   prefixIcon: const Icon(Icons.person),
@@ -45,11 +61,19 @@ class RegisterScreen extends StatelessWidget {
 
               // Password Field
               TextField(
-                obscureText: true,
+                controller: _passwordController,
+                obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   hintText: 'Password',
                   prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: const Icon(Icons.visibility),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                   filled: true,
                   fillColor: Colors.grey[100],
                   border: OutlineInputBorder(
@@ -65,11 +89,19 @@ class RegisterScreen extends StatelessWidget {
 
               // Confirm Password Field
               TextField(
-                obscureText: true,
+                controller: _confirmPasswordController,
+                obscureText: _obscureConfirmPassword,
                 decoration: InputDecoration(
                   hintText: 'Confirm Password',
                   prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: const Icon(Icons.visibility),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _obscureConfirmPassword = !_obscureConfirmPassword;
+                      });
+                    },
+                  ),
                   filled: true,
                   fillColor: Colors.grey[100],
                   border: OutlineInputBorder(
@@ -83,28 +115,6 @@ class RegisterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Terms and Conditions
-              Row(
-                children: [
-                  Checkbox(value: false, onChanged: (_) {}),
-                  const Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        text: 'By clicking the ',
-                        children: [
-                          TextSpan(
-                            text: 'Register',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          TextSpan(text: ' button, you agree to the public offer'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
               // Create Account Button
               SizedBox(
                 width: double.infinity,
@@ -116,77 +126,29 @@ class RegisterScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Account created successfully!"),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
 
-                  onPressed: () {},
-
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    );
+                  },
                   child: const Text(
                     'Create Account',
-                    style: TextStyle(fontSize: 20,color: Colors.white,),
+                    style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(height: 110),
-
-              // OR Divider
-              const Center(
-                child: Text(
-                  '- OR Continue with -',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              const SizedBox(height: 18),
-
-              // Social Media Icons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _socialIcon('assets/google.png'),
-                  const SizedBox(width: 16),
-                  _socialIcon('assets/apple.png'),
-                  const SizedBox(width: 16),
-                  _socialIcon('assets/facebook.png'),
-                ],
-              ),
-              const SizedBox(height: 10),
-
-              // Already Have Account
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    // Navigate to login
-                  },
-                  child: const Text.rich(
-                    TextSpan(
-                      text: 'I Already Have an Account ',
-                      style: TextStyle(color: Colors.black),
-                      children: [
-                        TextSpan(
-                          text: 'Login',
-                          style: TextStyle(color: Color(0xFFE53950)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              )
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _socialIcon(String assetPath) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.red),
-        shape: BoxShape.circle,
-      ),
-      child: Image.asset(
-        assetPath,
-        height: 32,
-        width: 32,
       ),
     );
   }

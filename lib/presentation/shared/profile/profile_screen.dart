@@ -1,197 +1,279 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MaterialApp(
-    home: ProfilePage(),
-    debugShowCheckedModeBanner: false,
-  ));
-}
-
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  bool isSeller = false;
-  String sellerChoice = '';
+  final Color primaryColor = const Color(0xFFE51742); // accent pink/red
+  final Color secondaryColor = const Color(0xFF273647); // dark gray-blue
+
+  final Map<String, TextEditingController> controllers = {
+    'firstName': TextEditingController(),
+    'lastName': TextEditingController(),
+    'email': TextEditingController(),
+    'phone': TextEditingController(),
+    'address': TextEditingController(),
+    'city': TextEditingController(),
+    'postcode': TextEditingController(),
+    'country': TextEditingController(),
+    'accountNumber': TextEditingController(),
+    'accountName': TextEditingController(),
+    'ifsc': TextEditingController(),
+  };
+
   bool newsletter = false;
   bool remoteAssist = false;
+  String sellerChoice = '';
+  int _selectedIndex = 0;
+  bool hasChanges = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(),
-        title: const Text('Profile'),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.pinkAccent,
-                  backgroundImage: AssetImage('assets/avatar.png'), // Assure-toi que le chemin est correct
-                ),
-                const Positioned(
-                  bottom: 0,
-                  right: 4,
-                  child: CircleAvatar(
-                    radius: 14,
-                    backgroundColor: Colors.red,
-                    child: Icon(Icons.edit, size: 16, color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
+  void initState() {
+    super.initState();
+    for (var controller in controllers.values) {
+      controller.addListener(_checkForChanges);
+    }
+  }
 
-            const SizedBox(height: 30),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Personal Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(height: 20),
-            buildTextField('First Name', 'Lorem'),
-            buildTextField('Last Name', 'Lorem ipson', bold: true),
-            buildTextField('Email Address', 'aashifa@gmail.com', bold: true),
-            buildTextField('Password', '**********', obscure: true),
-            buildTextField('Confirm Password', '**********', obscure: true),
-            buildTextField('Phone number', '+216 21 211 211', bold: true),
-            const SizedBox(height: 10),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Do you wanna become a Seller / Vendor ?'),
-            ),
-            Row(
-              children: [
-                Checkbox(
-                  value: sellerChoice == 'Yes',
-                  onChanged: (_) {
-                    setState(() => sellerChoice = 'Yes');
-                  },
-                ),
-                const Text('Yes'),
-                Checkbox(
-                  value: sellerChoice == 'No',
-                  onChanged: (_) {
-                    setState(() => sellerChoice = 'No');
-                  },
-                ),
-                const Text('No'),
-              ],
-            ),
-            CheckboxListTile(
-              title: const Text('Sign up for newsletter'),
-              value: newsletter,
-              onChanged: (val) {
-                setState(() => newsletter = val!);
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-            CheckboxListTile(
-              title: const Text('Allow remote Shopping assistance'),
-              value: remoteAssist,
-              onChanged: (val) {
-                setState(() => remoteAssist = val!);
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-            Column(
-              children: [
-                Divider(
-                  color: Colors.grey,
-                  thickness: 0.5,
-                  height: 20,
-                ),
-              ],
-            ),
+  void _checkForChanges() {
+    final anyText = controllers.values.any((c) => c.text.trim().isNotEmpty);
+    if (anyText != hasChanges) {
+      setState(() => hasChanges = anyText);
+    }
+  }
 
-            const SizedBox(height: 30),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Business Address Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(height: 20),
-            buildTextField('Pincode', '450116'),
-            buildTextField("Address", "216 St Paul's Rd,"),
-            buildTextField("City", "London"),
-            buildTextField("State", "N1 2LL,"),
-            buildTextField("Country", "United Kingdom"),
-            const SizedBox(height: 30),
-            Column(
-              children: [
-                Divider(
-                  color: Colors.grey,
-                  thickness: 0.5,
-                  height: 20,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
+  @override
+  void dispose() {
+    for (var controller in controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Bank Account Details', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(height: 20),
-            buildTextField("Bank Account Number", "204356XXXXXXXX"),
-            buildTextField("Account Holder’s Name", "Abhiraj Sisodiya"),
-            buildTextField("IFSC Code", "SBIN00428"),
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFDD1E1E),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-                onPressed: () {
-                  // Action on save
-                },
-                child: const Text(
-                  "Save",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ),
-            ),
-            const SizedBox(height: 60),
-          ],
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30, bottom: 12),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
         ),
       ),
     );
   }
 
-  Widget buildTextField(String label, String hint, {bool obscure = false, bool bold = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 10),
-        Text(label),
-        const SizedBox(height: 5),
-        TextField(
-          obscureText: obscure,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-              color: Colors.black,
+  Widget _input(String label, String key, {bool obscure = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: controllers[key],
+        obscureText: obscure,
+        decoration: InputDecoration(
+          labelText: label,
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChoiceChip(String label) {
+    final selected = sellerChoice == label;
+    return ChoiceChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: (_) => setState(() => sellerChoice = label),
+      selectedColor: primaryColor,
+      backgroundColor: Colors.grey.shade200,
+      labelStyle: TextStyle(
+        color: selected ? Colors.white : Colors.black87,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+
+  Widget _buildCheckbox(String title, bool value, ValueChanged<bool?> onChanged) {
+    return CheckboxListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(title),
+      value: value,
+      onChanged: onChanged,
+      activeColor: primaryColor,
+      controlAffinity: ListTileControlAffinity.leading,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          children: [
+            // Back button
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios, size: 20),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  "Edit Profile",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+              ],
             ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+            const SizedBox(height: 20),
+
+            // Profile image
+            Center(
+              child: Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  const CircleAvatar(
+                    radius: 52,
+                    backgroundImage: AssetImage('assets/avatar.png'),
+                  ),
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: secondaryColor,
+                    child:
+                    const Icon(Icons.edit, size: 16, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+
+            _sectionTitle("Personal Info"),
+            _input("First Name", 'firstName'),
+            _input("Last Name", 'lastName'),
+            _input("Email", 'email'),
+            _input("Phone", 'phone'),
+            Row(
+              children: [
+                const Text("Become a Seller?", style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 10),
+                _buildChoiceChip("Yes"),
+                const SizedBox(width: 6),
+                _buildChoiceChip("No"),
+              ],
+            ),
+            const SizedBox(height: 8),
+            _buildCheckbox("Sign up for newsletter", newsletter,
+                    (val) => setState(() => newsletter = val ?? false)),
+            _buildCheckbox("Enable remote shopping help", remoteAssist,
+                    (val) => setState(() => remoteAssist = val ?? false)),
+
+            _sectionTitle("Address"),
+            _input("Street Address", 'address'),
+            _input("City", 'city'),
+            _input("Postcode", 'postcode'),
+            _input("Country", 'country'),
+
+            _sectionTitle("Bank Details"),
+            _input("Account Number", 'accountNumber'),
+            _input("Account Holder", 'accountName'),
+            _input("IFSC Code", 'ifsc'),
+
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: hasChanges ? () => debugPrint("Saved!") : null,
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: primaryColor,
+                  backgroundColor: Colors.white,
+                  disabledBackgroundColor: Colors.grey.shade200,
+                  disabledForegroundColor: Colors.grey,
+                  side: BorderSide(
+                      color: hasChanges ? primaryColor : Colors.transparent),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text("Save Changes", style: TextStyle(fontSize: 16)),
+              ),
+            ),
+            const SizedBox(height: 80),
+          ],
+        ),
+      ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(height: 1, color: Colors.black.withOpacity(0.05)),
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.only(top: 10, bottom: 20),
+          child: SafeArea(
+            top: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(iconNames.length, (index) {
+                final name = iconNames[index];
+                final isSelected = index == _selectedIndex;
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedIndex = index),
+                  behavior: HitTestBehavior.opaque,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6, horizontal: 12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
+                          width: 26,
+                          height: 26,
+                          color: Colors.black,
+                          errorBuilder: (ctx, err, trace) =>
+                          const Icon(Icons.error),
+                        ),
+                        const SizedBox(height: 4),
+                        AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeInOut,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: isSelected
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                          child: Text(name),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
             ),
           ),
         ),
-
       ],
     );
   }

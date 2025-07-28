@@ -4,10 +4,12 @@ class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key? key}) : super(key: key);
 
   @override
-  _ChangePasswordPageState createState() => _ChangePasswordPageState();
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  final Color primaryColor = const Color(0xFFE51742);
+
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -21,47 +23,76 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   }
 
   void _changePassword() {
-    final oldPassword = _oldPasswordController.text;
-    final newPassword = _newPasswordController.text;
-    final confirmPassword = _confirmPasswordController.text;
+    final oldPassword = _oldPasswordController.text.trim();
+    final newPassword = _newPasswordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
 
     if (newPassword != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match'),
-          backgroundColor: Colors.redAccent,
+        SnackBar(
+          content: const Text('Passwords do not match'),
+          backgroundColor: Colors.red.shade400,
         ),
       );
       return;
     }
 
-    // TODO: Intégrer appel API ici
+    // TODO: Integrate API call here
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Password changed successfully'),
-        backgroundColor: Colors.green,
+      SnackBar(
+        content: const Text('Password changed successfully'),
+        backgroundColor: Colors.green.shade600,
       ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          obscureText: true,
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: const BackButton(),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: const Text(
           'Change Password',
-          style: TextStyle(
-            fontWeight: FontWeight.bold, // 👈 This makes it bold
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
-        centerTitle: true,
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 0,
+        centerTitle: true,
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -90,51 +121,24 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               child: ElevatedButton(
                 onPressed: _changePassword,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFDD1E1E),
+                  backgroundColor: Colors.white,
+                  foregroundColor: primaryColor,
+                  side: BorderSide(color: primaryColor),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: const Text(
                   'Change Now',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildPasswordField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label),
-        const SizedBox(height: 5),
-        TextField(
-          controller: controller,
-          obscureText: true,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: const TextStyle(color: Colors.black),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

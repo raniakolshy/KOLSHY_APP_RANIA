@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import '../widgets/white_menu_button.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  final int _selectedIndex = 4;
+  final Color primaryColor = const Color(0xFFE63056);
 
   @override
   Widget build(BuildContext context) {
@@ -11,82 +19,138 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Container(
-            decoration: const BoxDecoration(
+        leading: IconButton(
+          icon: Container(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFFF0F0F0),
+              color: Colors.grey.shade200,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
-                  blurRadius: 6,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
                 )
               ],
             ),
-            child: const Icon(Icons.arrow_back, color: Colors.black),
+            padding: const EdgeInsets.all(6),
+            child: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 18),
           ),
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Settings",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
         ),
         centerTitle: true,
       ),
       body: ListView(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-            child: Text("General",
-                style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold)),
-          ),
+          _buildSectionTitle("General"),
           WhiteMenuButton(
-            icon: Icons.person_outline,
+            iconPath: 'assets/Icons/profile.png',
             text: "Edit profile",
             onTap: () {},
           ),
           WhiteMenuButton(
-            icon: Icons.notifications_none,
+            iconPath: 'assets/Icons/notification.png',
             text: "Notification",
             onTap: () {},
           ),
           WhiteMenuButton(
-            icon: Icons.favorite_border,
+            iconPath: 'assets/Icons/favorites.png',
             text: "Favourites",
             onTap: () {},
           ),
           WhiteMenuButton(
-            icon: Icons.language,
+            iconPath: 'assets/Icons/language.png',
             text: "Language",
             trailingText: "English",
             onTap: () {},
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-            child: Text("Performances",
-                style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold)),
-          ),
+          _buildSectionTitle("Performances"),
           WhiteMenuButton(
-            icon: Icons.gavel_outlined,
+            iconPath: 'assets/Icons/policy.png',
             text: "Legal and Policies",
             onTap: () {},
           ),
           WhiteMenuButton(
-            icon: Icons.help_outline,
+            iconPath: 'assets/Icons/help.png',
             text: "Help & Support",
             onTap: () {},
           ),
           WhiteMenuButton(
-            icon: Icons.logout,
+            iconPath: 'assets/Icons/logout.png',
             text: "Logout",
             iconColor: Colors.red,
             textColor: Colors.red,
             onTap: () {},
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 28),
         ],
+      ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
+        color: Colors.white,
+      ),
+      padding: const EdgeInsets.only(top: 10, bottom: 20),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(iconNames.length, (index) {
+            final name = iconNames[index];
+            final isSelected = index == _selectedIndex;
+            return GestureDetector(
+              onTap: () => setState(() {}),
+              behavior: HitTestBehavior.opaque,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
+                      width: 26,
+                      height: 26,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(height: 4),
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                        color: Colors.black,
+                      ),
+                      child: Text(name),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

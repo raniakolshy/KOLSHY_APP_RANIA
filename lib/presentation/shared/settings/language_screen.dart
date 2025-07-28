@@ -10,6 +10,8 @@ class LanguageScreen extends StatefulWidget {
 class _LanguageScreenState extends State<LanguageScreen> {
   String selectedLanguage = 'English';
   final TextEditingController _searchController = TextEditingController();
+  final int _selectedIndex = 4;
+  final Color primaryColor = const Color(0xFFE51742);
 
   @override
   void dispose() {
@@ -20,11 +22,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: const BackButton(),
-        title: const Text('Language'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text('Language', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
         centerTitle: true,
-        elevation: 0,
+        elevation: 0.5,
+        backgroundColor: Colors.white,
       ),
       body: Column(
         children: [
@@ -54,7 +61,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     icon: const Icon(Icons.close, color: Colors.black54),
                     onPressed: () {
                       _searchController.clear();
-                      setState(() {}); // optional: to rebuild UI after clearing
+                      setState(() {});
                     },
                   ),
                 ],
@@ -65,17 +72,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
           _buildLanguageTile('Arabic', '🇸🇦'),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 4,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'search'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: 'Chat'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-        ],
-      ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -83,9 +80,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
     final isSelected = selectedLanguage == language;
 
     return GestureDetector(
-      onTap: () => setState(() {
-        selectedLanguage = language;
-      }),
+      onTap: () => setState(() => selectedLanguage = language),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
@@ -93,7 +88,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isSelected ? Colors.pinkAccent : Colors.grey.shade300,
+            color: isSelected ? primaryColor : Colors.grey.shade300,
             width: 2,
           ),
         ),
@@ -109,9 +104,62 @@ class _LanguageScreenState extends State<LanguageScreen> {
             ),
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected ? Colors.pinkAccent : Colors.grey,
+              color: isSelected ? primaryColor : Colors.grey,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
+        color: Colors.white,
+      ),
+      padding: const EdgeInsets.only(top: 10, bottom: 20),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(iconNames.length, (index) {
+            final name = iconNames[index];
+            final isSelected = index == _selectedIndex;
+            return GestureDetector(
+              onTap: () => setState(() {}),
+              behavior: HitTestBehavior.opaque,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
+                      width: 26,
+                      height: 26,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(height: 4),
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                        color: Colors.black,
+                      ),
+                      child: Text(name),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
         ),
       ),
     );

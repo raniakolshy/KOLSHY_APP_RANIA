@@ -14,20 +14,59 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   cupertino_icons: ^1.0.8
 
+  # 📌 Internationalization dependencies
+flutter_localizations:
+  sdk: flutter
+
+intl: ^0.18.1 # ou la dernière version
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
 
 flutter:
-
   uses-material-design: true
-
   assets:
+    - assets/google.png
     - assets/google.png
     - assets/apple.png
     - assets/facebook.png
     - assets/kolshy_intro.png
     - assets/kolshy_logo_noir.gif
+    - assets/shopping_girl.jpg
+    - assets/Icons/CartF.png
+    - assets/Icons/CartG.png
+    - assets/Icons/ChatF.png
+    - assets/Icons/ChatG.png
+    - assets/Icons/HomeF.png
+    - assets/Icons/HomeG.png
+    - assets/Icons/SearchF.png
+    - assets/Icons/SearchG.png
+    - assets/Icons/SettingF.png
+    - assets/Icons/SettingG.png
+    - assets/home/electronics.png
+    - assets/home/computer.jpg
+    - assets/home/fashion.jpg
+    - assets/home/home_kitchen.jpg
+    - assets/home/toys.jpg
+    - assets/home/beauty.jpg
+    - assets/home/grocery.jpg
+    - assets/home/cars.jpg
+    - assets/home/books.jpg
+    - assets/home/sports.jpg
+    - assets/home/shoes.jpg
+    - assets/checkout/apple_pay.png
+    - assets/checkout/paypal.png
+    - assets/product_image.png
     - assets/avatar.png
     - assets/shoes.png
+    - assets/home/all.png
+    - assets/Icons/favorites.png
+    - assets/Icons/help.png
+    - assets/Icons/language.png
+    - assets/Icons/logout.png
+    - assets/Icons/notification.png
+    - assets/Icons/policy.png
+    - assets/Icons/profile.png

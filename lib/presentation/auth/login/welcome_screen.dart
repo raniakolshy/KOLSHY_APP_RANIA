@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/auth/register/register_screen.dart';
+import 'login_screen.dart'; // Assure-toi que ce fichier existe et contient la classe LoginScreen
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -23,9 +25,7 @@ class WelcomeScreen extends StatelessWidget {
                     height: 60,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
@@ -38,10 +38,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
-
                 const SizedBox(height: 16),
-
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 32),
                   child: Text(
@@ -56,12 +53,11 @@ class WelcomeScreen extends StatelessWidget {
               ],
             ),
 
-
             const SizedBox(height: 24),
 
             // Illustration
             Image.asset(
-              'assets/kolshy_intro.png', // Place the image here
+              'assets/kolshy_intro.png',
               width: 350,
             ),
 
@@ -83,7 +79,10 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // Navigation vers le login
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        );
                       },
                       child: const Text(
                         'Login',
@@ -106,8 +105,10 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // Navigation vers register
-                      },
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                        );                      },
                       child: const Text(
                         'Create Account',
                         style: TextStyle(
