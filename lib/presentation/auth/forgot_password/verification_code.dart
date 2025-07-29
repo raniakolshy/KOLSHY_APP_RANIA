@@ -10,17 +10,19 @@ class VerificationCodeScreen extends StatefulWidget {
 
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   final List<TextEditingController> _controllers =
-  List.generate(6, (_) => TextEditingController());
+  List.generate(5, (_) => TextEditingController());
+
+  final List<FocusNode> _focusNodes = List.generate(5, (_) => FocusNode());
 
   void _submitCode() {
     final code = _controllers.map((c) => c.text).join();
-    // Logique de soumission ici
     print("Code entré : $code");
+    // Logique de vérification ici
   }
 
   void _resendCode() {
-    // Logique de renvoi de code ici
     print("Code renvoyé");
+    // Logique d'envoi ici
   }
 
   @override
@@ -28,23 +30,30 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     for (var controller in _controllers) {
       controller.dispose();
     }
+    for (var node in _focusNodes) {
+      node.dispose();
+    }
     super.dispose();
   }
 
   Widget _buildCodeBox(int index) {
     return SizedBox(
-      width: 50,
+      width: 60,
       height: 60,
       child: TextField(
         controller: _controllers[index],
+        focusNode: _focusNodes[index],
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         maxLength: 1,
-        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
         decoration: InputDecoration(
           counterText: '',
           filled: true,
-          fillColor: Colors.grey[100],
+          fillColor: Colors.grey[200],
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(color: Colors.grey),
@@ -55,8 +64,14 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
           ),
         ),
         onChanged: (value) {
-          if (value.isNotEmpty && index < _controllers.length - 1) {
-            FocusScope.of(context).nextFocus();
+          if (value.isNotEmpty) {
+            if (index < _controllers.length - 1) {
+              FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+            } else {
+              FocusScope.of(context).unfocus();
+            }
+          } else if (index > 0) {
+            FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
           }
         },
       ),
@@ -93,23 +108,25 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                   "We have sent the verification code to",
                   style: TextStyle(fontSize: 18, color: Colors.black54),
                 ),
-              )
-              ,
+              ),
               const SizedBox(height: 4),
               const Center(
                 child: Text(
-                "lorem@email.tn",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  "lorem@email.tn",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              ),
               const SizedBox(height: 60),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:
-                List.generate(6, (index) => _buildCodeBox(index)),
+              Center(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: List.generate(5, (index) => _buildCodeBox(index)),
+                ),
               ),
               const SizedBox(height: 30),
               SizedBox(
@@ -142,8 +159,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                           color: Color(0xFFE31640),
                           fontWeight: FontWeight.bold,
                         ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = _resendCode,
+                        recognizer: TapGestureRecognizer()..onTap = _resendCode,
                       ),
                     ],
                   ),

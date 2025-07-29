@@ -5,6 +5,9 @@ import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
 import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
 import 'package:kolshy_app/presentation/client/product/favorite_products_screen.dart';
+import 'package:kolshy_app/presentation/shared/Search/FilterPage.dart';
+import 'package:kolshy_app/presentation/shared/Search/ResultPage.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import 'package:kolshy_app/presentation/shared/profile/change_password_screen.dart';
 import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
@@ -13,7 +16,6 @@ import 'package:kolshy_app/presentation/shared/settings/help_and_support_screen.
 import 'package:kolshy_app/presentation/shared/settings/language_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/legal_and_policies_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
-
 import 'core/theme/app_theme.dart';
 import 'presentation/auth/login/login_screen.dart';
 import 'presentation/auth/login/welcome_screen.dart';
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
       title: 'Kolshy App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const ShoppingCartPage(),
+      home: const FilterScreen(),
     );
   }
 }

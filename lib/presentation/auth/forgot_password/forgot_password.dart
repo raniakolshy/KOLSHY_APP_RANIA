@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/auth/forgot_password/verification_code.dart';
+// 🔁 Importe ici ta propre page de vérification si nécessaire
+// import 'package:ton_app/pages/my_verification_page.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -15,7 +18,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void _submit() {
     final email = _emailController.text.trim();
 
-    // 👉 1. Vérifie si la case est cochée
     if (!_isChecked) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -27,7 +29,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    // 👉 2. Vérifie si le mail est vide ou invalide
     if (email.isEmpty || !emailRegex.hasMatch(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -39,7 +40,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    // ✅ 3. Tout est OK
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Mail sent'),
@@ -47,6 +47,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         duration: Duration(seconds: 2),
       ),
     );
+
+    // 👉 Redirection après validation
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          // 🔁 Remplace ici par ta vraie page
+          builder: (context) => VerificationCodeScreen(),
+        ),
+      );
+    });
   }
 
   @override
@@ -82,8 +93,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   filled: true,
                   fillColor: Colors.grey[100],
                   prefixIcon: Icon(Icons.email, color: Colors.grey[700]),
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 18.0, horizontal: 16.0),
+                  contentPadding:
+                  const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                     borderSide: const BorderSide(color: Colors.grey),

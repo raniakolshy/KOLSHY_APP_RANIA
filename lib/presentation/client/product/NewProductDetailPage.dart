@@ -21,9 +21,9 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
   bool showIngredients = false;
 
   final List<String> productImages = [
-    'assets/product_image.png',
-    'assets/product_image.png',
-    'assets/product_image.png',
+    'assets/avatar.png',
+    'assets/avatar.png',
+    'assets/avatar.png',
   ];
 
   @override
@@ -308,7 +308,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
                 ),
                 child: Row(
                   children: [
-                    CircleAvatar(radius: 24, backgroundImage: AssetImage('assets/profile_picture.png')),
+                    CircleAvatar(radius: 24, backgroundImage: AssetImage('assets/avatar.png')),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -452,7 +452,7 @@ class ProductCard extends StatelessWidget {
           width: 150,
           decoration: BoxDecoration(
             image: const DecorationImage(
-              image: AssetImage('assets/product_image.png'),
+              image: AssetImage('assets/avatar.png'),
               fit: BoxFit.cover,
             ),
             borderRadius: BorderRadius.circular(12),

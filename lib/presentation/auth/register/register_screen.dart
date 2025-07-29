@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import '../login/login_screen.dart';
-
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -50,10 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   fillColor: Colors.grey[100],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 0.1,
-                    ),
+                    borderSide: const BorderSide(color: Colors.grey, width: 0.1),
                   ),
                 ),
               ),
@@ -78,10 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   fillColor: Colors.grey[100],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 0.1,
-                    ),
+                    borderSide: const BorderSide(color: Colors.grey, width: 0.1),
                   ),
                 ),
               ),
@@ -106,12 +98,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   fillColor: Colors.grey[100],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 0.1,
-                    ),
+                    borderSide: const BorderSide(color: Colors.grey, width: 0.1),
                   ),
                 ),
+              ),
+              const SizedBox(height: 16),
+
+              // Checkbox and legal text
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Checkbox(
+                    value: _isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        _isChecked = value!;
+                      });
+                    },
+                    activeColor: Colors.redAccent,
+                  ),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(color: Colors.black87),
+                        children: [
+                          const TextSpan(text: 'By clicking the '),
+                          TextSpan(
+                            text: 'Register',
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const TextSpan(text: ' button, you agree\nto the public offer'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
 
@@ -127,6 +151,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   onPressed: () {
+                    if (!_isChecked) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("You must accept the public offer to continue."),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
+                      return;
+                    }
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("Account created successfully!"),
@@ -145,10 +179,69 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 110),
+              const SizedBox(height: 40),
+
+              // Or continue with
+              const Center(child: Text('- OR Continue with -')),
+              const SizedBox(height: 16),
+
+              // Social Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  SocialButton(icon: 'assets/google.png'),
+                  SizedBox(width: 12),
+                  SocialButton(icon: 'assets/apple.png'),
+                  SizedBox(width: 12),
+                  SocialButton(icon: 'assets/facebook.png'),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Already have an account
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Already have an account? "),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      );
+                    },
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(color: Colors.redAccent),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class SocialButton extends StatelessWidget {
+  final String icon;
+  const SocialButton({super.key, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF5F7),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.pinkAccent, width: 1),
+      ),
+      child: Image.asset(
+        icon,
+        width: 35,
+        height: 35,
       ),
     );
   }

@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
+import 'package:kolshy_app/presentation/shared/Search/ResultPage.dart';
+
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,9 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(child: _buildPromoCarousel()),
             SliverToBoxAdapter(child: _buildCategoryTabs()),
             SliverToBoxAdapter(child: _buildSectionTitle('Best Seller')),
-            _buildProductGrid(),
+            _buildProductGrid(), // modifié
             SliverToBoxAdapter(child: _buildSectionTitle('Shop by Category')),
-            SliverToBoxAdapter(child: _buildCategoryGrid()),
+            SliverToBoxAdapter(child: _buildCategoryGrid()), // modifié
             SliverToBoxAdapter(child: _buildSectionTitle('New Arrivals')),
             _buildProductGrid(),
             SliverToBoxAdapter(child: _buildBottomBanner()),
@@ -233,44 +237,49 @@ class _HomeScreenState extends State<HomeScreen> {
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           itemCount: 5,
-          itemBuilder: (_, i) => Container(
-            width: 150,
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                )
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: Image.asset(
-                    'assets/shoes.png',
-                    height: 130,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+          itemBuilder: (_, i) => GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const NewProductDetailPage()));
+            },
+            child: Container(
+              width: 150,
+              margin: const EdgeInsets.only(right: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  )
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    child: Image.asset(
+                      'assets/shoes.png',
+                      height: 130,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Forem ipsum', style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(height: 4),
-                      Text('AED 19.00'),
-                    ],
+                  const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Forem ipsum', style: TextStyle(fontWeight: FontWeight.bold)),
+                        SizedBox(height: 4),
+                        Text('AED 19.00'),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -293,35 +302,40 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         itemBuilder: (context, index) {
           final category = categories[index];
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.asset(
-                  category['image']!,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  alignment: Alignment.bottomLeft,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.black.withOpacity(0.5), Colors.transparent],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchResultPage()));
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    category['image']!,
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    alignment: Alignment.bottomLeft,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.black.withOpacity(0.5), Colors.transparent],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                    child: Text(
+                      category['label']!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    category['label']!,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
