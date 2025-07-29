@@ -30,7 +30,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/google.png
-    - assets/google.png
     - assets/apple.png
     - assets/facebook.png
     - assets/kolshy_intro.png
@@ -70,3 +69,6 @@ flutter:
     - assets/Icons/notification.png
     - assets/Icons/policy.png
     - assets/Icons/profile.png
+    - assets/icons/stock.png
+    - assets/icons/delivery.png
+    - assets/icons/store.png

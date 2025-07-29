@@ -12,18 +12,36 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
   final List<String> sizes = ['S', 'M', 'L', 'XL'];
   String selectedSize = 'M';
   bool isFavorite = false;
-  int _selectedIndex = 0;
-
+  int _selectedIndex = 2;
   int quantity = 1;
-
-  bool showDescription = false;
-  bool showHowToUse = false;
-  bool showIngredients = false;
+  final PageController _pageController = PageController();
+  int _currentPageIndex = 0;
 
   final List<String> productImages = [
-    'assets/avatar.png',
-    'assets/avatar.png',
-    'assets/avatar.png',
+    'assets/product_image.png',
+    'assets/product_image.png',
+    'assets/product_image.png',
+  ];
+
+  final List<Map<String, dynamic>> customerReviews = [
+    {
+      'name': 'Alice',
+      'comment': 'Amazing quality, fits perfectly!',
+      'date': 'Jul 25, 2025',
+      'images': ['assets/product_image.png', 'assets/product_image.png'],
+    },
+    {
+      'name': 'Bob',
+      'comment': 'Comfortable and stylish. Worth it!',
+      'date': 'Jul 21, 2025',
+      'images': ['assets/product_image.png'],
+    },
+    {
+      'name': 'Charlie',
+      'comment': 'Good value for money.',
+      'date': 'Jul 15, 2025',
+      'images': [],
+    },
   ];
 
   @override
@@ -33,406 +51,354 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 _buildProductImage(),
                 const SizedBox(height: 16),
                 _buildProductTitle(),
-                const SizedBox(height: 8),
                 _buildProductPrice(),
                 const SizedBox(height: 16),
                 _buildSizeSelection(),
                 const SizedBox(height: 16),
-                _buildQuantitySelector(),
-                const SizedBox(height: 16),
                 _buildAvailability(),
-                const SizedBox(height: 24),
-                _buildExpandableSection(
-                  'Description',
-                  'Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos.',
-                  showDescription,
-                      () => setState(() => showDescription = !showDescription),
-                ),
                 const SizedBox(height: 16),
-                _buildExpandableSection(
-                  'How to Use',
-                  'Simply apply the product on the skin and wait for 5 minutes before rinsing off.',
-                  showHowToUse,
-                      () => setState(() => showHowToUse = !showHowToUse),
-                ),
+                _buildExpandableSection('Description', 'Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.', true),
                 const SizedBox(height: 16),
-                _buildExpandableSection(
-                  'Ingredients',
-                  'Water, Glycerin, Aloe Vera, Vitamin C, Essential Oils.',
-                  showIngredients,
-                      () => setState(() => showIngredients = !showIngredients),
-                ),
-                const SizedBox(height: 20),
+                _buildExpandableSection('Ingredients', 'Water, Glycerin, Aloe Vera...', false),
+                const SizedBox(height: 16),
+                _buildExpandableSection('How to use', 'Apply a small amount...', false),
+                const SizedBox(height: 16),
                 _buildCustomerReviews(),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 _buildRecommendedProducts(),
-                const SizedBox(height: 20),
-                _buildAddToCartButton(),
-                const SizedBox(height: 10),
-                _buildScrollBar(),
+                const SizedBox(height: 100),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: SafeArea(child: _buildBottomNavigationBar()),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
-          onPressed: () => Navigator.of(context).pop(),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildQuantityAndAddToCart(),
+            _buildBottomNavigationBar(),
+          ],
         ),
-        const SizedBox(width: 12),
-        const Text(
-          "Product Details",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const Spacer(),
-        IconButton(
-          icon: Icon(
-            isFavorite ? Icons.favorite : Icons.favorite_border,
-            color: primaryColor,
-            size: 28,
-          ),
-          onPressed: () => setState(() => isFavorite = !isFavorite),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProductImage() {
-    return SizedBox(
-      height: 350,
-      child: PageView.builder(
-        itemCount: productImages.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                productImages[index],
-                height: 300,
-                fit: BoxFit.cover,
-              ),
-            ),
-          );
-        },
       ),
     );
   }
 
-  Widget _buildProductTitle() {
-    return const Text(
-      'Modern Product Name',
-      style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black87),
-    );
-  }
+  Widget _buildHeader() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      IconButton(
+        icon: Icon(
+          isFavorite ? Icons.favorite : Icons.favorite_border,
+          color: primaryColor,
+          size: 28,
+        ),
+        onPressed: () => setState(() => isFavorite = !isFavorite),
+      ),
+    ],
+  );
 
-  Widget _buildProductPrice() {
-    return const Text(
-      'AED 199.99',
-      style: TextStyle(fontSize: 20, color: Color(0xFFE63056)),
-    );
-  }
+  Widget _buildProductImage() => Column(
+    children: [
+      SizedBox(
+        height: 350,
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: productImages.length,
+          onPageChanged: (index) => setState(() => _currentPageIndex = index),
+          itemBuilder: (context, index) => ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              productImages[index],
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 10),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(productImages.length, (index) {
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            height: 6,
+            width: _currentPageIndex == index ? 22 : 6,
+            decoration: BoxDecoration(
+              color: _currentPageIndex == index ? primaryColor : Colors.grey.shade400,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          );
+        }),
+      ),
+    ],
+  );
 
-  Widget _buildSizeSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("Size", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 12,
-          children: sizes.map((size) {
-            return GestureDetector(
+  Widget _buildProductTitle() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: const [
+      Text('Lorem ipsum', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+      SizedBox(height: 4),
+      Text('By Day Dissolve', style: TextStyle(fontSize: 14, color: Colors.black54)),
+      SizedBox(height: 6),
+      Row(
+        children: [
+          Icon(Icons.star, color: Colors.amber, size: 18),
+          Icon(Icons.star, color: Colors.amber, size: 18),
+          Icon(Icons.star, color: Colors.amber, size: 18),
+          Icon(Icons.star, color: Colors.amber, size: 18),
+          Icon(Icons.star_border, color: Colors.grey, size: 18),
+          SizedBox(width: 6),
+          Text('(234 reviews)', style: TextStyle(fontSize: 14, color: Colors.black54)),
+        ],
+      ),
+    ],
+  );
+
+  Widget _buildProductPrice() => const Text('AED 13.99', style: TextStyle(fontSize: 20, color: Color(0xFFE63056), fontWeight: FontWeight.w600));
+
+  Widget _buildSizeSelection() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text("Sizes", style: TextStyle(fontWeight: FontWeight.bold)),
+      const SizedBox(height: 8),
+      Row(
+        children: sizes.map((size) {
+          final bool isSelected = selectedSize == size;
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: GestureDetector(
               onTap: () => setState(() => selectedSize = size),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                width: 40,
+                height: 40,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: selectedSize == size ? primaryColor : Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black12, offset: Offset(0, 4), blurRadius: 8),
-                  ],
+                  shape: BoxShape.circle,
+                  border: Border.all(color: isSelected ? primaryColor : Colors.grey, width: 2),
                 ),
-                child: Text(
-                  size,
-                  style: TextStyle(
-                    color: selectedSize == size ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                ),
+                child: Text(size, style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuantitySelector() {
-    return Row(
-      children: [
-        const Text("Quantity", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        const SizedBox(width: 8),
-        Row(
-          children: [
-            _buildQuantityButton(Icons.remove, () {
-              if (quantity > 1) {
-                setState(() {
-                  quantity--;
-                });
-              }
-            }),
-            Text(
-              '$quantity',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            _buildQuantityButton(Icons.add, () {
-              setState(() {
-                quantity++;
-              });
-            }),
-          ],
-        ),
-      ],
-    );
-  }
+          );
+        }).toList(),
+      ),
+    ],
+  );
 
-  Widget _buildQuantityButton(IconData icon, VoidCallback onPressed) {
-    return IconButton(
-      icon: Icon(icon, color: primaryColor),
-      onPressed: onPressed,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
-    );
-  }
+  Widget _buildAvailability() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: const [
+      SizedBox(height: 10),
+      Row(
+        children: [
+          Icon(Icons.check_circle, color: Color(0xFF4A9F62), size: 16),
+          SizedBox(width: 10),
+          Expanded(child: Text('In Stock', style: TextStyle(fontSize: 12, color: Color(0xFF4A9F62)))),
+        ],
+      ),
+      SizedBox(height: 10),
+      Row(
+        children: [
+          Icon(Icons.local_shipping, size: 16),
+          SizedBox(width: 10),
+          Expanded(child: Text('Free delivery', style: TextStyle(fontSize: 12))),
+        ],
+      ),
+      SizedBox(height: 10),
+      Row(
+        children: [
+          Icon(Icons.store, size: 16),
+          SizedBox(width: 10),
+          Expanded(child: Text('Available in the nearest store', style: TextStyle(fontSize: 12))),
+        ],
+      ),
+    ],
+  );
 
-  Widget _buildAvailability() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        SizedBox(height: 8),
-        Row(
-          children: [
-            Icon(Icons.check, size: 20, color: Colors.green),
-            SizedBox(width: 8),
-            Text('In Stock', style: TextStyle(fontSize: 16)),
-          ],
-        ),
-        SizedBox(height: 8),
-        Row(
-          children: [
-            Icon(Icons.local_shipping, size: 20, color: Colors.blue),
-            SizedBox(width: 8),
-            Text('Free delivery', style: TextStyle(fontSize: 16)),
-          ],
-        ),
-        SizedBox(height: 8),
-        Row(
-          children: [
-            Icon(Icons.store, size: 20, color: Colors.purple),
-            SizedBox(width: 8),
-            Text('Available in the nearest store', style: TextStyle(fontSize: 16)),
-          ],
-        ),
-      ],
-    );
-  }
+  Widget _buildExpandableSection(String title, String content, bool initiallyExpanded) => ExpansionTile(
+    title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+    initiallyExpanded: initiallyExpanded,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Text(content, style: const TextStyle(height: 1.5)),
+      ),
+    ],
+  );
 
-  Widget _buildExpandableSection(String title, String content, bool showContent, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+  Widget _buildCustomerReviews() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text('Customer Reviews', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+      const SizedBox(height: 12),
+      ...customerReviews.map((review) => Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: Colors.grey.shade100,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black12, offset: Offset(0, 4), blurRadius: 8)],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ],
         ),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const Spacer(),
-                Icon(showContent ? Icons.arrow_drop_up : Icons.arrow_drop_down, color: primaryColor),
-              ],
-            ),
-            if (showContent) ...[
-              const SizedBox(height: 8),
-              Text(content, style: const TextStyle(fontSize: 14)),
-            ]
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCustomerReviews() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Customer Reviews', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: 5,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 6)],
+                const CircleAvatar(
+                  radius: 20,
+                  child: Icon(Icons.person),
                 ),
-                child: Row(
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(radius: 24, backgroundImage: AssetImage('assets/avatar.png')),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('User Name', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: List.generate(5, (starIndex) {
-                              return Icon(
-                                Icons.star,
-                                size: 18,
-                                color: starIndex < 4 ? Colors.yellow : Colors.grey,
-                              );
-                            }),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text('This product is amazing! I loved it so much, and I am happy with my purchase.', style: TextStyle(fontSize: 14)),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text('2 days ago', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(review['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(review['date'], style: const TextStyle(fontSize: 12, color: Colors.grey)),
                   ],
                 ),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRecommendedProducts() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Recommended for You', style: TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              5, // Number of product cards to show
-                  (index) => const Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: ProductCard(),
-              ),
+              ],
             ),
+            const SizedBox(height: 10),
+            Text(review['comment']),
+            const SizedBox(height: 10),
+            if (review['images'] != null && review['images'].isNotEmpty)
+              SizedBox(
+                height: 80,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: (review['images'] as List<String>).map((img) {
+                    return Container(
+                      margin: const EdgeInsets.only(right: 10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(img, width: 80, height: 80, fit: BoxFit.cover),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+          ],
+        ),
+      )),
+    ],
+  );
+
+  Widget _buildRecommendedProducts() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text('Products you may also like', style: TextStyle(fontWeight: FontWeight.bold)),
+      const SizedBox(height: 8),
+      SizedBox(
+        height: 210,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: List.generate(2, (index) => const ProductCard()),
+        ),
+      ),
+    ],
+  );
+
+  Widget _buildQuantityAndAddToCart() => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+    child: Row(
+      children: [
+        Container(
+          height: 48,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade400),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: () {
+                  if (quantity > 1) setState(() => quantity--);
+                },
+              ),
+              Text('$quantity', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => setState(() => quantity++),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            onPressed: () {},
+            child: const Text("Add To Cart", style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildAddToCartButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          minimumSize: const Size(double.infinity, 50),
-          backgroundColor: primaryColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-        child: const Text("Add To Cart", style: TextStyle(color: Colors.white, fontSize: 18)),
-      ),
-    );
-  }
-
-  Widget _buildScrollBar() {
-    return Container(
-      height: 4,
-      width: double.infinity,
-      decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(5)),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          width: 100,
-          height: 4,
-          decoration: BoxDecoration(color: primaryColor, borderRadius: BorderRadius.circular(5)),
-        ),
-      ),
-    );
-  }
+    ),
+  );
 
   Widget _buildBottomNavigationBar() {
     List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
     return Container(
       decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -2)),
-        ],
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       ),
-      child: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
-        elevation: 0,
-        items: List.generate(5, (index) {
+      padding: const EdgeInsets.only(top: 10, bottom: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(iconNames.length, (index) {
           final name = iconNames[index];
           final isSelected = index == _selectedIndex;
-          return BottomNavigationBarItem(
-            icon: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.black.withOpacity(0.05) : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Image.asset(
-                'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                width: 26,
-                height: 26,
+          return GestureDetector(
+            onTap: () => setState(() => _selectedIndex = index),
+            behavior: HitTestBehavior.opaque,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.circle, size: 26, color: Colors.black),
+                  const SizedBox(height: 4),
+                  AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                      color: Colors.black,
+                    ),
+                    child: Text(name),
+                  ),
+                ],
               ),
             ),
-            label: name,
           );
         }),
       ),
@@ -445,29 +411,26 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 150,
-          width: 150,
-          decoration: BoxDecoration(
-            image: const DecorationImage(
-              image: AssetImage('assets/avatar.png'),
-              fit: BoxFit.cover,
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: Column(
+        children: [
+          Container(
+            height: 150,
+            width: 150,
+            decoration: BoxDecoration(
+              image: const DecorationImage(
+                image: AssetImage('assets/product_image.png'),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(12),
             ),
-            borderRadius: BorderRadius.circular(12),
           ),
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'New Black Winter',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-        const Text(
-          'AED 499',
-          style: TextStyle(fontSize: 14, color: Color(0xFFE63056)),
-        ),
-      ],
+          const SizedBox(height: 8),
+          const Text('Black Winter...', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('AED 499', style: TextStyle(color: Color(0xFFE63056))),
+        ],
+      ),
     );
   }
 }

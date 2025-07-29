@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
+import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
 
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
 import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
       title: 'Kolshy App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const FilterScreen(),
+      home: const NewProductDetailPage(),
     );
   }
 }

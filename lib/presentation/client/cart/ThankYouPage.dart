@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 
 class ThankYouPage extends StatefulWidget {
   const ThankYouPage({super.key});
@@ -118,7 +119,11 @@ class _ThankYouPageState extends State<ThankYouPage> {
       height: 52,
       child: ElevatedButton(
         onPressed: () {
-          // Navigate to home or previous screen
+          // Aller à HomePage
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
@@ -142,35 +147,53 @@ class _ThankYouPageState extends State<ThankYouPage> {
   Widget _buildBottomNavigationBar() {
     List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
 
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      onTap: (index) => setState(() => _selectedIndex = index),
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.white,
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.grey,
-      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-      unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
-      elevation: 0,
-      items: List.generate(iconNames.length, (index) {
-        final name = iconNames[index];
-        final isSelected = index == _selectedIndex;
-        return BottomNavigationBarItem(
-          icon: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.black.withOpacity(0.05) : Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Image.asset(
-              'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-              width: 26,
-              height: 26,
-            ),
-          ),
-          label: name,
-        );
-      }),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
+        color: Colors.white,
+      ),
+      padding: const EdgeInsets.only(top: 10, bottom: 20),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(iconNames.length, (index) {
+            final name = iconNames[index];
+            final isSelected = index == _selectedIndex;
+            return GestureDetector(
+              onTap: () => setState(() => _selectedIndex = index),
+              behavior: HitTestBehavior.opaque,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
+                      width: 26,
+                      height: 26,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(height: 4),
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                        color: Colors.black,
+                      ),
+                      child: Text(name),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
     );
   }
 }
