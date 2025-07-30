@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import '../login/login_screen.dart';
+
+const Color primaryPink = Color(0xFFE51742);
+const Color inputFill = Color(0xFFF4F4F4);
+const Color lightBorder = Color(0xFFDDDDDD);
+const Color greyText = Color(0xFF777777);
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -10,13 +17,47 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  bool _isChecked = false;
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  bool _isChecked = false;
+  bool _newsletter = false;
+  bool _remoteAssist = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+  String _sellerChoice = '';
+
+  void _showMessage(String msg, {bool isError = true}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: isError ? Colors.red : Colors.green,
+      ),
+    );
+  }
+
+  void _onRegister() {
+    if (!_isChecked) {
+      _showMessage('You must accept the public offer');
+      return;
+    }
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      _showMessage('Passwords do not match');
+      return;
+    }
+
+    _showMessage('Account created successfully!', isError: false);
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,185 +65,180 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
+              Text('Create\nan account',
+                  style: GoogleFonts.poppins(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w800,
+                  )),
+              const SizedBox(height: 36),
+
+              _CustomInput(
+                controller: _firstNameController,
+                hintText: 'First Name',
+                icon: Icons.person_outline,
+              ),
               const SizedBox(height: 20),
-              const Text(
-                'Create an\naccount',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: 40),
 
-              // Username or Email Field
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  hintText: 'Username or Email',
-                  prefixIcon: const Icon(Icons.person),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.grey, width: 0.1),
-                  ),
-                ),
+              _CustomInput(
+                controller: _lastNameController,
+                hintText: 'Last Name',
+                icon: Icons.person_outline,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              // Password Field
-              TextField(
+              _CustomInput(
+                controller: _emailController,
+                hintText: 'Email',
+                icon: Icons.email_outlined,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 20),
+
+              _CustomInput(
+                controller: _phoneController,
+                hintText: 'Phone',
+                icon: Icons.phone_outlined,
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 20),
+
+              _CustomInput(
                 controller: _passwordController,
+                hintText: 'Password',
+                icon: Icons.lock_outline,
+                isPassword: true,
                 obscureText: _obscurePassword,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                    icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.grey, width: 0.1),
-                  ),
-                ),
+                toggleVisibility: () {
+                  setState(() => _obscurePassword = !_obscurePassword);
+                },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              // Confirm Password Field
-              TextField(
+              _CustomInput(
                 controller: _confirmPasswordController,
-                obscureText: _obscureConfirmPassword,
-                decoration: InputDecoration(
-                  hintText: 'Confirm Password',
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
-                    icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.grey, width: 0.1),
-                  ),
-                ),
+                hintText: 'Confirm Password',
+                icon: Icons.lock_outline,
+                isPassword: true,
+                obscureText: _obscureConfirm,
+                toggleVisibility: () {
+                  setState(() => _obscureConfirm = !_obscureConfirm);
+                },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              // Checkbox and legal text
+              // Become a Seller section
+              const Text("Become a Seller?", style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 10),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Checkbox(
-                    value: _isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        _isChecked = value!;
-                      });
-                    },
-                    activeColor: Colors.redAccent,
-                  ),
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: const TextStyle(color: Colors.black87),
-                        children: [
-                          const TextSpan(text: 'By clicking the '),
-                          TextSpan(
-                            text: 'Register',
-                            style: const TextStyle(
-                              color: Colors.redAccent,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const TextSpan(text: ' button, you agree\nto the public offer'),
-                        ],
-                      ),
-                    ),
-                  ),
+                  _buildChoiceChip("Yes"),
+                  const SizedBox(width: 10),
+                  _buildChoiceChip("No"),
                 ],
               ),
               const SizedBox(height: 16),
 
-              // Create Account Button
+              // Checkboxes
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                activeColor: primaryPink,
+                value: _isChecked,
+                onChanged: (v) => setState(() => _isChecked = v ?? false),
+                title: RichText(
+                  text: const TextSpan(
+                    style: TextStyle(color: Colors.black87),
+                    children: [
+                      TextSpan(text: 'By clicking the '),
+                      TextSpan(
+                        text: 'Register',
+                        style: TextStyle(
+                          color: primaryPink,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(text: ' button, you agree to the public offer'),
+                    ],
+                  ),
+                ),
+              ),
+
+              CheckboxListTile(
+                title: const Text('Sign up for newsletter'),
+                value: _newsletter,
+                onChanged: (val) =>
+                    setState(() => _newsletter = val ?? false),
+                activeColor: primaryPink,
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+              ),
+
+              CheckboxListTile(
+                title: const Text('Enable remote shopping help'),
+                value: _remoteAssist,
+                onChanged: (val) =>
+                    setState(() => _remoteAssist = val ?? false),
+                activeColor: primaryPink,
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+              ),
+
+              const SizedBox(height: 16),
+
               SizedBox(
                 width: double.infinity,
-                height: 58,
+                height: 56,
                 child: ElevatedButton(
+                  onPressed: _onRegister,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE53950),
+                    backgroundColor: primaryPink,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    if (!_isChecked) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("You must accept the public offer to continue."),
-                          backgroundColor: Colors.redAccent,
-                        ),
-                      );
-                      return;
-                    }
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Account created successfully!"),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
-                    );
-                  },
                   child: const Text(
                     'Create Account',
-                    style: TextStyle(fontSize: 20, color: Colors.white),
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
               ),
               const SizedBox(height: 40),
 
-              // Or continue with
-              const Center(child: Text('- OR Continue with -')),
-              const SizedBox(height: 16),
-
-              // Social Buttons
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  SocialButton(icon: 'assets/google.png'),
-                  SizedBox(width: 12),
-                  SocialButton(icon: 'assets/apple.png'),
-                  SizedBox(width: 12),
-                  SocialButton(icon: 'assets/facebook.png'),
+                  Expanded(child: Divider()),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text('- OR Continue with -',
+                        style: TextStyle(color: greyText)),
+                  ),
+                  Expanded(child: Divider()),
                 ],
               ),
               const SizedBox(height: 24),
 
-              // Already have an account
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  SocialButton(icon: 'assets/google.png'),
+                  SizedBox(width: 20),
+                  SocialButton(icon: 'assets/apple.png'),
+                  SizedBox(width: 20),
+                  SocialButton(icon: 'assets/facebook.png'),
+                ],
+              ),
+              const SizedBox(height: 32),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Already have an account? "),
+                  const Text('Already have an account? ',
+                      style: TextStyle(color: greyText)),
                   GestureDetector(
                     onTap: () {
                       Navigator.pushReplacement(
@@ -211,14 +247,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       );
                     },
                     child: const Text(
-                      "Login",
-                      style: TextStyle(color: Colors.redAccent),
+                      'Login',
+                      style: TextStyle(
+                          color: primaryPink, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ],
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChoiceChip(String label) {
+    final selected = _sellerChoice == label;
+    return ChoiceChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: (_) => setState(() => _sellerChoice = label),
+      selectedColor: primaryPink,
+      backgroundColor: Colors.grey.shade200,
+      labelStyle: TextStyle(
+        color: selected ? Colors.white : Colors.black87,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+}
+
+class _CustomInput extends StatelessWidget {
+  final String hintText;
+  final IconData icon;
+  final TextEditingController controller;
+  final bool isPassword;
+  final bool obscureText;
+  final VoidCallback? toggleVisibility;
+  final TextInputType keyboardType;
+
+  const _CustomInput({
+    required this.hintText,
+    required this.icon,
+    required this.controller,
+    this.isPassword = false,
+    this.obscureText = false,
+    this.toggleVisibility,
+    this.keyboardType = TextInputType.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      obscureText: isPassword ? obscureText : false,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: inputFill,
+        hintText: hintText,
+        hintStyle: const TextStyle(color: greyText),
+        prefixIcon: Icon(icon, color: greyText),
+        suffixIcon: isPassword
+            ? IconButton(
+          icon: Icon(
+            obscureText ? Icons.visibility_off : Icons.visibility,
+            color: greyText,
+          ),
+          onPressed: toggleVisibility,
+        )
+            : null,
+        contentPadding:
+        const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: lightBorder),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: lightBorder),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: primaryPink),
         ),
       ),
     );
@@ -232,17 +343,14 @@ class SocialButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      width: 56,
+      height: 56,
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF5F7),
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.pinkAccent, width: 1),
+        border: Border.all(color: primaryPink, width: 1.5),
       ),
-      child: Image.asset(
-        icon,
-        width: 35,
-        height: 35,
-      ),
+      padding: const EdgeInsets.all(12),
+      child: Image.asset(icon, fit: BoxFit.contain),
     );
   }
 }

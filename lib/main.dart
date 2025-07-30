@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       title: 'Kolshy App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const LanguageScreen(),
+      home: const RegisterScreen(),
     );
   }
 }
