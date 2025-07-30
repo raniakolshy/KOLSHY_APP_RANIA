@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -26,9 +27,18 @@ class _LanguageScreenState extends State<LanguageScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            // Aller vers la page Settings au clic
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            );
+          },
         ),
-        title: const Text('Language', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+        title: const Text(
+          'Language',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+        ),
         centerTitle: true,
         elevation: 0.5,
         backgroundColor: Colors.white,
@@ -129,7 +139,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
             final name = iconNames[index];
             final isSelected = index == _selectedIndex;
             return GestureDetector(
-              onTap: () => setState(() {}),
+              onTap: () {
+                // Tu peux ajouter la navigation ici si nécessaire
+              },
               behavior: HitTestBehavior.opaque,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),

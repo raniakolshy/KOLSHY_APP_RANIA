@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 
 class FavoriteProductsScreen extends StatefulWidget {
   const FavoriteProductsScreen({super.key});
@@ -10,7 +11,6 @@ class FavoriteProductsScreen extends StatefulWidget {
 class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> with TickerProviderStateMixin {
   int _selectedIndex = 0;
 
-  // Mocked product model
   final List<Map<String, dynamic>> _allProducts = List.generate(6, (index) => {
     'id': index,
     'name': 'Product $index',
@@ -50,7 +50,12 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> with Ti
         foregroundColor: Colors.black,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            );
+          },
         ),
         title: const Text("My Favourite"),
         centerTitle: true,

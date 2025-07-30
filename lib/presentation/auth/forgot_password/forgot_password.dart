@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'package:kolshy_app/presentation/auth/forgot_password/verification_code.dart';
-// 🔁 Importe ici ta propre page de vérification si nécessaire
-// import 'package:ton_app/pages/my_verification_page.dart';
+
+const Color primaryPink = Color(0xFFE51742);
+const Color inputFill = Color(0xFFF4F4F4);
+const Color lightBorder = Color(0xFFDDDDDD);
+const Color greyText = Color(0xFF777777);
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -13,108 +18,96 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
   final RegExp emailRegex = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+
   bool _isChecked = false;
 
   void _submit() {
     final email = _emailController.text.trim();
 
     if (!_isChecked) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please check the box to proceed.'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
-        ),
-      );
+      _showSnackbar('Please check the box to proceed.');
       return;
     }
 
     if (email.isEmpty || !emailRegex.hasMatch(email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid email format'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
-        ),
-      );
+      _showSnackbar('Invalid email format');
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Mail sent'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
-      ),
-    );
+    _showSnackbar('Mail sent', isError: false);
 
-    // 👉 Redirection après validation
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          // 🔁 Remplace ici par ta vraie page
-          builder: (context) => VerificationCodeScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const VerificationCodeScreen()),
       );
     });
+  }
+
+  void _showSnackbar(String msg, {bool isError = true}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 40),
-              const Text(
-                "Forgot",
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w900,
+              const SizedBox(height: 24),
+              Text(
+                "Forgot\nPassword?",
+                style: GoogleFonts.poppins(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              const Text(
-                "password ?",
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 36),
+
+              // Email field
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  hintText: "Enter your email address",
                   filled: true,
-                  fillColor: Colors.grey[100],
-                  prefixIcon: Icon(Icons.email, color: Colors.grey[700]),
+                  fillColor: inputFill,
+                  hintText: "Enter your email address",
+                  hintStyle: const TextStyle(color: greyText),
+                  prefixIcon: const Icon(Icons.email_outlined, color: greyText),
                   contentPadding:
                   const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.grey),
+                    borderSide: const BorderSide(color: lightBorder),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.grey),
+                    borderSide: const BorderSide(color: lightBorder),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
-                    borderSide: const BorderSide(color: Colors.grey),
+                    borderSide: const BorderSide(color: primaryPink),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
+
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Checkbox(
                     value: _isChecked,
-                    activeColor: Colors.redAccent,
+                    activeColor: primaryPink,
                     onChanged: (value) {
                       setState(() {
                         _isChecked = value ?? false;
@@ -124,18 +117,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const Expanded(
                     child: Text(
                       "* We will send you a message to set or reset your new password",
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                      style: TextStyle(color: greyText, fontSize: 14),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE31640),
+                    backgroundColor: primaryPink,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

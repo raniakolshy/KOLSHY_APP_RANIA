@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/auth/login/login_screen.dart';
+import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
+import 'package:kolshy_app/presentation/client/product/favorite_products_screen.dart';
+import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
+import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
+import 'package:kolshy_app/presentation/shared/settings/help_and_support_screen.dart';
+import 'package:kolshy_app/presentation/shared/settings/language_screen.dart';
+import 'package:kolshy_app/presentation/shared/settings/legal_and_policies_screen.dart';
 import '../widgets/white_menu_button.dart';
+import 'package:flutter/material.dart';
+import '../widgets/white_menu_button.dart';
+
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -9,8 +21,17 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final int _selectedIndex = 4;
+  int _selectedIndex = 4;
   final Color primaryColor = const Color(0xFFE63056);
+
+  void _onBottomNavTap(int index) {
+    if (index == _selectedIndex) return;
+
+    setState(() {
+      _selectedIndex = index;
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,41 +70,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
           WhiteMenuButton(
             iconPath: 'assets/Icons/profile.png',
             text: "Edit profile",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfilePage()));
+            },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/notification.png',
             text: "Notification",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
+            },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/favorites.png',
             text: "Favourites",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const FavoriteProductsScreen()));
+            },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/language.png',
             text: "Language",
             trailingText: "English",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const LanguageScreen()));
+            },
           ),
           _buildSectionTitle("Performances"),
           WhiteMenuButton(
             iconPath: 'assets/Icons/policy.png',
             text: "Legal and Policies",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const LegalAndPoliciesScreen()));
+            },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/help.png',
             text: "Help & Support",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpAndSupportScreen()));
+            },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/logout.png',
             text: "Logout",
             iconColor: Colors.red,
             textColor: Colors.red,
-            onTap: () {},
+            onTap: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+              );
+            },
           ),
           const SizedBox(height: 28),
         ],
@@ -119,7 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             final name = iconNames[index];
             final isSelected = index == _selectedIndex;
             return GestureDetector(
-              onTap: () => setState(() {}),
+              onTap: () => _onBottomNavTap(index),
               behavior: HitTestBehavior.opaque,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),

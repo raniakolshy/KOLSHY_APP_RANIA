@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
+// Assure-toi que ce chemin est correct pour ta page EditProfile
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key? key}) : super(key: key);
@@ -83,7 +85,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EditProfilePage()),
+            );
+          },
         ),
         title: const Text(
           'Change Password',

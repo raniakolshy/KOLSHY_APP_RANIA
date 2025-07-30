@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/auth/forgot_password/forgot_password.dart';
+import 'package:kolshy_app/presentation/shared/profile/change_password_screen.dart';
+import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -13,7 +16,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   int _selectedIndex = 0;
 
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController currentEmailController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(); // New Email
   final TextEditingController passwordController = TextEditingController();
 
   final TextEditingController pincodeController = TextEditingController();
@@ -29,9 +36,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   bool hasChanges = false;
 
+  final _formKey = GlobalKey<FormState>();
+
   void _checkChanges() {
     setState(() {
-      hasChanges = emailController.text.isNotEmpty ||
+      hasChanges = firstNameController.text.isNotEmpty ||
+          lastNameController.text.isNotEmpty ||
+          phoneController.text.isNotEmpty ||
+          currentEmailController.text.isNotEmpty ||
+          emailController.text.isNotEmpty ||
           passwordController.text.isNotEmpty ||
           pincodeController.text.isNotEmpty ||
           addressController.text.isNotEmpty ||
@@ -47,6 +60,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     for (var c in [
+      firstNameController,
+      lastNameController,
+      phoneController,
+      currentEmailController,
       emailController,
       passwordController,
       pincodeController,
@@ -63,6 +80,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    phoneController.dispose();
+    currentEmailController.dispose();
     emailController.dispose();
     passwordController.dispose();
     pincodeController.dispose();
@@ -75,6 +96,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
+  void _showNotification(String message, {bool success = false}) {
+    final color = success ? Colors.green : Colors.red;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+      ),
+    );
+  }
+
+  void _handleSave() {
+    if (firstNameController.text.isEmpty ||
+        lastNameController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        currentEmailController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty) {
+      _showNotification("Please fill out all required fields.");
+      return;
+    }
+
+    if (passwordController.text.length < 6) {
+      _showNotification("Password must be at least 6 characters long.");
+      return;
+    }
+
+    if (_formKey.currentState!.validate()) {
+      _showNotification("Profile updated successfully!", success: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,79 +134,98 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            );
+          },
         ),
-        title: const Text('Edit Profile',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+        title: const Text(
+          'Edit Profile',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+        ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                const CircleAvatar(
-                  radius: 52,
-                  backgroundImage: AssetImage('assets/avatar.png'),
-                ),
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: secondaryColor,
-                  child: const Icon(Icons.edit, color: Colors.white, size: 16),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            sectionTitle('Personal Details'),
-            customField('Email Address', emailController),
-            customField('Password', passwordController, obscure: true),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {},
-                child: Text("Change Password", style: TextStyle(color: primaryColor)),
-              ),
-            ),
-            const Divider(),
-
-            sectionTitle('Business Address Details'),
-            customField('Pincode', pincodeController),
-            customField("Address", addressController),
-            customField("City", cityController),
-            dropdownField("State", ["N1 2LL,", "W1A 1AA", "EC1A 1BB"]),
-            customField("Country", countryController),
-            const Divider(),
-
-            sectionTitle('Bank Account Details'),
-            customField("Bank Account Number", accountNumberController),
-            customField("Account Holder’s Name", accountNameController),
-            customField("IFSC Code", ifscController),
-
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: hasChanges ? () => debugPrint("Saved!") : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: primaryColor,
-                  disabledBackgroundColor: Colors.grey.shade200,
-                  disabledForegroundColor: Colors.grey,
-                  side: BorderSide(color: hasChanges ? primaryColor : Colors.transparent),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  const CircleAvatar(
+                    radius: 52,
+                    backgroundImage: AssetImage('assets/avatar.png'),
                   ),
-                ),
-                child: const Text("Save", style: TextStyle(fontSize: 16)),
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: secondaryColor,
+                    child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 30),
+              sectionTitle('Personal Details'),
+              customField('First Name', firstNameController),
+              customField('Last Name', lastNameController),
+              validatedPhoneField('Telephone', phoneController),
+              customField('Current Email Address', currentEmailController),
+              validatedEmailField('New Email Address', emailController),
+              customField('Password *', passwordController, obscure: true),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+                    );
+                  },
+                  child: Text("Change Password", style: TextStyle(color: primaryColor)),
+                ),
+              ),
+
+              const Divider(),
+              sectionTitle('Business Address Details'),
+              customField('Pincode', pincodeController),
+              customField("Address", addressController),
+              customField("City", cityController),
+              dropdownField("State", ["N1 2LL,", "W1A 1AA", "EC1A 1BB"]),
+              customField("Country", countryController),
+              const Divider(),
+              sectionTitle('Bank Account Details'),
+              customField("Bank Account Number", accountNumberController),
+              customField("Account Holder’s Name", accountNameController),
+              customField("IFSC Code", ifscController),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: (hasChanges && passwordController.text.isNotEmpty)
+                      ? _handleSave
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: primaryColor,
+                    disabledBackgroundColor: Colors.grey.shade200,
+                    disabledForegroundColor: Colors.grey,
+                    side: BorderSide(color: hasChanges ? primaryColor : Colors.transparent),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text("Save", style: TextStyle(fontSize: 16)),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -180,7 +251,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         const SizedBox(height: 10),
         Text(label),
         const SizedBox(height: 5),
-        TextField(
+        TextFormField(
           controller: controller,
           obscureText: obscure,
           decoration: InputDecoration(
@@ -193,6 +264,70 @@ class _EditProfilePageState extends State<EditProfilePage> {
               borderSide: BorderSide.none,
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget validatedEmailField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        Text(label),
+        const SizedBox(height: 5),
+        TextFormField(
+          controller: controller,
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a new email address';
+            } else if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}$').hasMatch(value)) {
+              return 'Please enter a valid email address';
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget validatedPhoneField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        Text(label),
+        const SizedBox(height: 5),
+        TextFormField(
+          controller: controller,
+          keyboardType: TextInputType.phone,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a phone number';
+            } else if (!RegExp(r'^[0-9]{10,}$').hasMatch(value)) {
+              return 'Enter a valid phone number (min 10 digits)';
+            }
+            return null;
+          },
         ),
       ],
     );
@@ -230,7 +365,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  /// ✅ Your Custom Bottom Navigation Bar
   Widget _buildBottomNavigationBar() {
     List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
 

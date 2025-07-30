@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -38,7 +39,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
         elevation: 0.3,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            );
+          },
         ),
         centerTitle: true,
         title: const Text(
@@ -106,11 +112,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: List.generate(iconNames.length, (index) {
             final name = iconNames[index];
             final isSelected = index == _selectedIndex;
+
             return GestureDetector(
               onTap: () {
                 setState(() {
                   _selectedIndex = index;
                 });
+
+                // Navigation vers SettingsScreen si on clique sur "Setting"
+                if (name == 'Setting') {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                  );
+                }
               },
               behavior: HitTestBehavior.opaque,
               child: AnimatedContainer(
