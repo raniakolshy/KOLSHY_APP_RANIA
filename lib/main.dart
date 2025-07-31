@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
 import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
@@ -23,6 +25,8 @@ import 'presentation/auth/login/welcome_screen.dart';
 import 'presentation/auth/register/register_screen.dart';
 import 'presentation/auth/forgot_password/forgot_password.dart';
 import 'presentation/auth/forgot_password/verification_code.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -34,10 +38,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kolshy App',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      home: const RegisterScreen(),
+      locale: const Locale('ar'), // ou Locale('en') ou null pour utiliser la langue du système
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ar'),
+      ],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: RegisterScreen(),
     );
+
   }
 }

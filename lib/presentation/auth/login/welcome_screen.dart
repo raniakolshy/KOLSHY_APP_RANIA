@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/presentation/auth/register/register_screen.dart';
 import 'login_screen.dart'; // Assure-toi que ce fichier existe et contient la classe LoginScreen
+import 'package:kolshy_app/l10n/app_localizations.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -29,7 +30,7 @@ class WelcomeScreen extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
-                    '! كل شي تحتاجه بمكان واحد',
+                    'كل شي تحتاجه بمكان واحد',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 30,
@@ -39,10 +40,11 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 32),
                   child: Text(
-                    '\nWe are your one-stop online shop for everything you need. Fast delivery, great prices, and trusted brands all in one place.\n\n\n',
+                    // Clé de traduction utilisée ici
+                    AppLocalizations.of(context)!.oneStopShopDescription,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.black54,
@@ -84,8 +86,8 @@ class WelcomeScreen extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => const LoginScreen()),
                         );
                       },
-                      child: const Text(
-                        'Login',
+                      child: Text(
+                        AppLocalizations.of(context)!.login,
                         style: TextStyle(
                           fontSize: 19,
                           color: Colors.white,
@@ -109,8 +111,8 @@ class WelcomeScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(builder: (context) => const RegisterScreen()),
                         );                      },
-                      child: const Text(
-                        'Create Account',
+                      child: Text(
+                        AppLocalizations.of(context)!.create,
                         style: TextStyle(
                           fontSize: 19,
                           color: Colors.white,

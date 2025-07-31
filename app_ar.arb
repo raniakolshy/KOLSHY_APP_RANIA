@@ -1,0 +1,22 @@
+{
+  "@@locale": "ar",
+  "hello": "مرحبا",
+  "welcome": "مرحبًا بك !",
+  "logout": "تسجيل الخروج",
+  "settings": "الإعدادات",
+  "language": "اللغة",
+  "oneStopShopDescription": "d.",
+  "Login": "f",
+  "create": "f",
+  "back!": "f",
+  "usernameOrEmail": "f",
+  "password": "f",
+  "forgotPwd": "f",
+  "continueWith": "f",
+  "createAnAccount": "f",
+  "noAccount": "f",
+  "signUp": "f",
+  "createAccount": "f",
+  "anAccount": "f",
+  "jjj": "f"
+}

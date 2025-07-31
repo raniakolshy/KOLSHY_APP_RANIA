@@ -1,0 +1,22 @@
+{
+  "@@locale": "ar",
+  "hello": "مرحبا",
+  "welcome": "مرحبًا بك !",
+  "logout": "تسجيل الخروج",
+  "settings": "الإعدادات",
+  "language": "اللغة",
+  "oneStopShopDescription": "نحن متجرك الإلكتروني الشامل لكل ما تحتاج إليه.\u2028 توصيل سريع، أسعار رائعة، وعلامات تجارية موثوقة \u2028 كلها في مكان واحد..",
+  "login": "تسجيل الدخول",
+  "create": "إنشاء حساب",
+  "usernameOrEmail": "اسم المستخدم أو البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "forgotPwd": "هل نسيت كلمة المرور؟",
+  "continueWith": "- أو تابع باستخدام -",
+  "createAnAccount": "إنشاء \nحساب",
+  "signUp": "تسجيل",
+  "welcomeBack": "مرحبًا \nبعودتك!",
+  "firstName": "الاسم",
+  "lastName": "اللقب",
+  "createSimple":"إنشاء",
+  "anAccount": "حساب"
+}

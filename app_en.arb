@@ -1,0 +1,22 @@
+{
+  "@@locale": "en",
+  "hello": "hello",
+  "welcome": "Welcome",
+  "logout": "Logout",
+  "settings": "Settings",
+  "language": "Language",
+  "oneStopShopDescription": "We are your one-stop online shop for everything you need. \nFast delivery , great prices, and trusted brands all in one place.",
+  "Login": "Login",
+  "create": "create",
+  "back!": "Back!",
+  "usernameOrEmail": "Username or Email",
+  "password": "Password",
+  "forgotPwd": "Forgot Password?",
+  "continueWith": "- OR Continue with -",
+  "createAnAccount": "Create An Account",
+  "noAccount": "Don't have an account?",
+  "signUp": "Sign Up",
+  "createAccount": "create  an account",
+  "anAccount": "an account",
+  "jjj": "jjj"
+}

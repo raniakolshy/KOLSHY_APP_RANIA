@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
+import 'package:kolshy_app/l10n/app_localizations_en.dart';
 
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import '../login/login_screen.dart';
@@ -70,23 +72,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
-              Text('Create\nan account',
-                  style: GoogleFonts.poppins(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w800,
-                  )),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // ou center selon ton besoin
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.createSimple, // ← "Create"
+                    style: GoogleFonts.poppins(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.anAccount, // ← "an account"
+                    style: GoogleFonts.poppins(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              )
+,
               const SizedBox(height: 36),
 
               _CustomInput(
                 controller: _firstNameController,
-                hintText: 'First Name',
+                hintText: AppLocalizations.of(context)!.firstName,
                 icon: Icons.person_outline,
               ),
               const SizedBox(height: 20),
 
               _CustomInput(
                 controller: _lastNameController,
-                hintText: 'Last Name',
+                hintText: AppLocalizations.of(context)!.lastName,
                 icon: Icons.person_outline,
               ),
               const SizedBox(height: 20),
