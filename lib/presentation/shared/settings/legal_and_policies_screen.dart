@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
+import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
+
+import '../../client/Messages/Chat_screen.dart';
+import '../../client/notifications/notification_screen.dart';
+import '../home/home_screen.dart';
+import 'Settings_screen.dart';
 
 class LegalAndPoliciesScreen extends StatefulWidget {
   const LegalAndPoliciesScreen({super.key});
@@ -8,7 +16,7 @@ class LegalAndPoliciesScreen extends StatefulWidget {
 }
 
 class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
-  final int _selectedIndex = 4;
+  late int _selectedIndex = 4;
   final Color primaryColor = const Color(0xFFE51742);
   final Color tabInactiveColor = const Color(0xFFF3F3F3);
 
@@ -62,7 +70,19 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
+
     );
   }
 
@@ -88,57 +108,20 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
       ),
     );
   }
-
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(iconNames.length, (index) {
-            final name = iconNames[index];
-            final isSelected = index == _selectedIndex;
-            return GestureDetector(
-              onTap: () => setState(() {}),
-              behavior: HitTestBehavior.opaque,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                      width: 26,
-                      height: 26,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 4),
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                      child: Text(name),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
+}
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

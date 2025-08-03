@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
+import '../../client/Messages/Chat_screen.dart';
+import '../../client/cart/ShoppingCartPage.dart';
+import '../../client/notifications/notification_screen.dart';
+import '../home/home_screen.dart';
+import '../settings/Settings_screen.dart';
+import '../widgets/bottom_nav_bar.dart';
 import 'FilterPage.dart';
+import 'SearchPage.dart';
 
 
 class SearchResultPage extends StatefulWidget {
@@ -66,7 +73,39 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => SearchPage()),
+              );
+            }
+        ),title: const Text(
+        'Result',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w800,
+          fontSize: 24,
+        ),
+      ),
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
@@ -260,53 +299,20 @@ class _SearchResultPageState extends State<SearchResultPage> {
       },
     );
   }
-
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(height: 1, color: Colors.black.withOpacity(0.05)),
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: SafeArea(
-            top: false,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(iconNames.length, (index) {
-                final name = iconNames[index];
-                final isSelected = index == _selectedIndex;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedIndex = index),
-                  behavior: HitTestBehavior.opaque,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                        width: 26,
-                        height: 26,
-                        color: Colors.black,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        name,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      ],
-    );
+}
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

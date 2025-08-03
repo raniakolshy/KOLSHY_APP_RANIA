@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
+import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
+import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
+
+import '../../client/Messages/Chat_screen.dart';
+import '../../client/notifications/notification_screen.dart';
+import '../home/home_screen.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -11,7 +18,7 @@ class LanguageScreen extends StatefulWidget {
 class _LanguageScreenState extends State<LanguageScreen> {
   String selectedLanguage = 'English';
   final TextEditingController _searchController = TextEditingController();
-  final int _selectedIndex = 4;
+  late int _selectedIndex = 4;
   final Color primaryColor = const Color(0xFFE51742);
 
   @override
@@ -25,10 +32,11 @@ class _LanguageScreenState extends State<LanguageScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
-            // Aller vers la page Settings au clic
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -37,11 +45,13 @@ class _LanguageScreenState extends State<LanguageScreen> {
         ),
         title: const Text(
           'Language',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
         ),
-        centerTitle: true,
-        elevation: 0.5,
-        backgroundColor: Colors.white,
+        centerTitle: false,
       ),
       body: Column(
         children: [
@@ -82,7 +92,18 @@ class _LanguageScreenState extends State<LanguageScreen> {
           _buildLanguageTile('Arabic', '🇸🇦'),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -175,5 +196,21 @@ class _LanguageScreenState extends State<LanguageScreen> {
         ),
       ),
     );
+  }
+}
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

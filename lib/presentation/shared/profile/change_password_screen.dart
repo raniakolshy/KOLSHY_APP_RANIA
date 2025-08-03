@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
-// Assure-toi que ce chemin est correct pour ta page EditProfile
+import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
+import '../../client/cart/ShoppingCartPage.dart';
+import '../../client/notifications/notification_screen.dart';
+import '../Search/SearchPage.dart';
+import '../home/home_screen.dart';
+import '../settings/Settings_screen.dart';
+import '../widgets/bottom_nav_bar.dart';
+
+// Assuming ChangePasswordPage is in the shared/profile folder
+import 'package:kolshy_app/presentation/shared/profile/change_password_screen.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key? key}) : super(key: key);
@@ -11,6 +19,8 @@ class ChangePasswordPage extends StatefulWidget {
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final Color primaryColor = const Color(0xFFE51742);
+  int _selectedIndex = 0;
+  final _formKey = GlobalKey<FormState>();
 
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
@@ -25,127 +35,181 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   }
 
   void _changePassword() {
-    final oldPassword = _oldPasswordController.text.trim();
-    final newPassword = _newPasswordController.text.trim();
-    final confirmPassword = _confirmPasswordController.text.trim();
-
-    if (newPassword != confirmPassword) {
+    if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Passwords do not match'),
-          backgroundColor: Colors.red.shade400,
+          content: const Text('Password changed successfully'),
+          backgroundColor: Colors.green.shade600,
         ),
       );
-      return;
+      Navigator.of(context).pop();
     }
-
-    // TODO: Integrate API call here
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Password changed successfully'),
-        backgroundColor: Colors.green.shade600,
-      ),
-    );
   }
 
-  Widget _buildPasswordField({
+  Widget _buildInput({
     required TextEditingController controller,
     required String label,
     required String hint,
+    String? Function(String?)? validator,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-        const SizedBox(height: 6),
-        TextField(
-          controller: controller,
-          obscureText: true,
-          decoration: InputDecoration(
-            hintText: hint,
-            filled: true,
-            fillColor: Colors.grey.shade100,
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: TextFormField(
+        controller: controller,
+        obscureText: true,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          labelStyle: TextStyle(color: Colors.grey[600]),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          filled: true,
+          fillColor: Colors.grey.shade50,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
           ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: primaryColor, width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         ),
-      ],
+        validator: validator,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const EditProfilePage()),
-            );
-          },
-        ),
-        title: const Text(
-          'Change Password',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-        ),
         backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
+        elevation: 0.5,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),title: const Text(
+        'Change Password',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w800,
+          fontSize: 24,
+        ),
+      ),
+        centerTitle: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            _buildPasswordField(
-              controller: _oldPasswordController,
-              label: 'Old Password',
-              hint: 'Enter your current password',
-            ),
-            const SizedBox(height: 20),
-            _buildPasswordField(
-              controller: _newPasswordController,
-              label: 'New Password',
-              hint: 'Enter new password',
-            ),
-            const SizedBox(height: 20),
-            _buildPasswordField(
-              controller: _confirmPasswordController,
-              label: 'Confirm Password',
-              hint: 'Re-enter new password',
-            ),
-            const SizedBox(height: 40),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _changePassword,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: primaryColor,
-                  side: BorderSide(color: primaryColor),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              _buildInput(
+                controller: _oldPasswordController,
+                label: 'Old Password',
+                hint: 'Enter your current password',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your old password';
+                  }
+                  return null;
+                },
+              ),
+              _buildInput(
+                controller: _newPasswordController,
+                label: 'New Password',
+                hint: 'Enter new password',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a new password';
+                  }
+                  if (value.length < 8) {
+                    return 'Password must be at least 8 characters long';
+                  }
+                  if (value == _oldPasswordController.text && _oldPasswordController.text.isNotEmpty) {
+                    return 'New password cannot be the same as the old password';
+                  }
+                  return null;
+                },
+              ),
+              _buildInput(
+                controller: _confirmPasswordController,
+                label: 'Confirm Password',
+                hint: 'Re-enter new password',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm your new password';
+                  }
+                  if (value != _newPasswordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _changePassword,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                  ),
+                  child: const Text(
+                    'Change Now',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ),
-                child: const Text(
-                  'Change Now',
-                  style: TextStyle(fontSize: 16),
-                ),
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+}
+
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

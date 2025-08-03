@@ -43,7 +43,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get password => 'Password';
 
   @override
-  String get forgotPwd => 'Forgot Password?';
+  String get forgotPwd => 'Forgot\nPassword?';
 
   @override
   String get continueWith => '- OR Continue with -';
@@ -71,4 +71,98 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createSimple => 'Create';
+
+  @override
+  String get createAnAccountLogin => 'create an account';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get passworConfirmation => 'Confirm Password';
+
+  @override
+  String get becomeASeller => 'Do you wanna become a Seller / Vendor ?';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get byClickingThe => 'By clicking the';
+
+  @override
+  String get publicOffer => 'button,you agree to the public offer';
+
+  @override
+  String get newsletter => 'Sign up for newsletter';
+
+  @override
+  String get enableremoteshoppinghelp => 'Enable remote shopping help';
+
+  @override
+  String get alreadyHaveAnAccount => 'I Already Have an Account ';
+
+  @override
+  String get enterEmail => 'Enter your email address';
+
+  @override
+  String get resetPwd =>
+      '* We will send you a message to set or reset your new password';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get verificationCode => 'Verification\ncode';
+
+  @override
+  String get sentTheVerificationCode => 'We have sent the verification code to';
+
+  @override
+  String get noCode => 'Didn’t receive the code ?';
+
+  @override
+  String get resend => 'Resend';
+
+  @override
+  String get general => 'General';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get notification => 'Notification';
+
+  @override
+  String get favourites => 'Favourites';
+
+  @override
+  String get myOrders => 'My Orders';
+
+  @override
+  String get performances => 'Performances';
+
+  @override
+  String get legalAndPolicies => 'Legal And Policies';
+
+  @override
+  String get helpSupport => 'Help & Support';
+
+  @override
+  String get trailLanguage => 'English';
+
+  @override
+  String get personalInfo => 'personal Info';
+
+  @override
+  String get shippingAddress => 'Shipping Address';
+
+  @override
+  String get paymentMethod => 'payment Method';
 }

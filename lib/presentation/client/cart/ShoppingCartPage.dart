@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
-import 'CheckoutPage.dart'; // Assure-toi que ce fichier existe et est bien placé
+import 'package:flutter/services.dart';
+import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
+import 'package:kolshy_app/presentation/shared/Search/ResultPage.dart';
+import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
+import '../../shared/Search/SearchPage.dart';
+import '../../shared/settings/Settings_screen.dart';
+import '../../shared/widgets/bottom_nav_bar.dart';
+import '../Messages/Chat_screen.dart';
+import '../notifications/notification_screen.dart';
+import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
+
 
 class CartItem {
   final String name;
@@ -27,7 +37,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
   final Color primaryColor = const Color(0xFFE63056);
   int _selectedIndex = 1;
 
-  List<CartItem> _cartItems = List.generate(
+  final List<CartItem> _cartItems = List.generate(
     4,
         (i) => CartItem(
       name: 'Nike Air Max',
@@ -36,34 +46,103 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
     ),
   );
 
+  double get _cartTotal =>
+      _cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
+
   void _removeItem(int index) {
     final removedItem = _cartItems[index];
     _cartItems.removeAt(index);
     _listKey.currentState?.removeItem(
       index,
-          (context, animation) => _buildCartItem(removedItem, index, animation),
+          (context, animation) =>
+          _buildCartItem(removedItem, index, animation),
       duration: const Duration(milliseconds: 400),
     );
+    HapticFeedback.lightImpact();
+    setState(() {});
+  }
+
+  void _onNavItemTap(int index) {
+    setState(() => _selectedIndex = index);
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        break;
+      case 1:
+        break; // already on cart
+      case 2:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (_) => const SearchResultPage()));
+        break;
+      case 3:
+      // Navigate to Chat screen (stubbed)
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Chat screen not implemented.")));
+        break;
+      case 4:
+      // Navigate to Settings (stubbed)
+        Navigator.push(context,
+            MaterialPageRoute(builder: (_) => const SettingsScreen()));
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    double total =
-    _cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
-
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            }
+
+        ),
+        title: const Text(
+          'My Cart',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
+        ),
+        centerTitle: false,
+      ),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
             Expanded(
-              child: AnimatedList(
+              child: _cartItems.isEmpty
+                  ? const Center(
+                child: Text(
+                  'Your cart is empty',
+                  style: TextStyle(fontSize: 18),
+                ),
+              )
+                  : AnimatedList(
                 key: _listKey,
                 initialItemCount: _cartItems.length,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemBuilder: (context, index, animation) =>
                     _buildCartItem(_cartItems[index], index, animation),
               ),
@@ -76,7 +155,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
                 children: [
                   _buildCouponField(),
                   const SizedBox(height: 12),
-                  _buildTotalSection(total),
+                  _buildTotalSection(_cartTotal),
                   const SizedBox(height: 16),
                   _buildCheckoutButton(),
                 ],
@@ -88,27 +167,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, size: 24),
-            onPressed: () => Navigator.pop(context),
-          ),
-          const SizedBox(width: 8),
-          const Text(
-            'My Cart',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCartItem(
-      CartItem item, int index, Animation<double> animation) {
+  Widget _buildCartItem(CartItem item, int index, Animation<double> animation) {
     return SizeTransition(
       sizeFactor: animation,
       child: Container(
@@ -202,7 +261,10 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
           GestureDetector(
             onTap: () {
               setState(() {
-                if (item.quantity > 1) item.quantity--;
+                if (item.quantity > 1) {
+                  item.quantity--;
+                  HapticFeedback.lightImpact();
+                }
               });
             },
             child: const Icon(Icons.remove, size: 18),
@@ -211,13 +273,15 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               '${item.quantity}',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+              style:
+              const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
             ),
           ),
           GestureDetector(
             onTap: () {
               setState(() {
                 item.quantity++;
+                HapticFeedback.lightImpact();
               });
             },
             child: const Icon(Icons.add, size: 18),
@@ -235,13 +299,21 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
-        decoration: InputDecoration(
-          icon: const Icon(Icons.local_offer_outlined),
+        decoration: const InputDecoration(
+          icon: Icon(Icons.local_offer_outlined),
           hintText: 'Add coupon code',
           border: InputBorder.none,
         ),
         onSubmitted: (value) {
-          debugPrint('Coupon entered: $value');
+          if (value.toLowerCase() == 'save10') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Coupon applied: 10% off!')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Invalid coupon code')),
+            );
+          }
         },
       ),
     );
@@ -259,8 +331,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
             const Text('Total',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text('AED ${total.toStringAsFixed(2)}',
-                style:
-                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 6),
@@ -276,80 +347,43 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: _cartItems.isEmpty
+            ? null
+            : () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CheckoutPage()),
+            MaterialPageRoute(builder: (context) => const CheckoutPage()),
           );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           elevation: 0,
         ),
         child: const Text(
           'Proceed to Checkout',
-          style: TextStyle(
-              fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(iconNames.length, (index) {
-            final name = iconNames[index];
-            final isSelected = index == _selectedIndex;
-            return GestureDetector(
-              onTap: () => setState(() => _selectedIndex = index),
-              behavior: HitTestBehavior.opaque,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeInOut,
-                padding:
-                const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                      width: 26,
-                      height: 26,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 4),
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight:
-                        isSelected ? FontWeight.w700 : FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                      child: Text(name),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
+}
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

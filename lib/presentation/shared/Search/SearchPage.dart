@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../client/Messages/Chat_screen.dart';
+import '../../client/cart/ShoppingCartPage.dart';
+import '../../client/notifications/notification_screen.dart';
+import '../home/home_screen.dart';
+import '../settings/Settings_screen.dart';
+import '../widgets/bottom_nav_bar.dart';
+import 'FilterPage.dart'; // Add the import for FilterPage.dart
+import 'ResultPage.dart'; // Add the import for ResultPage.dart
+
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -16,14 +25,45 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            }
+        ),title: const Text(
+        'Search',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w800,
+          fontSize: 24,
+        ),
+      ),
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTopBar(),
               const SizedBox(height: 20),
               _buildSearchBar(),
               if (recentSearches.isNotEmpty) ...[
@@ -41,22 +81,6 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTopBar() {
-    return Row(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        const SizedBox(width: 4),
-        const Text(
-          'Search',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-      ],
     );
   }
 
@@ -82,7 +106,15 @@ class _SearchPageState extends State<SearchPage> {
                       hintText: 'Search',
                       border: InputBorder.none,
                     ),
-                    onChanged: (_) => setState(() {}),
+                    onSubmitted: (query) {
+                      // When user presses Enter, navigate to the ResultPage
+                      if (query == 'T-Shirt') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SearchResultPage()),
+                        );
+                      }
+                    },
                   ),
                 ),
                 if (_searchController.text.isNotEmpty)
@@ -98,14 +130,23 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
         const SizedBox(width: 12),
-        Container(
-          height: 48,
-          width: 48,
-          decoration: BoxDecoration(
-            color: const Color(0xFFE51742),
-            borderRadius: BorderRadius.circular(12),
+        GestureDetector(
+          onTap: () {
+            // Navigate to the FilterPage when the pink filter button is pressed
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FilterScreen()),
+            );
+          },
+          child: Container(
+            height: 48,
+            width: 48,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE51742),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.filter_alt_outlined, color: Colors.white),
           ),
-          child: const Icon(Icons.filter_alt_outlined, color: Colors.white),
         ),
       ],
     );
@@ -208,61 +249,21 @@ class _SearchPageState extends State<SearchPage> {
       },
     );
   }
+}
 
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(height: 1, color: Colors.black.withOpacity(0.05)),
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: SafeArea(
-            top: false,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(iconNames.length, (index) {
-                final name = iconNames[index];
-                final isSelected = index == _selectedIndex;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedIndex = index),
-                  behavior: HitTestBehavior.opaque,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                          width: 26,
-                          height: 26,
-                          color: Colors.black,
-                          errorBuilder: (ctx, err, trace) => const Icon(Icons.error),
-                        ),
-                        const SizedBox(height: 4),
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                            color: Colors.black,
-                          ),
-                          child: Text(name),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      ],
-    );
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

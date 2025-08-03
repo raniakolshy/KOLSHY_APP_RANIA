@@ -167,7 +167,7 @@ abstract class AppLocalizations {
   /// No description provided for @forgotPwd.
   ///
   /// In en, this message translates to:
-  /// **'Forgot Password?'**
+  /// **'Forgot\nPassword?'**
   String get forgotPwd;
 
   /// No description provided for @continueWith.
@@ -223,6 +223,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create'**
   String get createSimple;
+
+  /// No description provided for @createAnAccountLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'create an account'**
+  String get createAnAccountLogin;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// No description provided for @passworConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get passworConfirmation;
+
+  /// No description provided for @becomeASeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you wanna become a Seller / Vendor ?'**
+  String get becomeASeller;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @byClickingThe.
+  ///
+  /// In en, this message translates to:
+  /// **'By clicking the'**
+  String get byClickingThe;
+
+  /// No description provided for @publicOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'button,you agree to the public offer'**
+  String get publicOffer;
+
+  /// No description provided for @newsletter.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up for newsletter'**
+  String get newsletter;
+
+  /// No description provided for @enableremoteshoppinghelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable remote shopping help'**
+  String get enableremoteshoppinghelp;
+
+  /// No description provided for @alreadyHaveAnAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'I Already Have an Account '**
+  String get alreadyHaveAnAccount;
+
+  /// No description provided for @enterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address'**
+  String get enterEmail;
+
+  /// No description provided for @resetPwd.
+  ///
+  /// In en, this message translates to:
+  /// **'* We will send you a message to set or reset your new password'**
+  String get resetPwd;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @verificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification\ncode'**
+  String get verificationCode;
+
+  /// No description provided for @sentTheVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'We have sent the verification code to'**
+  String get sentTheVerificationCode;
+
+  /// No description provided for @noCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn’t receive the code ?'**
+  String get noCode;
+
+  /// No description provided for @resend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resend;
+
+  /// No description provided for @general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @notification.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notification;
+
+  /// No description provided for @favourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourites'**
+  String get favourites;
+
+  /// No description provided for @myOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'My Orders'**
+  String get myOrders;
+
+  /// No description provided for @performances.
+  ///
+  /// In en, this message translates to:
+  /// **'Performances'**
+  String get performances;
+
+  /// No description provided for @legalAndPolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal And Policies'**
+  String get legalAndPolicies;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpSupport;
+
+  /// No description provided for @trailLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get trailLanguage;
+
+  /// No description provided for @personalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'personal Info'**
+  String get personalInfo;
+
+  /// No description provided for @shippingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipping Address'**
+  String get shippingAddress;
+
+  /// No description provided for @paymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'payment Method'**
+  String get paymentMethod;
 }
 
 class _AppLocalizationsDelegate

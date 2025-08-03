@@ -156,7 +156,7 @@ class _LoginFormState extends State<LoginForm> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(AppLocalizations.of(context)!.createAnAccount, style: TextStyle(color: greyText)),
+            Text(AppLocalizations.of(context)!.createAnAccountLogin, style: TextStyle(color: greyText)),
             GestureDetector(
               onTap: () {
                 Navigator.push(

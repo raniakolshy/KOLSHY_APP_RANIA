@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
+import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
+import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
+import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
+import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
+
+import '../Messages/Chat_screen.dart';
 
 class NewProductDetailPage extends StatefulWidget {
   const NewProductDetailPage({super.key});
@@ -12,7 +20,6 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
   final List<String> sizes = ['S', 'M', 'L', 'XL'];
   String selectedSize = 'M';
   bool isFavorite = false;
-  int _selectedIndex = 2;
   int quantity = 1;
   final PageController _pageController = PageController();
   int _currentPageIndex = 0;
@@ -66,7 +73,11 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
                 const SizedBox(height: 16),
                 _buildAvailability(),
                 const SizedBox(height: 16),
-                _buildExpandableSection('Description', 'Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.', true),
+                _buildExpandableSection(
+                  'Description',
+                  'Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
+                  true,
+                ),
                 const SizedBox(height: 16),
                 _buildExpandableSection('Ingredients', 'Water, Glycerin, Aloe Vera...', false),
                 const SizedBox(height: 16),
@@ -81,37 +92,42 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
           ),
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildQuantityAndAddToCart(),
-            _buildBottomNavigationBar(),
-          ],
-        ),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildQuantityAndAddToCart(),
+          BottomNavBar(
+            selectedIndex: 2,
+            onItemTapped: (index) {
+              if (index != 2) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+                );
+              }
+            },
+          ),
+        ],
       ),
     );
   }
-
   Widget _buildHeader() => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black, size: 28),
+        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 24),
         onPressed: () => Navigator.of(context).pop(),
       ),
       IconButton(
         icon: Icon(
           isFavorite ? Icons.favorite : Icons.favorite_border,
-          color: primaryColor,
-          size: 28,
+          color: isFavorite ? const Color(0xFFE63056) : Colors.black,
+          size: 24,
         ),
         onPressed: () => setState(() => isFavorite = !isFavorite),
       ),
     ],
   );
-
   Widget _buildProductImage() => Column(
     children: [
       SizedBox(
@@ -169,7 +185,10 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     ],
   );
 
-  Widget _buildProductPrice() => const Text('AED 13.99', style: TextStyle(fontSize: 20, color: Color(0xFFE63056), fontWeight: FontWeight.w600));
+  Widget _buildProductPrice() => const Text(
+    'AED 13.99',
+    style: TextStyle(fontSize: 20, color: Color(0xFFE63056), fontWeight: FontWeight.w600),
+  );
 
   Widget _buildSizeSelection() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,10 +284,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
           children: [
             Row(
               children: [
-                const CircleAvatar(
-                  radius: 20,
-                  child: Icon(Icons.person),
-                ),
+                const CircleAvatar(radius: 20, child: Icon(Icons.person)),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,50 +376,6 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
       ],
     ),
   );
-
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(iconNames.length, (index) {
-          final name = iconNames[index];
-          final isSelected = index == _selectedIndex;
-          return GestureDetector(
-            onTap: () => setState(() => _selectedIndex = index),
-            behavior: HitTestBehavior.opaque,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.circle, size: 26, color: Colors.black),
-                  const SizedBox(height: 4),
-                  AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                      color: Colors.black,
-                    ),
-                    child: Text(name),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
 }
 
 class ProductCard extends StatelessWidget {
@@ -432,5 +404,22 @@ class ProductCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

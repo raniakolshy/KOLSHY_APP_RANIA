@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
+import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
+import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
+
+import '../Messages/Chat_screen.dart';
+import '../product/NewProductDetailPage.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -36,21 +43,24 @@ class _NotificationScreenState extends State<NotificationScreen> {
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0.3,
+        elevation: 0.5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SettingsScreen()),
-            );
-          },
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
+              );
+            }
+        ),title: const Text(
+        'Notification',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w800,
+          fontSize: 24,
         ),
-        centerTitle: true,
-        title: const Text(
-          'Notifications',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-        ),
+      ),
+        centerTitle: false,
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
@@ -65,7 +75,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ],
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: 3, // 'Chat' or Notifications tab index
+        onItemTapped: (index) {
+          if (index != 3) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
+
     );
   }
 
@@ -98,69 +119,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(iconNames.length, (index) {
-            final name = iconNames[index];
-            final isSelected = index == _selectedIndex;
-
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedIndex = index;
-                });
-
-                // Navigation vers SettingsScreen si on clique sur "Setting"
-                if (name == 'Setting') {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SettingsScreen()),
-                  );
-                }
-              },
-              behavior: HitTestBehavior.opaque,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                      width: 26,
-                      height: 26,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 4),
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                      child: Text(name),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
-  }
 }
 
 class NotificationItemData {
@@ -238,5 +196,21 @@ class SectionHeader extends StatelessWidget {
         style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
       ),
     );
+  }
+}
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

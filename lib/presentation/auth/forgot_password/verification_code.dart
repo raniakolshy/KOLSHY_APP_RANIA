@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 
 const Color primaryPink = Color(0xFFE51742);
@@ -109,18 +110,18 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Verification\nCode",
+                AppLocalizations.of(context)!.verificationCode,
                 style: GoogleFonts.poppins(
                   fontSize: 36,
                   fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 32),
-              const Center(
+               Center(
                 child: Column(
                   children: [
                     Text(
-                      "We have sent the verification code to",
+                      AppLocalizations.of(context)!.sentTheVerificationCode,
                       style: TextStyle(fontSize: 16, color: greyText),
                     ),
                     SizedBox(height: 4),
@@ -152,8 +153,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    "Submit",
+                  child:  Text(
+                    AppLocalizations.of(context)!.submit,
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
@@ -162,11 +163,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               Center(
                 child: RichText(
                   text: TextSpan(
-                    text: "Didn’t receive the code? ",
-                    style: const TextStyle(color: greyText, fontSize: 14),
+                    text: AppLocalizations.of(context)!.noCode,
+                    style:  TextStyle(color: greyText, fontSize: 14),
                     children: [
                       TextSpan(
-                        text: "Resend",
+                        text: AppLocalizations.of(context)!.resend,
                         style: const TextStyle(
                           color: primaryPink,
                           fontWeight: FontWeight.bold,

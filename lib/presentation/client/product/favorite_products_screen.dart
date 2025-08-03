@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
+
+import '../../shared/Search/SearchPage.dart';
+import '../../shared/home/home_screen.dart';
+import '../../shared/settings/Settings_screen.dart';
+import '../../shared/widgets/bottom_nav_bar.dart';
+import '../Messages/Chat_screen.dart';
+import '../cart/ShoppingCartPage.dart';
+import '../notifications/notification_screen.dart';
 
 class FavoriteProductsScreen extends StatefulWidget {
   const FavoriteProductsScreen({super.key});
@@ -11,6 +18,7 @@ class FavoriteProductsScreen extends StatefulWidget {
 class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> with TickerProviderStateMixin {
   int _selectedIndex = 0;
 
+  // Mocked product model
   final List<Map<String, dynamic>> _allProducts = List.generate(6, (index) => {
     'id': index,
     'name': 'Product $index',
@@ -47,19 +55,24 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> with Ti
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SettingsScreen()),
-            );
-          },
-        ),
-        title: const Text("My Favourite"),
-        centerTitle: true,
         elevation: 0.5,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsScreen()),
+              );
+            }
+        ),title: const Text(
+        'Favourites',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w800,
+          fontSize: 24,
+        ),
+      ),
+        centerTitle: false,
       ),
       body: Column(
         children: [
@@ -109,63 +122,19 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> with Ti
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
-    );
-  }
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
 
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(height: 1, color: Colors.black.withOpacity(0.05)),
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: SafeArea(
-            top: false,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(iconNames.length, (index) {
-                final name = iconNames[index];
-                final isSelected = index == _selectedIndex;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedIndex = index),
-                  behavior: HitTestBehavior.opaque,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                          width: 26,
-                          height: 26,
-                          color: Colors.black,
-                        ),
-                        const SizedBox(height: 4),
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                            color: Colors.black,
-                          ),
-                          child: Text(name),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -280,5 +249,21 @@ class _AnimatedProductCardState extends State<AnimatedProductCard> with TickerPr
         ],
       ),
     );
+  }
+}
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

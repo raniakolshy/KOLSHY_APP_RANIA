@@ -110,7 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               _CustomInput(
                 controller: _emailController,
-                hintText: 'Email',
+                hintText: AppLocalizations.of(context)!.email,
                 icon: Icons.email_outlined,
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -118,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               _CustomInput(
                 controller: _phoneController,
-                hintText: 'Phone',
+                hintText: AppLocalizations.of(context)!.phone,
                 icon: Icons.phone_outlined,
                 keyboardType: TextInputType.phone,
               ),
@@ -126,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               _CustomInput(
                 controller: _passwordController,
-                hintText: 'Password',
+                hintText: AppLocalizations.of(context)!.password,
                 icon: Icons.lock_outline,
                 isPassword: true,
                 obscureText: _obscurePassword,
@@ -138,7 +138,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               _CustomInput(
                 controller: _confirmPasswordController,
-                hintText: 'Confirm Password',
+                hintText: AppLocalizations.of(context)!.passworConfirmation,
                 icon: Icons.lock_outline,
                 isPassword: true,
                 obscureText: _obscureConfirm,
@@ -149,13 +149,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 20),
 
               // Become a Seller section
-              const Text("Become a Seller?", style: TextStyle(fontSize: 16)),
+              Text(AppLocalizations.of(context)!.becomeASeller, style: TextStyle(fontSize: 16)),
               const SizedBox(height: 10),
               Row(
                 children: [
-                  _buildChoiceChip("Yes"),
+                  _buildChoiceChip(AppLocalizations.of(context)!.yes),
                   const SizedBox(width: 10),
-                  _buildChoiceChip("No"),
+                  _buildChoiceChip(AppLocalizations.of(context)!.no),
                 ],
               ),
               const SizedBox(height: 16),
@@ -168,25 +168,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 value: _isChecked,
                 onChanged: (v) => setState(() => _isChecked = v ?? false),
                 title: RichText(
-                  text: const TextSpan(
+                  text:  TextSpan(
                     style: TextStyle(color: Colors.black87),
                     children: [
-                      TextSpan(text: 'By clicking the '),
+                      TextSpan(text: AppLocalizations.of(context)!.byClickingThe ),
                       TextSpan(
-                        text: 'Register',
+                        text: AppLocalizations.of(context)!.signUp,
                         style: TextStyle(
                           color: primaryPink,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      TextSpan(text: ' button, you agree to the public offer'),
+                      TextSpan(text: AppLocalizations.of(context)!.publicOffer),
                     ],
                   ),
                 ),
               ),
 
               CheckboxListTile(
-                title: const Text('Sign up for newsletter'),
+                title:  Text( AppLocalizations.of(context)!.newsletter),
                 value: _newsletter,
                 onChanged: (val) =>
                     setState(() => _newsletter = val ?? false),
@@ -196,7 +196,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
 
               CheckboxListTile(
-                title: const Text('Enable remote shopping help'),
+                title:  Text(AppLocalizations.of(context)!.enableremoteshoppinghelp),
                 value: _remoteAssist,
                 onChanged: (val) =>
                     setState(() => _remoteAssist = val ?? false),
@@ -218,8 +218,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Create Account',
+                  child:  Text(
+                    AppLocalizations.of(context)!.create,
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
@@ -227,11 +227,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 40),
 
               Row(
-                children: const [
+                children:  [
                   Expanded(child: Divider()),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text('- OR Continue with -',
+                    child: Text(AppLocalizations.of(context)!.continueWith,
                         style: TextStyle(color: greyText)),
                   ),
                   Expanded(child: Divider()),
@@ -254,7 +254,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Already have an account? ',
+                  Text(AppLocalizations.of(context)!.alreadyHaveAnAccount,
                       style: TextStyle(color: greyText)),
                   GestureDetector(
                     onTap: () {
@@ -263,8 +263,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         MaterialPageRoute(builder: (_) => const LoginScreen()),
                       );
                     },
-                    child: const Text(
-                      'Login',
+                    child: Text(
+                      AppLocalizations.of(context)!.login,
                       style: TextStyle(
                           color: primaryPink, fontWeight: FontWeight.w600),
                     ),

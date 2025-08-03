@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
+import 'package:kolshy_app/presentation/client/cart/OrderDetailsPage.dart';
+
+import 'OrderDetailsPage.dart';
 
 class ThankYouPage extends StatefulWidget {
   const ThankYouPage({super.key});
@@ -9,7 +12,6 @@ class ThankYouPage extends StatefulWidget {
 }
 
 class _ThankYouPageState extends State<ThankYouPage> {
-  int _selectedIndex = 1;
   final Color primaryColor = const Color(0xFFE63056);
   final Color successColor = const Color(0xFF34A853);
 
@@ -17,7 +19,7 @@ class _ThankYouPageState extends State<ThankYouPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      // ✅ Bottom nav removed
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -92,7 +94,11 @@ class _ThankYouPageState extends State<ThankYouPage> {
       height: 52,
       child: OutlinedButton(
         onPressed: () {
-          // Navigate to order details
+          // ✅ Navigate to Order Details
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const OrderDetailsPage()),
+          );
         },
         style: OutlinedButton.styleFrom(
           side: const BorderSide(color: Colors.black12),
@@ -119,10 +125,10 @@ class _ThankYouPageState extends State<ThankYouPage> {
       height: 52,
       child: ElevatedButton(
         onPressed: () {
-          // Aller à HomePage
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
+                (route) => false,
           );
         },
         style: ElevatedButton.styleFrom(
@@ -139,59 +145,6 @@ class _ThankYouPageState extends State<ThankYouPage> {
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(iconNames.length, (index) {
-            final name = iconNames[index];
-            final isSelected = index == _selectedIndex;
-            return GestureDetector(
-              onTap: () => setState(() => _selectedIndex = index),
-              behavior: HitTestBehavior.opaque,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                      width: 26,
-                      height: 26,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 4),
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                      child: Text(name),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
         ),
       ),
     );

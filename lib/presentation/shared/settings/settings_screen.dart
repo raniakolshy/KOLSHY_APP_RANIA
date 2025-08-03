@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/presentation/auth/login/login_screen.dart';
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
 import 'package:kolshy_app/presentation/client/product/favorite_products_screen.dart';
@@ -7,10 +8,12 @@ import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
 import 'package:kolshy_app/presentation/shared/settings/help_and_support_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/language_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/legal_and_policies_screen.dart';
+import '../../client/Messages/Chat_screen.dart';
 import '../widgets/white_menu_button.dart';
-import 'package:flutter/material.dart';
-import '../widgets/white_menu_button.dart';
-
+import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
+import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
+import 'package:kolshy_app/presentation/client/cart/OrderDetailsPage.dart';
 
 
 class SettingsScreen extends StatefulWidget {
@@ -39,81 +42,84 @@ class _SettingsScreenState extends State<SettingsScreen> {
       backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 0.5,
         leading: IconButton(
-          icon: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey.shade200,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                )
-              ],
-            ),
-            padding: const EdgeInsets.all(6),
-            child: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 18),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
+        ),
+        title:  Text(
+          AppLocalizations.of(context)!.settings,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
           ),
-          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Settings",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 18),
-        ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: ListView(
+
         children: [
-          _buildSectionTitle("General"),
+          _buildSectionTitle(AppLocalizations.of(context)!.general),
           WhiteMenuButton(
             iconPath: 'assets/Icons/profile.png',
-            text: "Edit profile",
+            text: AppLocalizations.of(context)!.editProfile,
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfilePage()));
             },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/notification.png',
-            text: "Notification",
+            text: AppLocalizations.of(context)!.notification,
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
             },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/favorites.png',
-            text: "Favourites",
+            text: AppLocalizations.of(context)!.favourites,
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const FavoriteProductsScreen()));
             },
           ),
           WhiteMenuButton(
+            iconPath: 'assets/Icons/reciept.png',
+            text: AppLocalizations.of(context)!.myOrders,
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderDetailsPage()));
+            },
+          ),
+          WhiteMenuButton(
             iconPath: 'assets/Icons/language.png',
-            text: "Language",
-            trailingText: "English",
+            text: AppLocalizations.of(context)!.language,
+            trailingText: AppLocalizations.of(context)!.trailLanguage,
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const LanguageScreen()));
             },
           ),
-          _buildSectionTitle("Performances"),
+          _buildSectionTitle(AppLocalizations.of(context)!.performances),
           WhiteMenuButton(
             iconPath: 'assets/Icons/policy.png',
-            text: "Legal and Policies",
+            text: AppLocalizations.of(context)!.legalAndPolicies,
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const LegalAndPoliciesScreen()));
             },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/help.png',
-            text: "Help & Support",
+            text: AppLocalizations.of(context)!.helpSupport,
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpAndSupportScreen()));
             },
           ),
           WhiteMenuButton(
             iconPath: 'assets/Icons/logout.png',
-            text: "Logout",
+            text: AppLocalizations.of(context)!.logout,
             iconColor: Colors.red,
             textColor: Colors.red,
             onTap: () {
@@ -127,7 +133,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 28),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
+
     );
   }
 
@@ -141,56 +159,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(iconNames.length, (index) {
-            final name = iconNames[index];
-            final isSelected = index == _selectedIndex;
-            return GestureDetector(
-              onTap: () => _onBottomNavTap(index),
-              behavior: HitTestBehavior.opaque,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                      width: 26,
-                      height: 26,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 4),
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                      child: Text(name),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
+}
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

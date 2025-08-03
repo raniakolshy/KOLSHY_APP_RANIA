@@ -1,7 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
-import 'package:kolshy_app/presentation/shared/Search/ResultPage.dart';
+import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
+import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
+import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
+import 'package:kolshy_app/presentation/shared/settings/Settings_screen.dart';
+
+import '../../client/product/NewProductDetailPage.dart';
+import '../Search/ResultPage.dart';
+
 
 
 
@@ -48,12 +55,50 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
   }
+  void _onNavItemTap(int index) {
+    if (_selectedIndex == index) return;
 
+    setState(() => _selectedIndex = index);
+
+    switch (index) {
+      case 0:
+      // Already on Home
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ShoppingCartPage()),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SearchPage()),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ChatScreen()),
+        );
+        break;
+      case 4:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+        );
+        break;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onNavItemTap,
+      ),
+
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -74,61 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(height: 1, color: Colors.black.withOpacity(0.05)),
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: SafeArea(
-            top: false,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(iconNames.length, (index) {
-                final name = iconNames[index];
-                final isSelected = index == _selectedIndex;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedIndex = index),
-                  behavior: HitTestBehavior.opaque,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                          width: 26,
-                          height: 26,
-                          color: Colors.black,
-                        ),
-                        const SizedBox(height: 4),
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                            color: Colors.black,
-                          ),
-                          child: Text(name),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildHeader() {
     return Padding(

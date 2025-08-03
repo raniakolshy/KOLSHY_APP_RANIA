@@ -1,5 +1,12 @@
-// keep your imports
 import 'package:flutter/material.dart';
+
+import '../../client/Messages/Chat_screen.dart';
+import '../../client/cart/ShoppingCartPage.dart';
+import '../../client/notifications/notification_screen.dart';
+import '../home/home_screen.dart';
+import '../settings/Settings_screen.dart';
+import '../widgets/bottom_nav_bar.dart';
+import 'SearchPage.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({super.key});
@@ -10,7 +17,7 @@ class FilterScreen extends StatefulWidget {
 
 class _FilterScreenState extends State<FilterScreen> {
   final Color primaryColor = const Color(0xFFE63056);
-
+  int _selectedIndex = 2;
   String selectedCategory = 'All';
   String selectedBrand = 'All';
   int selectedStar = -1;
@@ -25,32 +32,60 @@ class _FilterScreenState extends State<FilterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavBar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          if (index != _selectedIndex) {
+            setState(() => _selectedIndex = index);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+            );
+          }
+        },
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SearchPage()),
+            );
+          },
+        ),
+        title: const Text(
+          'Filter',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
+        ),
+        centerTitle: false,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
               const SizedBox(height: 30),
-
               _buildSectionTitle('Category'),
               _buildChips(categories, selectedCategory, (val) {
                 setState(() => selectedCategory = val);
               }),
               const SizedBox(height: 24),
-
               _buildSectionTitle('Brand'),
               _buildChips(brands, selectedBrand, (val) {
                 setState(() => selectedBrand = val);
               }),
               const SizedBox(height: 24),
-
               _buildSectionTitle('Price'),
               _buildPriceSlider(),
               const SizedBox(height: 24),
-
               _buildSectionTitle('Stars Range'),
               Wrap(
                 spacing: 8,
@@ -60,7 +95,6 @@ class _FilterScreenState extends State<FilterScreen> {
                 ],
               ),
               const Spacer(),
-
               Row(
                 children: [
                   Expanded(
@@ -71,15 +105,20 @@ class _FilterScreenState extends State<FilterScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        side: const BorderSide(color: Colors.black), // Change border color to black
                       ),
-                      child: const Text("Reset Filter"),
+                      child: const Text("Reset Filter", style: TextStyle(color: Colors.black)),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // handle apply filter logic
+                        // Apply the filters and navigate back to SearchPage
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SearchPage()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryColor,
@@ -101,28 +140,6 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Material(
-          elevation: 4,
-          shape: const CircleBorder(),
-          shadowColor: Colors.black12,
-          child: CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.white,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-        ),
-        const Text('Filter', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        const SizedBox(width: 44), // center align
-      ],
-    );
-  }
 
   Widget _buildSectionTitle(String title) {
     return Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16));
@@ -217,61 +234,20 @@ class _FilterScreenState extends State<FilterScreen> {
       _priceRange = const RangeValues(50, 150);
     });
   }
-
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-    int _selectedIndex = 2;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(height: 1, color: Colors.black.withOpacity(0.05)),
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.only(top: 10, bottom: 20),
-          child: SafeArea(
-            top: false,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(iconNames.length, (index) {
-                final name = iconNames[index];
-                final isSelected = index == _selectedIndex;
-                return GestureDetector(
-                  onTap: () {},
-                  behavior: HitTestBehavior.opaque,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeInOut,
-                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                          width: 26,
-                          height: 26,
-                          color: Colors.black,
-                        ),
-                        const SizedBox(height: 4),
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                            color: Colors.black,
-                          ),
-                          child: Text(name),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ),
-      ],
-    );
+}
+Widget getScreenForTab(int index) {
+  switch (index) {
+    case 0:
+      return const HomeScreen();
+    case 1:
+      return const ShoppingCartPage();
+    case 2:
+      return const SearchPage();
+    case 3:
+      return const ChatScreen();
+    case 4:
+      return const SettingsScreen();
+    default:
+      return const HomeScreen();
   }
 }

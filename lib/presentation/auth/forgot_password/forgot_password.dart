@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 
 import 'package:kolshy_app/presentation/auth/forgot_password/verification_code.dart';
 
@@ -66,7 +67,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             children: [
               const SizedBox(height: 24),
               Text(
-                "Forgot\nPassword?",
+                AppLocalizations.of(context)!.forgotPwd,
                 style: GoogleFonts.poppins(
                   fontSize: 36,
                   fontWeight: FontWeight.w800,
@@ -81,7 +82,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: inputFill,
-                  hintText: "Enter your email address",
+                  hintText: AppLocalizations.of(context)!.enterEmail,
                   hintStyle: const TextStyle(color: greyText),
                   prefixIcon: const Icon(Icons.email_outlined, color: greyText),
                   contentPadding:
@@ -114,9 +115,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       });
                     },
                   ),
-                  const Expanded(
+                   Expanded(
                     child: Text(
-                      "* We will send you a message to set or reset your new password",
+                      AppLocalizations.of(context)!.resetPwd,
                       style: TextStyle(color: greyText, fontSize: 14),
                     ),
                   ),
@@ -135,8 +136,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    "Submit",
+                  child:  Text(
+                    AppLocalizations.of(context)!.submit,
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
