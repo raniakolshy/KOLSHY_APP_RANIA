@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
 import 'package:kolshy_app/presentation/shared/Search/ResultPage.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
@@ -9,7 +10,6 @@ import '../../shared/widgets/bottom_nav_bar.dart';
 import '../Messages/Chat_screen.dart';
 import '../notifications/notification_screen.dart';
 import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
-
 
 class CartItem {
   final String name;
@@ -54,8 +54,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
     _cartItems.removeAt(index);
     _listKey.currentState?.removeItem(
       index,
-          (context, animation) =>
-          _buildCartItem(removedItem, index, animation),
+          (context, animation) => _buildCartItem(removedItem, index, animation),
       duration: const Duration(milliseconds: 400),
     );
     HapticFeedback.lightImpact();
@@ -64,33 +63,22 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
 
   void _onNavItemTap(int index) {
     setState(() => _selectedIndex = index);
-
     switch (index) {
       case 0:
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
         break;
-      case 1:
-        break; // already on cart
       case 2:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const SearchResultPage()));
-        break;
-      case 3:
-      // Navigate to Chat screen (stubbed)
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Chat screen not implemented.")));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchResultPage()));
         break;
       case 4:
-      // Navigate to Settings (stubbed)
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const SettingsScreen()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
@@ -103,12 +91,10 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
                 context,
                 MaterialPageRoute(builder: (context) => HomeScreen()),
               );
-            }
-
-        ),
-        title: const Text(
-          'My Cart',
-          style: TextStyle(
+            }),
+        title: Text(
+          t.myCart,
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.w800,
             fontSize: 24,
@@ -133,12 +119,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
           children: [
             Expanded(
               child: _cartItems.isEmpty
-                  ? const Center(
-                child: Text(
-                  'Your cart is empty',
-                  style: TextStyle(fontSize: 18),
-                ),
-              )
+                  ? Center(child: Text(t.cartEmpty, style: const TextStyle(fontSize: 18)))
                   : AnimatedList(
                 key: _listKey,
                 initialItemCount: _cartItems.length,
@@ -153,11 +134,11 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildCouponField(),
+                  _buildCouponField(t),
                   const SizedBox(height: 12),
-                  _buildTotalSection(_cartTotal),
+                  _buildTotalSection(_cartTotal, t),
                   const SizedBox(height: 16),
-                  _buildCheckoutButton(),
+                  _buildCheckoutButton(t),
                 ],
               ),
             ),
@@ -191,12 +172,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/shoes.png',
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.asset('assets/shoes.png', width: 80, height: 80, fit: BoxFit.cover),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -205,16 +181,12 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(item.name,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(item.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                         const SizedBox(height: 4),
-                        Text(item.type,
-                            style: const TextStyle(color: Colors.grey)),
+                        Text(item.type, style: const TextStyle(color: Colors.grey)),
                         const SizedBox(height: 8),
                         Text('AED ${item.price.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold)),
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -228,19 +200,12 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
                 onTap: () => _removeItem(index),
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
                   child: const Icon(Icons.close, size: 18),
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: _buildQuantitySelector(item),
-            ),
+            Positioned(bottom: 0, right: 0, child: _buildQuantitySelector(item)),
           ],
         ),
       ),
@@ -271,11 +236,8 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(
-              '${item.quantity}',
-              style:
-              const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-            ),
+            child: Text('${item.quantity}',
+                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15)),
           ),
           GestureDetector(
             onTap: () {
@@ -291,7 +253,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
     );
   }
 
-  Widget _buildCouponField() {
+  Widget _buildCouponField(AppLocalizations t) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -299,27 +261,23 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
-        decoration: const InputDecoration(
-          icon: Icon(Icons.local_offer_outlined),
-          hintText: 'Add coupon code',
+        decoration: InputDecoration(
+          icon: const Icon(Icons.local_offer_outlined),
+          hintText: t.addCoupon,
           border: InputBorder.none,
         ),
         onSubmitted: (value) {
           if (value.toLowerCase() == 'save10') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Coupon applied: 10% off!')),
-            );
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.couponApplied)));
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Invalid coupon code')),
-            );
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.invalidCoupon)));
           }
         },
       ),
     );
   }
 
-  Widget _buildTotalSection(double total) {
+  Widget _buildTotalSection(double total, AppLocalizations t) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -328,22 +286,18 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Total',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(t.total, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text('AED ${total.toStringAsFixed(2)}',
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 6),
-        const Text(
-          'You’ll earn 34 points · Free shipping',
-          style: TextStyle(fontSize: 13, color: Colors.grey),
-        ),
+        Text(t.earnPointsFreeShipping, style: const TextStyle(fontSize: 13, color: Colors.grey)),
       ],
     );
   }
 
-  Widget _buildCheckoutButton() {
+  Widget _buildCheckoutButton(AppLocalizations t) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -361,16 +315,15 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           elevation: 0,
         ),
-        child: const Text(
-          'Proceed to Checkout',
-          style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+        child: Text(
+          t.proceedToCheckout,
+          style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
-
-
 }
+
 Widget getScreenForTab(int index) {
   switch (index) {
     case 0:

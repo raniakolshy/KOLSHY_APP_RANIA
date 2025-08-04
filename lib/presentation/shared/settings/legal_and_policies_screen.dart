@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
+
 import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
 import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
-
 import '../../client/Messages/Chat_screen.dart';
 import '../../client/notifications/notification_screen.dart';
 import '../home/home_screen.dart';
@@ -22,6 +23,8 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -31,9 +34,9 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Privacy Policy',
-          style: TextStyle(
+        title: Text(
+          localizations.privacyPolicy,
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.w800,
             fontSize: 24,
@@ -46,9 +49,9 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
         children: [
           Row(
             children: [
-              _buildTabButton("HUMAN-FRIENDLY", true),
+              _buildTabButton(localizations.humanFriendly, true),
               const SizedBox(width: 10),
-              _buildTabButton("LEGAL MUMBO-JUMBO", false),
+              _buildTabButton(localizations.legalMumboJumbo, false),
             ],
           ),
           const SizedBox(height: 20),
@@ -58,15 +61,15 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text(
-              'Our human-friendly Terms of Service for the platform prevails over the detailed one, which specifies all rights and obligations in more complex legalese.\n\nIn case of contradiction between the two documents, the human-friendly Terms shall prevail. That means no nasty surprises if you read only the human-friendly version.',
-              style: TextStyle(fontSize: 15.5, height: 1.6, color: Colors.black87),
+            child: Text(
+              localizations.privacyDescription,
+              style: const TextStyle(fontSize: 15.5, height: 1.6, color: Colors.black87),
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
-            "Last updated: June 24, 2020",
-            style: TextStyle(fontSize: 13, color: Colors.grey),
+          Text(
+            '${localizations.lastUpdated}: June 24, 2020',
+            style: const TextStyle(fontSize: 13, color: Colors.grey),
           ),
         ],
       ),
@@ -82,7 +85,6 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
           }
         },
       ),
-
     );
   }
 
@@ -109,6 +111,7 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
     );
   }
 }
+
 Widget getScreenForTab(int index) {
   switch (index) {
     case 0:

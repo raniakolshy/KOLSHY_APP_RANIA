@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
+
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
 import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
@@ -16,7 +18,7 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  String selectedLanguage = 'English';
+  String selectedLanguage = 'english';
   final TextEditingController _searchController = TextEditingController();
   late int _selectedIndex = 4;
   final Color primaryColor = const Color(0xFFE51742);
@@ -29,6 +31,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -43,9 +47,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
             );
           },
         ),
-        title: const Text(
-          'Language',
-          style: TextStyle(
+        title: Text(
+          localizations.language,
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.w800,
             fontSize: 24,
@@ -71,8 +75,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   Expanded(
                     child: TextField(
                       controller: _searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
+                      decoration: InputDecoration(
+                        hintText: localizations.search,
                         border: InputBorder.none,
                       ),
                     ),
@@ -88,8 +92,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
               ),
             ),
           ),
-          _buildLanguageTile('English', '🇬🇧'),
-          _buildLanguageTile('Arabic', '🇸🇦'),
+          _buildLanguageTile(localizations.english, 'english', '🇬🇧'),
+          _buildLanguageTile(localizations.arabic, 'arabic', '🇸🇦'),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
@@ -107,11 +111,11 @@ class _LanguageScreenState extends State<LanguageScreen> {
     );
   }
 
-  Widget _buildLanguageTile(String language, String flagEmoji) {
-    final isSelected = selectedLanguage == language;
+  Widget _buildLanguageTile(String label, String value, String flagEmoji) {
+    final isSelected = selectedLanguage == value;
 
     return GestureDetector(
-      onTap: () => setState(() => selectedLanguage = language),
+      onTap: () => setState(() => selectedLanguage = value),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
@@ -129,7 +133,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                language,
+                label,
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
@@ -142,62 +146,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
       ),
     );
   }
-
-  Widget _buildBottomNavigationBar() {
-    List<String> iconNames = ['Home', 'Cart', 'Search', 'Chat', 'Setting'];
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05))),
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(iconNames.length, (index) {
-            final name = iconNames[index];
-            final isSelected = index == _selectedIndex;
-            return GestureDetector(
-              onTap: () {
-                // Tu peux ajouter la navigation ici si nécessaire
-              },
-              behavior: HitTestBehavior.opaque,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/Icons/${name}${isSelected ? 'G' : 'F'}.png',
-                      width: 26,
-                      height: 26,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 4),
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                      child: Text(name),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
-  }
 }
+
 Widget getScreenForTab(int index) {
   switch (index) {
     case 0:

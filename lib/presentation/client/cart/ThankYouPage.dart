@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
-import 'package:kolshy_app/presentation/client/cart/OrderDetailsPage.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 
-import 'OrderDetailsPage.dart';
+import '../../shared/home/home_screen.dart';
+import '../cart/OrderDetailsPage.dart';
 
 class ThankYouPage extends StatefulWidget {
   const ThankYouPage({super.key});
@@ -17,9 +17,10 @@ class _ThankYouPageState extends State<ThankYouPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.white,
-      // ✅ Bottom nav removed
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -28,10 +29,10 @@ class _ThankYouPageState extends State<ThankYouPage> {
               const SizedBox(height: 30),
               _buildSuccessIcon(),
               const SizedBox(height: 24),
-              const Text(
-                "Thank you for\nshopping with us!",
+              Text(
+                localizations.thankYouTitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1E8E3E),
@@ -39,32 +40,29 @@ class _ThankYouPageState extends State<ThankYouPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
-                "Your order number 16 is confirmed\nand in processing",
+              Text(
+                localizations.thankYouSubtitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                   color: Colors.black87,
                   height: 1.5,
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                "Porem ipsum dolor sit amet, consectetur adipiscing elit. "
-                    "Nunc vulputate libero et velit interdum, ac aliquet odio mattis. "
-                    "Class aptent taciti sociosqu ad litora torquent per conubia nostra, "
-                    "per inceptos himenaeos.",
+              Text(
+                localizations.thankYouDescription,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black54,
                   fontSize: 13,
                   height: 1.6,
                 ),
               ),
               const SizedBox(height: 36),
-              _buildOutlinedButton(),
+              _buildOutlinedButton(localizations),
               const SizedBox(height: 16),
-              _buildFilledButton(),
+              _buildFilledButton(localizations),
               const SizedBox(height: 30),
             ],
           ),
@@ -88,13 +86,12 @@ class _ThankYouPageState extends State<ThankYouPage> {
     );
   }
 
-  Widget _buildOutlinedButton() {
+  Widget _buildOutlinedButton(AppLocalizations localizations) {
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: OutlinedButton(
         onPressed: () {
-          // ✅ Navigate to Order Details
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const OrderDetailsPage()),
@@ -107,9 +104,9 @@ class _ThankYouPageState extends State<ThankYouPage> {
           ),
           backgroundColor: Colors.white,
         ),
-        child: const Text(
-          "Order Details",
-          style: TextStyle(
+        child: Text(
+          localizations.orderDetails,
+          style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
             color: Colors.black,
@@ -119,7 +116,7 @@ class _ThankYouPageState extends State<ThankYouPage> {
     );
   }
 
-  Widget _buildFilledButton() {
+  Widget _buildFilledButton(AppLocalizations localizations) {
     return SizedBox(
       width: double.infinity,
       height: 52,
@@ -138,9 +135,9 @@ class _ThankYouPageState extends State<ThankYouPage> {
             borderRadius: BorderRadius.circular(14),
           ),
         ),
-        child: const Text(
-          "Done",
-          style: TextStyle(
+        child: Text(
+          localizations.done,
+          style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
             color: Colors.white,

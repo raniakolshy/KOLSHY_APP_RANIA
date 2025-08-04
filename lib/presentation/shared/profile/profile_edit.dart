@@ -199,9 +199,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStepperItem(0, "Personal Info"),
-          _buildStepperItem(1, "Shipping Address"),
-          _buildStepperItem(2, "Payment Method"),
+          _buildStepperItem(0, AppLocalizations.of(context)!.personalInfo),
+          _buildStepperItem(1, AppLocalizations.of(context)!.shippingAddress),
+          _buildStepperItem(2, AppLocalizations.of(context)!.paymentMethod),
         ],
       ),
     );
@@ -317,7 +317,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 Expanded(
                   child: _buildInput(
                     controller: _phoneNumberController,
-                    label: "Phone Number",
+                    label: AppLocalizations.of(context)!.phone,
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -337,7 +337,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             _buildInput(
               controller: _emailController,
-              label: "Email",
+              label: AppLocalizations.of(context)!.email,
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -364,7 +364,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   minimumSize: Size.zero, // Remove default min size
                 ),
                 child: Text(
-                  "Change Password",
+                  AppLocalizations.of(context)!.changePassword,
                   style: TextStyle(
                     color: primaryColor,
                     fontWeight: FontWeight.w600,
@@ -388,28 +388,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Shipping Address",
+             Text(
+              AppLocalizations.of(context)!.shippingAddress,
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
             const SizedBox(height: 24),
-            _buildInput(controller: _addressController, label: "Street Address"),
-            _buildInput(controller: _cityController, label: "City"),
+            _buildInput(controller: _addressController, label: AppLocalizations.of(context)!.streetAddress),
+            _buildInput(controller: _cityController, label: AppLocalizations.of(context)!.city),
             _buildInput(
               controller: _zipController,
-              label: "ZIP / Postal Code",
+              label: AppLocalizations.of(context)!.zipPostalCode,
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Required';
+                  return AppLocalizations.of(context)!.required;
                 }
                 if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                  return 'Invalid code';
+                  return AppLocalizations.of(context)!.invalidCode;
                 }
                 return null;
               },
             ),
-            _buildInput(controller: _countryController, label: "Country"),
+            _buildInput(controller: _countryController, label: AppLocalizations.of(context)!.country),
             const SizedBox(height: 16),
           ],
         ),
@@ -425,20 +425,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Payment Method",
+            Text(
+            AppLocalizations.of(context)!.paymentMethod,
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
             const SizedBox(height: 24),
-            _buildPaymentMethodOption("Card", Icons.credit_card),
-            _buildPaymentMethodOption("PayPal", Icons.account_balance_wallet),
-            _buildPaymentMethodOption("Apple Pay", Icons.phone_iphone),
+            _buildPaymentMethodOption(AppLocalizations.of(context)!.card, Icons.credit_card),
+            _buildPaymentMethodOption(AppLocalizations.of(context)!.payPal, Icons.account_balance_wallet),
+            _buildPaymentMethodOption(AppLocalizations.of(context)!.applePay, Icons.phone_iphone),
             const SizedBox(height: 24),
             if (_selectedPaymentMethod == "Card") ...[
-              _buildInput(controller: _cardHolderNameController, label: "Cardholder Name"),
+              _buildInput(controller: _cardHolderNameController, label: AppLocalizations.of(context)!.cardholderName),
               _buildInput(
                 controller: _cardNumberController,
-                label: "Card Number",
+                label:  AppLocalizations.of(context)!.cardNumber,
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -455,7 +455,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Expanded(
                     child: _buildInput(
                       controller: _expiryDateController,
-                      label: "Expiry (MM/YY)",
+                      label: AppLocalizations.of(context)!.expiry,
                       keyboardType: TextInputType.datetime,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -624,7 +624,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text("Back", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                child:  Text(AppLocalizations.of(context)!.back, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
               ),
             ),
           SizedBox(width: _currentPage > 0 ? 14 : 0), // Space only if Back button is present
@@ -641,7 +641,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 elevation: 4,
               ),
               child: Text(
-                _currentPage < 2 ? "Next" : "Save",
+                _currentPage < 2 ? AppLocalizations.of(context)!.next : AppLocalizations.of(context)!.save,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),

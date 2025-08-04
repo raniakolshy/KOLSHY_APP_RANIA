@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
 import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
-
 import '../Messages/Chat_screen.dart';
 
 class NewProductDetailPage extends StatefulWidget {
@@ -53,6 +53,8 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -66,25 +68,30 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
                 const SizedBox(height: 12),
                 _buildProductImage(),
                 const SizedBox(height: 16),
-                _buildProductTitle(),
-                _buildProductPrice(),
+                Text(loc.productTitle, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(loc.productBrand, style: const TextStyle(fontSize: 14, color: Colors.black54)),
+                const SizedBox(height: 6),
+                _buildRating(),
+                const SizedBox(height: 16),
+                const Text('AED 13.99', style: TextStyle(fontSize: 20, color: Color(0xFFE63056), fontWeight: FontWeight.w600)),
                 const SizedBox(height: 16),
                 _buildSizeSelection(),
                 const SizedBox(height: 16),
-                _buildAvailability(),
+                _buildAvailability(loc),
                 const SizedBox(height: 16),
-                _buildExpandableSection(
-                  'Description',
-                  'Corem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
-                  true,
-                ),
+                _buildExpandableSection(loc.description, loc.descriptionContent, true),
                 const SizedBox(height: 16),
-                _buildExpandableSection('Ingredients', 'Water, Glycerin, Aloe Vera...', false),
+                _buildExpandableSection(loc.ingredients, loc.ingredientsContent, false),
                 const SizedBox(height: 16),
-                _buildExpandableSection('How to use', 'Apply a small amount...', false),
+                _buildExpandableSection(loc.howToUse, loc.howToUseContent, false),
                 const SizedBox(height: 16),
+                Text(loc.customerReviews, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 12),
                 _buildCustomerReviews(),
                 const SizedBox(height: 16),
+                Text(loc.recommendedProducts, style: const TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
                 _buildRecommendedProducts(),
                 const SizedBox(height: 100),
               ],
@@ -95,7 +102,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildQuantityAndAddToCart(),
+          _buildQuantityAndAddToCart(loc),
           BottomNavBar(
             selectedIndex: 2,
             onItemTapped: (index) {
@@ -111,6 +118,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
       ),
     );
   }
+
   Widget _buildHeader() => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -128,6 +136,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
       ),
     ],
   );
+
   Widget _buildProductImage() => Column(
     children: [
       SizedBox(
@@ -164,30 +173,16 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     ],
   );
 
-  Widget _buildProductTitle() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: const [
-      Text('Lorem ipsum', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-      SizedBox(height: 4),
-      Text('By Day Dissolve', style: TextStyle(fontSize: 14, color: Colors.black54)),
-      SizedBox(height: 6),
-      Row(
-        children: [
-          Icon(Icons.star, color: Colors.amber, size: 18),
-          Icon(Icons.star, color: Colors.amber, size: 18),
-          Icon(Icons.star, color: Colors.amber, size: 18),
-          Icon(Icons.star, color: Colors.amber, size: 18),
-          Icon(Icons.star_border, color: Colors.grey, size: 18),
-          SizedBox(width: 6),
-          Text('(234 reviews)', style: TextStyle(fontSize: 14, color: Colors.black54)),
-        ],
-      ),
+  Widget _buildRating() => const Row(
+    children: [
+      Icon(Icons.star, color: Colors.amber, size: 18),
+      Icon(Icons.star, color: Colors.amber, size: 18),
+      Icon(Icons.star, color: Colors.amber, size: 18),
+      Icon(Icons.star, color: Colors.amber, size: 18),
+      Icon(Icons.star_border, color: Colors.grey, size: 18),
+      SizedBox(width: 6),
+      Text('(234 reviews)', style: TextStyle(fontSize: 14, color: Colors.black54)),
     ],
-  );
-
-  Widget _buildProductPrice() => const Text(
-    'AED 13.99',
-    style: TextStyle(fontSize: 20, color: Color(0xFFE63056), fontWeight: FontWeight.w600),
   );
 
   Widget _buildSizeSelection() => Column(
@@ -219,31 +214,31 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     ],
   );
 
-  Widget _buildAvailability() => Column(
+  Widget _buildAvailability(AppLocalizations loc) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    children: const [
-      SizedBox(height: 10),
+    children: [
+      const SizedBox(height: 10),
       Row(
         children: [
-          Icon(Icons.check_circle, color: Color(0xFF4A9F62), size: 16),
-          SizedBox(width: 10),
-          Expanded(child: Text('In Stock', style: TextStyle(fontSize: 12, color: Color(0xFF4A9F62)))),
+          const Icon(Icons.check_circle, color: Color(0xFF4A9F62), size: 16),
+          const SizedBox(width: 10),
+          Expanded(child: Text(loc.inStock, style: const TextStyle(fontSize: 12, color: Color(0xFF4A9F62)))),
         ],
       ),
-      SizedBox(height: 10),
+      const SizedBox(height: 10),
       Row(
         children: [
-          Icon(Icons.local_shipping, size: 16),
-          SizedBox(width: 10),
-          Expanded(child: Text('Free delivery', style: TextStyle(fontSize: 12))),
+          const Icon(Icons.local_shipping, size: 16),
+          const SizedBox(width: 10),
+          Expanded(child: Text(loc.freeDelivery, style: const TextStyle(fontSize: 12))),
         ],
       ),
-      SizedBox(height: 10),
+      const SizedBox(height: 10),
       Row(
         children: [
-          Icon(Icons.store, size: 16),
-          SizedBox(width: 10),
-          Expanded(child: Text('Available in the nearest store', style: TextStyle(fontSize: 12))),
+          const Icon(Icons.store, size: 16),
+          const SizedBox(width: 10),
+          Expanded(child: Text(loc.availableInStore, style: const TextStyle(fontSize: 12))),
         ],
       ),
     ],
@@ -261,11 +256,8 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
   );
 
   Widget _buildCustomerReviews() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text('Customer Reviews', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-      const SizedBox(height: 12),
-      ...customerReviews.map((review) => Container(
+    children: customerReviews.map((review) {
+      return Container(
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -276,7 +268,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
               color: Colors.black.withOpacity(0.03),
               blurRadius: 4,
               offset: const Offset(0, 2),
-            )
+            ),
           ],
         ),
         child: Column(
@@ -316,26 +308,19 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
               ),
           ],
         ),
-      )),
-    ],
+      );
+    }).toList(),
   );
 
-  Widget _buildRecommendedProducts() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text('Products you may also like', style: TextStyle(fontWeight: FontWeight.bold)),
-      const SizedBox(height: 8),
-      SizedBox(
-        height: 210,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: List.generate(2, (index) => const ProductCard()),
-        ),
-      ),
-    ],
+  Widget _buildRecommendedProducts() => SizedBox(
+    height: 210,
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      children: List.generate(2, (index) => const ProductCard()),
+    ),
   );
 
-  Widget _buildQuantityAndAddToCart() => Padding(
+  Widget _buildQuantityAndAddToCart(AppLocalizations loc) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
     child: Row(
       children: [
@@ -370,7 +355,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
             onPressed: () {},
-            child: const Text("Add To Cart", style: TextStyle(color: Colors.white, fontSize: 16)),
+            child: Text(loc.addToCart, style: const TextStyle(color: Colors.white, fontSize: 16)),
           ),
         ),
       ],

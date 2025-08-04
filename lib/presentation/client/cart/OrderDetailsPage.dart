@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 
 import '../../shared/Search/SearchPage.dart';
 import '../../shared/home/home_screen.dart';
@@ -18,17 +18,16 @@ class OrderDetailsPage extends StatefulWidget {
 
 class _OrderDetailsPageState extends State<OrderDetailsPage> {
   int _selectedIndex = 1;
-
   final Color primaryColor = const Color(0xFFE63056);
 
-  // Example user data
   final String customerName = "John Doe";
   final String customerEmail = "john.doe@example.com";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final localizations = AppLocalizations.of(context)!;
 
+    return Scaffold(
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: (index) {
@@ -48,14 +47,15 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () => Navigator.pop(context),
-        ),title: const Text(
-        'Order Details',
-        style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.w800,
-          fontSize: 24,
         ),
-      ),
+        title: Text(
+          localizations.orderDetails,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
+        ),
         centerTitle: false,
       ),
       body: SingleChildScrollView(
@@ -63,42 +63,42 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle('Order Summary'),
-            _buildSummaryRow('Order Number', '#12345678'),
-            _buildSummaryRow('Date', 'July 31, 2025'),
-            _buildSummaryRow('Status', 'Confirmed'),
+            _buildSectionTitle(localizations.orderSummary),
+            _buildSummaryRow(localizations.orderNumber, '#12345678'),
+            _buildSummaryRow(localizations.orderDate, 'July 31, 2025'),
+            _buildSummaryRow(localizations.orderStatus, localizations.statusConfirmed),
 
             const SizedBox(height: 24),
-            _buildSectionTitle('Customer Info'),
+            _buildSectionTitle(localizations.customerInfo),
             const SizedBox(height: 8),
             _buildCustomerInfoCard(name: customerName, email: customerEmail),
 
             const SizedBox(height: 24),
-            _buildSectionTitle('Items'),
+            _buildSectionTitle(localizations.items),
             _buildItemCard(
               name: 'Nike Air Max',
-              type: 'Sneakers',
+              type: localizations.sneakers,
               quantity: 2,
               price: 139.98,
               imagePath: 'assets/shoes.png',
             ),
 
             const SizedBox(height: 24),
-            _buildSectionTitle('Shipping Address'),
+            _buildSectionTitle(localizations.shippingAddress),
             const SizedBox(height: 8),
             _buildAddressCard('742 Evergreen Terrace,\nSpringfield'),
 
             const SizedBox(height: 24),
-            _buildSectionTitle('Payment Method'),
+            _buildSectionTitle(localizations.paymentMethod),
             const SizedBox(height: 8),
             _buildPaymentMethodRow('Apple Pay'),
 
             const SizedBox(height: 24),
-            _buildSectionTitle('Order Total'),
+            _buildSectionTitle(localizations.orderTotal),
             const SizedBox(height: 8),
-            _buildTotalBreakdown(),
+            _buildTotalBreakdown(localizations),
 
-            const SizedBox(height: 60), // space for navbar
+            const SizedBox(height: 60),
           ],
         ),
       ),
@@ -125,21 +125,14 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     );
   }
 
-  Widget _buildCustomerInfoCard({
-    required String name,
-    required String email,
-  }) {
+  Widget _buildCustomerInfoCard({required String name, required String email}) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
-          BoxShadow(
-            color: Color(0x11000000),
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Color(0x11000000), blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Row(
@@ -151,8 +144,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(name,
-                    style: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w600)),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 Text(email,
                     style: const TextStyle(fontSize: 13, color: Colors.black54)),
@@ -178,40 +170,28 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
-          BoxShadow(
-            color: Color(0x11000000),
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Color(0x11000000), blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Row(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              imagePath,
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(imagePath, width: 60, height: 60, fit: BoxFit.cover),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 Text(type, style: const TextStyle(color: Colors.black54)),
                 Text('Qty: $quantity'),
               ],
             ),
           ),
           Text('AED ${price.toStringAsFixed(2)}',
-              style:
-              const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
         ],
       ),
     );
@@ -225,8 +205,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
-          BoxShadow(
-              color: Color(0x11000000), blurRadius: 6, offset: Offset(0, 3)),
+          BoxShadow(color: Color(0x11000000), blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
       child: Row(
@@ -234,10 +213,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           const Icon(Icons.location_on_outlined),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              address,
-              style: const TextStyle(fontSize: 14, height: 1.5),
-            ),
+            child: Text(address, style: const TextStyle(fontSize: 14, height: 1.5)),
           ),
         ],
       ),
@@ -251,8 +227,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
-          BoxShadow(
-              color: Color(0x11000000), blurRadius: 6, offset: Offset(0, 3)),
+          BoxShadow(color: Color(0x11000000), blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
       child: Row(
@@ -265,23 +240,22 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     );
   }
 
-  Widget _buildTotalBreakdown() {
+  Widget _buildTotalBreakdown(AppLocalizations localizations) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
-          BoxShadow(
-              color: Color(0x11000000), blurRadius: 6, offset: Offset(0, 3)),
+          BoxShadow(color: Color(0x11000000), blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
       child: Column(
-        children: const [
-          _TotalRow(label: 'Subtotal', value: 'AED 139.98'),
-          _TotalRow(label: 'Shipping', value: 'Free'),
-          Divider(),
-          _TotalRow(label: 'Total', value: 'AED 139.98', bold: true),
+        children: [
+          _TotalRow(label: localizations.subtotal, value: 'AED 139.98'),
+          _TotalRow(label: localizations.shipping, value: localizations.free),
+          const Divider(),
+          _TotalRow(label: localizations.total, value: 'AED 139.98', bold: true),
         ],
       ),
     );
@@ -316,7 +290,6 @@ class _TotalRow extends StatelessWidget {
   }
 }
 
-// Used by BottomNavBar
 Widget getScreenForTab(int index) {
   switch (index) {
     case 0:

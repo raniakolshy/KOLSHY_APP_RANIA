@@ -8,9 +8,9 @@ import 'package:kolshy_app/presentation/auth/forgot_password/forgot_password.dar
 import 'package:kolshy_app/presentation/auth/forgot_password/verification_code.dart';
 import 'package:kolshy_app/presentation/auth/login/login_screen.dart';
 import 'package:kolshy_app/presentation/auth/login/welcome_screen.dart';
-//import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
+import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
 import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
-//import 'package:kolshy_app/presentation/client/cart/OrderDetailsPage.dart';
+import 'package:kolshy_app/presentation/client/cart/OrderDetailsPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      initialRoute: '/edit-profile',
+      initialRoute: '/home',
       routes: {
         '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginScreen(),
@@ -91,8 +91,8 @@ class _MyAppState extends State<MyApp> {
         '/language': (context) => const LanguageScreen(),
         '/legal': (context) => const LegalAndPoliciesScreen(),
         '/help': (context) => const HelpAndSupportScreen(),
-        //'/orderdetails': (context) => const OrderDetailsPage(),
-        //'/chat': (context) => const ChatScreen(),
+        '/orderdetails': (context) => const OrderDetailsPage(),
+        '/chat': (context) => const ChatScreen(),
       },
     );
   }

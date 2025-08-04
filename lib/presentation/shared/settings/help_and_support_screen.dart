@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
+
 import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
 import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
-
 import '../../client/Messages/Chat_screen.dart';
 import '../../client/notifications/notification_screen.dart';
 import '../home/home_screen.dart';
 import 'Settings_screen.dart';
-
 
 class HelpAndSupportScreen extends StatefulWidget {
   const HelpAndSupportScreen({super.key});
@@ -18,11 +18,10 @@ class HelpAndSupportScreen extends StatefulWidget {
 
 class _HelpAndSupportScreenState extends State<HelpAndSupportScreen>
     with TickerProviderStateMixin {
-  final List<String> items =
-  List.generate(5, (index) => "Lorem ipsum dolor sit ame");
+  final List<String> items = List.generate(5, (index) => 'helpTopic$index');
   final TextEditingController _searchController = TextEditingController();
   late int _selectedIndex = 4;
-  final Color primaryColor = const Color(0xFFE51742); // brand red
+  final Color primaryColor = const Color(0xFFE51742);
 
   @override
   void dispose() {
@@ -32,6 +31,8 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen>
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -46,9 +47,9 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen>
             );
           },
         ),
-        title: const Text(
-          'Help & Support',
-          style: TextStyle(
+        title: Text(
+          localizations.helpAndSupport,
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.w800,
             fontSize: 24,
@@ -64,7 +65,7 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen>
               controller: _searchController,
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                hintText: 'Search for topics...',
+                hintText: localizations.searchTopics,
                 hintStyle: const TextStyle(color: Colors.grey),
                 filled: true,
                 fillColor: const Color(0xFFF4F5F7),
@@ -93,36 +94,36 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen>
               itemCount: items.length,
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
+                final topicKey = items[index];
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(14),
                   child: Material(
                     color: const Color(0xFFF9FAFB),
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        dividerColor: Colors.transparent, // removes black line
+                        dividerColor: Colors.transparent,
                       ),
                       child: ExpansionTile(
-                        tilePadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         collapsedIconColor: Colors.black,
                         iconColor: Colors.black,
                         title: Text(
-                          items[index],
+                          localizations.getHelpTopic(topicKey),
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
                         ),
-                        children: const [
+                        children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
                             child: Text(
-                              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                  height: 1.6),
+                              localizations.helpTopicContent,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                                height: 1.6,
+                              ),
                             ),
                           ),
                         ],
@@ -147,10 +148,22 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen>
           }
         },
       ),
-
     );
   }
 }
+
+extension HelpTopicExtension on AppLocalizations {
+  String getHelpTopic(String key) {
+    return {
+      'helpTopic0': helpTopic0,
+      'helpTopic1': helpTopic1,
+      'helpTopic2': helpTopic2,
+      'helpTopic3': helpTopic3,
+      'helpTopic4': helpTopic4,
+    }[key] ?? key;
+  }
+}
+
 Widget getScreenForTab(int index) {
   switch (index) {
     case 0:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 
 import '../../shared/Search/SearchPage.dart';
 import '../../shared/home/home_screen.dart';
@@ -36,8 +37,11 @@ class _ChatScreenState extends State<ChatScreen> {
   final Color primaryColor = const Color(0xFFE51742);
   final Color darkColor = const Color(0xFF273647);
   late int _selectedIndex = 3;
+
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
@@ -59,9 +63,9 @@ class _ChatScreenState extends State<ChatScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Messages',
-          style: TextStyle(
+        title: Text(
+          localizations.messages,
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.w800,
             fontSize: 24,
@@ -80,14 +84,14 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          _buildPresetOptions(),
-          _buildMessageInput(),
+          _buildPresetOptions(localizations),
+          _buildMessageInput(localizations),
         ],
       ),
     );
   }
 
-  Widget _buildMessageInput() {
+  Widget _buildMessageInput(AppLocalizations localizations) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -96,7 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: TextField(
               controller: _messageController,
               decoration: InputDecoration(
-                hintText: 'Send a message here...',
+                hintText: localizations.sendHint,
                 hintStyle: TextStyle(color: Colors.grey.shade600),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -119,16 +123,16 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildPresetOptions() {
+  Widget _buildPresetOptions(AppLocalizations localizations) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
         children: [
-          _presetOptionButton('Faster Delivery time'),
+          _presetOptionButton(localizations.presetFasterDelivery),
           const SizedBox(height: 8),
-          _presetOptionButton('Trouble with a product'),
+          _presetOptionButton(localizations.presetProductIssue),
           const SizedBox(height: 8),
-          _presetOptionButton('Something else...'),
+          _presetOptionButton(localizations.presetOther),
         ],
       ),
     );

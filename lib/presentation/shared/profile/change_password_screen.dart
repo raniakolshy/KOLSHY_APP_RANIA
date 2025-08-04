@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
 import '../../client/cart/ShoppingCartPage.dart';
 import '../../client/notifications/notification_screen.dart';
@@ -38,7 +39,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Password changed successfully'),
+          content: Text(AppLocalizations.of(context)!.passwordChangedSuccessfully),
           backgroundColor: Colors.green.shade600,
         ),
       );
@@ -109,8 +110,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () => Navigator.pop(context),
-        ),title: const Text(
-        'Change Password',
+        ),title:  Text(
+        AppLocalizations.of(context)!.changePassword,
         style: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.w800,
@@ -129,8 +130,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               const SizedBox(height: 20),
               _buildInput(
                 controller: _oldPasswordController,
-                label: 'Old Password',
-                hint: 'Enter your current password',
+                label: AppLocalizations.of(context)!.oldPassword,
+                hint: AppLocalizations.of(context)!.enteryourcurrentpassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your old password';
@@ -140,8 +141,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
               _buildInput(
                 controller: _newPasswordController,
-                label: 'New Password',
-                hint: 'Enter new password',
+                label: AppLocalizations.of(context)!.newPassword,
+                hint: AppLocalizations.of(context)!.enternewpassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a new password';
@@ -157,8 +158,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
               _buildInput(
                 controller: _confirmPasswordController,
-                label: 'Confirm Password',
-                hint: 'Re-enter new password',
+                label: AppLocalizations.of(context)!.confirmPassword,
+                hint: AppLocalizations.of(context)!.reenternewpassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please confirm your new password';
@@ -183,8 +184,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
-                    'Change Now',
+                  child: Text(
+                      AppLocalizations.of(context)!.changeNow,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ),

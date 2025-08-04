@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
@@ -24,16 +25,33 @@ class _NotificationScreenState extends State<NotificationScreen> {
   late List<NotificationItemData> yesterdayNotifications;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Localized strings should be used here instead of initState
     todayNotifications = [
-      NotificationItemData(Icons.local_shipping, 'Purchase Completed', '2 min ago'),
-      NotificationItemData(Icons.inventory_2, 'Order Packed', '15 min ago'),
+      NotificationItemData(
+        Icons.local_shipping,
+        AppLocalizations.of(context)!.purchaseCompleted,
+        AppLocalizations.of(context)!.minago,
+      ),
+      NotificationItemData(
+        Icons.inventory_2,
+        AppLocalizations.of(context)!.orderPacked,
+        AppLocalizations.of(context)!.minago,
+      ),
     ];
 
     yesterdayNotifications = [
-      NotificationItemData(Icons.percent, 'Discount Applied', 'Yesterday'),
-      NotificationItemData(Icons.notifications, 'New Feature Update', 'Yesterday'),
+      NotificationItemData(
+        Icons.percent,
+        AppLocalizations.of(context)!.discountApplied,
+        AppLocalizations.of(context)!.yesterday,
+      ),
+      NotificationItemData(
+        Icons.notifications,
+        AppLocalizations.of(context)!.newFeatureUpdate,
+        AppLocalizations.of(context)!.yesterday,
+      ),
     ];
   }
 
@@ -45,38 +63,40 @@ class _NotificationScreenState extends State<NotificationScreen> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
-              );
-            }
-        ),title: const Text(
-        'Notification',
-        style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.w800,
-          fontSize: 24,
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            );
+          },
         ),
-      ),
+        title: Text(
+          AppLocalizations.of(context)!.notification,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
+        ),
         centerTitle: false,
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
         children: [
-          if (todayNotifications.isNotEmpty) const SectionHeader(title: "Today"),
+          if (todayNotifications.isNotEmpty)
+            SectionHeader(title: AppLocalizations.of(context)!.today),
           ...todayNotifications.map((n) => _buildDismissibleNotification(n, true)),
 
           if (yesterdayNotifications.isNotEmpty) ...[
             const SizedBox(height: 24),
-            const SectionHeader(title: "Yesterday"),
+            SectionHeader(title: AppLocalizations.of(context)!.yesterday),
             ...yesterdayNotifications.map((n) => _buildDismissibleNotification(n, false)),
           ],
         ],
       ),
       bottomNavigationBar: BottomNavBar(
-        selectedIndex: 3, // 'Chat' or Notifications tab index
+        selectedIndex: 3,
         onItemTapped: (index) {
           if (index != 3) {
             Navigator.pushReplacement(
@@ -86,7 +106,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
           }
         },
       ),
-
     );
   }
 
@@ -118,7 +137,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: NotificationCard(data: data),
     );
   }
-
 }
 
 class NotificationItemData {
@@ -171,7 +189,7 @@ class NotificationCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   data.time,
-                  style: TextStyle(color: Colors.grey[500], fontSize: 11),
+                  style: TextStyle(color: Colors.grey, fontSize: 11),
                 ),
               ],
             ),
@@ -198,6 +216,7 @@ class SectionHeader extends StatelessWidget {
     );
   }
 }
+
 Widget getScreenForTab(int index) {
   switch (index) {
     case 0:

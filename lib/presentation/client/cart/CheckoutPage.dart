@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
 import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
 import '../../shared/Search/SearchPage.dart';
@@ -8,7 +9,6 @@ import '../../shared/widgets/bottom_nav_bar.dart';
 import '../Messages/Chat_screen.dart';
 import '../notifications/notification_screen.dart';
 import 'ShoppingCartPage.dart';
-import 'package:kolshy_app/presentation/shared/profile/change_password_screen.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -30,27 +30,30 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!; // ✨ pour simplifier
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
-              );
-            }
-        ),title: const Text(
-        'Checkout',
-        style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.w800,
-          fontSize: 24,
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
         ),
-      ),
+        title: Text(
+          t.checkoutTitle,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
+        ),
         centerTitle: false,
       ),
       bottomNavigationBar: BottomNavBar(
@@ -71,10 +74,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildDetailsContainer(),
+              _buildDetailsContainer(t),
               const SizedBox(height: 20),
               const SizedBox(height: 40),
-              _buildPlaceOrderButton(),
+              _buildPlaceOrderButton(t),
             ],
           ),
         ),
@@ -82,7 +85,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Widget _buildDetailsContainer() {
+  Widget _buildDetailsContainer(AppLocalizations t) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -103,9 +106,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Order Details',
-                style: TextStyle(
+              Text(
+                t.orderDetails,
+                style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87),
@@ -122,7 +125,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   alignment: Alignment.centerRight,
                 ),
                 child: Text(
-                  'Edit Details',
+                  t.editDetails,
                   style: TextStyle(
                       color: primaryColor,
                       fontWeight: FontWeight.w600,
@@ -132,14 +135,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ],
           ),
           const SizedBox(height: 20),
-          _buildDetailItem(Icons.person_outline, 'Personal Info',
-              [userName, userEmail, userPhone]),
+          _buildDetailItem(
+              Icons.person_outline, t.personalInfo, [userName, userEmail, userPhone]),
           const Divider(height: 32, color: Colors.black12),
           _buildDetailItem(
-              Icons.location_on_outlined, 'Shipping Address', [userAddress]),
+              Icons.location_on_outlined, t.shippingAddress, [userAddress]),
           const Divider(height: 32, color: Colors.black12),
           _buildDetailItem(
-              Icons.credit_card, 'Payment Method', [paymentMethod]),
+              Icons.credit_card, t.paymentMethod, [paymentMethod]),
         ],
       ),
     );
@@ -175,8 +178,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-
-  Widget _buildPlaceOrderButton() {
+  Widget _buildPlaceOrderButton(AppLocalizations t) {
     return SizedBox(
       height: 56,
       child: ElevatedButton(
@@ -188,13 +190,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 8,
           shadowColor: primaryColor.withOpacity(0.5),
         ),
-        child: const Text(
-          "Place Order",
-          style: TextStyle(
+        child: Text(
+          t.placeOrder,
+          style: const TextStyle(
               fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
