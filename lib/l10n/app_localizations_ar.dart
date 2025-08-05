@@ -561,4 +561,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get shopNow => 'Shop Now';
+
+  @override
+  String get home => 'الرئيسية';
+
+  @override
+  String get cart => 'السلة';
+
+  @override
+  String get chat => 'محادثة';
+
+  @override
+  String get setting => 'الإعدادات';
 }

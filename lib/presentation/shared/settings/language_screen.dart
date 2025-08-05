@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
+import 'package:kolshy_app/providers/locale_provider.dart';
 
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
@@ -18,10 +20,18 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  String selectedLanguage = 'english';
+  late String selectedLanguage;
   final TextEditingController _searchController = TextEditingController();
   late int _selectedIndex = 4;
   final Color primaryColor = const Color(0xFFE51742);
+
+  @override
+  void initState() {
+    super.initState();
+    final currentLocale =
+        Provider.of<LocaleProvider>(context, listen: false).locale.languageCode;
+    selectedLanguage = currentLocale == 'ar' ? 'arabic' : 'english';
+  }
 
   @override
   void dispose() {
@@ -115,7 +125,15 @@ class _LanguageScreenState extends State<LanguageScreen> {
     final isSelected = selectedLanguage == value;
 
     return GestureDetector(
-      onTap: () => setState(() => selectedLanguage = value),
+      onTap: () {
+        setState(() => selectedLanguage = value);
+
+        final provider =
+        Provider.of<LocaleProvider>(context, listen: false);
+        final newLocale =
+        value == 'arabic' ? const Locale('ar') : const Locale('en');
+        provider.setLocale(newLocale);
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),

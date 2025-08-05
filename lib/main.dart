@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kolshy_app/core/theme/app_theme.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
+import 'package:kolshy_app/providers/locale_provider.dart';
 
 import 'package:kolshy_app/presentation/auth/forgot_password/forgot_password.dart';
 import 'package:kolshy_app/presentation/auth/forgot_password/verification_code.dart';
@@ -27,38 +30,32 @@ import 'package:kolshy_app/presentation/shared/settings/language_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/legal_and_policies_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final localeProvider = LocaleProvider();
+  await localeProvider.loadSavedLocale(); // charge la langue enregistrée
+
+  runApp(
+    ChangeNotifierProvider<LocaleProvider>.value(
+      value: localeProvider,
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  static void setLocale(BuildContext context, Locale newLocale) {
-    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
-    state?.setLocale(newLocale);
-  }
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  Locale? _locale = const Locale('ar'); // par défaut anglais
-
-  void setLocale(Locale locale) {
-    setState(() {
-      _locale = locale;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<LocaleProvider>(context);
+
     return MaterialApp(
       title: 'Kolshy App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      locale: _locale,
+      locale: provider.locale,
       supportedLocales: const [
         Locale('en'),
         Locale('ar'),

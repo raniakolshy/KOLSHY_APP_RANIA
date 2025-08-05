@@ -165,7 +165,12 @@
   "availableInStore": "متوفر في أقرب متجر",
   "customerReviews": "مراجعات العملاء",
   "recommendedProducts": "منتجات قد تعجبك أيضًا",
-  "addToCart": "أضف إلى السلة"
+  "addToCart": "أضف إلى السلة",
+  "home": "الرئيسية",
+  "cart": "السلة",
+  "search": "بحث",
+  "chat": "محادثة",
+  "setting": "الإعدادات"
 
 
 }

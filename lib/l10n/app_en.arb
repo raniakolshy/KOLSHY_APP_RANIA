@@ -195,6 +195,11 @@
   "productName": "Forem ipsum",
   "discountBanner": "50–40% OFF",
   "shopNowText": "On selected products\nShop now with big discounts!",
-  "shopNow": "Shop Now"
+  "shopNow": "Shop Now",
+  "home": "Home",
+  "cart": "Cart",
+  "search": "Search",
+  "chat": "Chat",
+  "setting": "Setting"
 
 }

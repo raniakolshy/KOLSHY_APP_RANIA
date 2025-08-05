@@ -564,4 +564,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shopNow => 'Shop Now';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get cart => 'Cart';
+
+  @override
+  String get chat => 'Chat';
+
+  @override
+  String get setting => 'Setting';
 }
