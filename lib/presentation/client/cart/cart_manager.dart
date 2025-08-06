@@ -1,31 +1,51 @@
-import 'cart_item_model.dart';
+// lib/core/services/cart_manager.dart
+
+import 'package:kolshy_app/data/models/product_model.dart';
+import 'package:kolshy_app/data/models/cart_item_model.dart';
 
 class CartManager {
-  static final List<CartItem> _items = [];
+  // Pattern Singleton pour une seule instance du gestionnaire de panier
+  static final CartManager _instance = CartManager._internal();
+  factory CartManager() => _instance;
+  CartManager._internal();
 
-  static void addItem(CartItem item) {
-    // Check if same product with same type already exists
-    final existingIndex = _items.indexWhere((e) => e.name == item.name && e.type == item.type);
-    if (existingIndex != -1) {
-      _items[existingIndex].quantity += item.quantity;
+  final List<CartItem> _items = [];
+
+  List<CartItem> get items => _items;
+
+  double get totalAmount {
+    return _items.fold(0.0, (sum, item) => sum + (item.product.price * item.quantity));
+  }
+
+  void addProduct(Product product, int quantity) {
+    // Vérifie si un article avec le même produit et la même taille existe déjà
+    final existingItemIndex = _items.indexWhere(
+          (item) => item.product.name == product.name && item.product.selectedSize == product.selectedSize,
+    );
+
+    if (existingItemIndex != -1) {
+      // Si l'article existe, met à jour sa quantité
+      _items[existingItemIndex].quantity += quantity;
     } else {
-      _items.add(item);
+      // Sinon, ajoute un nouvel article au panier
+      _items.add(CartItem(product: product, quantity: quantity));
     }
   }
 
-  static List<CartItem> getItems() {
-    return _items;
+  void updateQuantity(CartItem item, int newQuantity) {
+    if (newQuantity > 0) {
+      final itemIndex = _items.indexOf(item);
+      if (itemIndex != -1) {
+        _items[itemIndex].quantity = newQuantity;
+      }
+    }
   }
 
-  static void removeItem(CartItem item) {
+  void removeItem(CartItem item) {
     _items.remove(item);
   }
 
-  static void clearCart() {
+  void clearCart() {
     _items.clear();
-  }
-
-  static double getTotal() {
-    return _items.fold(0, (sum, item) => sum + (item.price * item.quantity));
   }
 }

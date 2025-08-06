@@ -37,8 +37,10 @@ void main() async {
   await localeProvider.loadSavedLocale(); // charge la langue enregistrée
 
   runApp(
-    ChangeNotifierProvider<LocaleProvider>.value(
-      value: localeProvider,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LocaleProvider>.value(value: localeProvider),
+      ],
       child: const MyApp(),
     ),
   );

@@ -1,29 +1,17 @@
+// lib/presentation/client/cart/shopping_cart_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
-import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
-import 'package:kolshy_app/presentation/shared/Search/ResultPage.dart';
+import 'package:kolshy_app/data/models/cart_item_model.dart';
+import 'package:kolshy_app/presentation/client/cart/cart_manager.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
-import '../../shared/Search/SearchPage.dart';
-import '../../shared/settings/Settings_screen.dart';
-import '../../shared/widgets/bottom_nav_bar.dart';
-import '../Messages/Chat_screen.dart';
-import '../notifications/notification_screen.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
+import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
+import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
+import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
+import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
 import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
-
-class CartItem {
-  final String name;
-  final String type;
-  final double price;
-  int quantity;
-
-  CartItem({
-    required this.name,
-    required this.type,
-    required this.price,
-    this.quantity = 1,
-  });
-}
 
 class ShoppingCartPage extends StatefulWidget {
   const ShoppingCartPage({super.key});
@@ -35,50 +23,15 @@ class ShoppingCartPage extends StatefulWidget {
 class _ShoppingCartPageState extends State<ShoppingCartPage> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   final Color primaryColor = const Color(0xFFE63056);
-  int _selectedIndex = 1;
 
-  final List<CartItem> _cartItems = List.generate(
-    4,
-        (i) => CartItem(
-      name: 'Nike Air Max',
-      type: 'Sneakers',
-      price: 13.99,
-    ),
-  );
-
-  double get _cartTotal =>
-      _cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
-
-  void _removeItem(int index) {
-    final removedItem = _cartItems[index];
-    _cartItems.removeAt(index);
-    _listKey.currentState?.removeItem(
-      index,
-          (context, animation) => _buildCartItem(removedItem, index, animation),
-      duration: const Duration(milliseconds: 400),
-    );
-    HapticFeedback.lightImpact();
-    setState(() {});
-  }
-
-  void _onNavItemTap(int index) {
-    setState(() => _selectedIndex = index);
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
-        break;
-      case 2:
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchResultPage()));
-        break;
-      case 4:
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
-        break;
-    }
-  }
+  // Utilise le CartManager pour accéder à la liste des articles
+  final cartManager = CartManager();
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final cartItems = cartManager.items;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
@@ -89,7 +42,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
             }),
         title: Text(
@@ -103,10 +56,9 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
         centerTitle: false,
       ),
       bottomNavigationBar: BottomNavBar(
-        selectedIndex: _selectedIndex,
+        selectedIndex: 1, // L'index du panier est 1
         onItemTapped: (index) {
-          if (index != _selectedIndex) {
-            setState(() => _selectedIndex = index);
+          if (index != 1) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => getScreenForTab(index)),
@@ -118,96 +70,99 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
         child: Column(
           children: [
             Expanded(
-              child: _cartItems.isEmpty
+              child: cartItems.isEmpty
                   ? Center(child: Text(t.cartEmpty, style: const TextStyle(fontSize: 18)))
-                  : AnimatedList(
-                key: _listKey,
-                initialItemCount: _cartItems.length,
+                  : ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemBuilder: (context, index, animation) =>
-                    _buildCartItem(_cartItems[index], index, animation),
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  return _buildCartItem(cartItems[index], index);
+                },
               ),
             ),
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildCouponField(t),
-                  const SizedBox(height: 12),
-                  _buildTotalSection(_cartTotal, t),
-                  const SizedBox(height: 16),
-                  _buildCheckoutButton(t),
-                ],
+            if (cartItems.isNotEmpty)
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildCouponField(t),
+                    const SizedBox(height: 12),
+                    _buildTotalSection(cartManager.totalAmount, t),
+                    const SizedBox(height: 16),
+                    _buildCheckoutButton(t),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCartItem(CartItem item, int index, Animation<double> animation) {
-    return SizeTransition(
-      sizeFactor: animation,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 20),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x11000000),
-              blurRadius: 6,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset('assets/shoes.png', width: 80, height: 80, fit: BoxFit.cover),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 60),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(item.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 4),
-                        Text(item.type, style: const TextStyle(color: Colors.grey)),
-                        const SizedBox(height: 8),
-                        Text('AED ${item.price.toStringAsFixed(2)}',
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
+  Widget _buildCartItem(CartItem item, int index) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x11000000),
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(item.product.imageUrl, width: 80, height: 80, fit: BoxFit.cover),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 60),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.product.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 4),
+                      Text(item.product.selectedSize ?? 'N/A', style: const TextStyle(color: Colors.grey)),
+                      const SizedBox(height: 8),
+                      Text('AED ${item.product.price.toStringAsFixed(2)}',
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: () => _removeItem(index),
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
-                  child: const Icon(Icons.close, size: 18),
-                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  cartManager.removeItem(item);
+                });
+                HapticFeedback.lightImpact();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
+                child: const Icon(Icons.close, size: 18),
               ),
             ),
-            Positioned(bottom: 0, right: 0, child: _buildQuantitySelector(item)),
-          ],
-        ),
+          ),
+          Positioned(bottom: 0, right: 0, child: _buildQuantitySelector(item)),
+        ],
       ),
     );
   }
@@ -227,7 +182,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
             onTap: () {
               setState(() {
                 if (item.quantity > 1) {
-                  item.quantity--;
+                  cartManager.updateQuantity(item, item.quantity - 1);
                   HapticFeedback.lightImpact();
                 }
               });
@@ -242,7 +197,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
           GestureDetector(
             onTap: () {
               setState(() {
-                item.quantity++;
+                cartManager.updateQuantity(item, item.quantity + 1);
                 HapticFeedback.lightImpact();
               });
             },
@@ -301,7 +256,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _cartItems.isEmpty
+        onPressed: cartManager.items.isEmpty
             ? null
             : () {
           Navigator.push(

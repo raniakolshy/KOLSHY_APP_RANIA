@@ -1,3 +1,5 @@
+// lib/presentation/shared/product_detail/NewProductDetailPage.dart
+
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
@@ -6,7 +8,9 @@ import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
-import '../Messages/Chat_screen.dart';
+import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
+import 'package:kolshy_app/data/models/product_model.dart';
+import 'package:kolshy_app/presentation/client/cart/cart_manager.dart';
 
 class NewProductDetailPage extends StatefulWidget {
   const NewProductDetailPage({super.key});
@@ -50,6 +54,27 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
       'images': [],
     },
   ];
+
+  void _addToCart() {
+    final loc = AppLocalizations.of(context)!;
+    final productToAdd = Product(
+      name: loc.productTitle,
+      brand: loc.productBrand,
+      price: 13.99,
+      imageUrl: productImages.first,
+      selectedSize: selectedSize,
+    );
+
+    CartManager().addProduct(productToAdd, quantity);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$quantity ${loc.productTitle} ajouté(s) au panier.'),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -354,7 +379,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
-            onPressed: () {},
+            onPressed: _addToCart,
             child: Text(loc.addToCart, style: const TextStyle(color: Colors.white, fontSize: 16)),
           ),
         ),
