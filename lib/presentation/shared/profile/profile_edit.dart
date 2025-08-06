@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:kolshy_app/presentation/auth/login/welcome_screen.dart';
 import 'package:kolshy_app/presentation/shared/profile/change_password_screen.dart';
 
 import '../../../l10n/app_localizations.dart';
@@ -10,14 +11,8 @@ import '../Search/SearchPage.dart';
 import '../home/home_screen.dart';
 import '../settings/Settings_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
-
-// Your other imports - ensure these paths are correct for your project
-// import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
-// import '../../client/cart/CheckoutPage.dart';
-// import '../../shared/Search/SearchPage.dart';
-// import '../../shared/home/home_screen.dart';
-// import '../../shared/settings/Settings_screen.dart';
-// import '../../shared/widgets/bottom_nav_bar.dart'; // Future Navbar
+// Assuming you have a WelcomeScreen. Adjust the path if necessary.
+// <--- ADD THIS IMPORT
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -353,6 +348,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
             ),
             const SizedBox(height: 16), // Space before bottom button
+
+            // START: Added Delete Account Button
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                onPressed: () => _showDeleteConfirmationDialog(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent, // Transparent background
+                  foregroundColor: Colors.red, // Red text color
+                  shadowColor: Colors.transparent, // No shadow
+                  elevation: 0, // No elevation
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8), // Adjust padding
+                  minimumSize: Size.zero, // Remove default min size
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Shrink tap area
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // Slight rounding
+                  ),
+                ),
+                child: const Text(
+                  'Delete Account',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline, // Underline for link-like appearance
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16), // Space after delete button
+            // END: Added Delete Account Button
           ],
         ),
       ),
@@ -629,7 +654,62 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
     );
   }
+
+  // START: Added Delete Account Confirmation Dialog
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Delete Account"),
+          content: const Text("Are you sure you want to delete your account? This action cannot be undone."),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+            ),
+            TextButton(
+              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                // TODO: Implement your actual account deletion logic here.
+                // This is where you would call your backend API or Firebase function
+                // to delete the user's account and associated data.
+                print("Account deletion logic goes here.");
+
+                // After successful deletion, you typically want to:
+                // 1. Pop the dialog
+                Navigator.of(context).pop();
+                // 2. Navigate the user to the login/onboarding screen
+                // Example: Navigator.of(context).pushAndRemoveUntil(
+                //   MaterialPageRoute(builder: (context) => LoginScreen()),
+                //   (Route<dynamic> route) => false,
+                // );
+
+                // For demonstration, show a snackbar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Account deleted successfully!"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+
+                // Navigate to WelcomeScreen and remove all previous routes
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const WelcomeScreen()), // <--- ADDED NAVIGATION
+                      (Route<dynamic> route) => false, // This ensures all previous routes are removed
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+// END: Added Delete Account Confirmation Dialog
 }
+
 Widget getScreenForTab(int index) {
   switch (index) {
     case 0:

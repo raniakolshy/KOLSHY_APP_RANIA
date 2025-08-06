@@ -29,6 +29,7 @@ import 'package:kolshy_app/presentation/shared/settings/help_and_support_screen.
 import 'package:kolshy_app/presentation/shared/settings/language_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/legal_and_policies_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,11 +37,17 @@ void main() async {
   final localeProvider = LocaleProvider();
   await localeProvider.loadSavedLocale(); // charge la langue enregistrée
 
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: 'YOUR_IOS_WEB_CLIENT_ID.apps.googleusercontent.com', // Your provided Client ID
+    serverClientId: 'YOUR_ANDROID_WEB_CLIENT_ID.apps.googleusercontent.com', // Often the same Client ID, but specifically for Web app type
+    scopes: [
+      'email', // Request access to user's email
+      // 'profile', // Request access to user's basic profile info
+    ],
+  );
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<LocaleProvider>.value(value: localeProvider),
-      ],
+    ChangeNotifierProvider<LocaleProvider>.value(
+      value: localeProvider,
       child: const MyApp(),
     ),
   );
@@ -68,7 +75,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      initialRoute: '/login',
+      initialRoute: '/home',
       routes: {
         '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginScreen(),
@@ -83,14 +90,14 @@ class MyApp extends StatelessWidget {
         '/favorites': (context) => const FavoriteProductsScreen(),
         '/search': (context) => const SearchPage(),
         '/filter': (context) => const FilterScreen(),
-        '/results': (context) => const SearchResultPage(),
+        '/results': (context) => const SearchResultPage(searchTerm: '',),
         '/edit-profile': (context) => const EditProfilePage(),
         '/change-password': (context) => const ChangePasswordPage(),
         '/settings': (context) => const SettingsScreen(),
         '/language': (context) => const LanguageScreen(),
         '/legal': (context) => const LegalAndPoliciesScreen(),
         '/help': (context) => const HelpAndSupportScreen(),
-        '/orderdetails': (context) => const OrderDetailsPage(),
+        '/orderdetails': (context) => const OrderDetailsPage(orderData: {},),
         '/chat': (context) => const ChatScreen(),
       },
     );

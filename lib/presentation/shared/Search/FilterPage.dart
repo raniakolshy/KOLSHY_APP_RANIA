@@ -9,7 +9,18 @@ import '../widgets/bottom_nav_bar.dart';
 import 'SearchPage.dart';
 
 class FilterScreen extends StatefulWidget {
-  const FilterScreen({super.key});
+  final String selectedCategory;
+  final String selectedBrand;
+  final RangeValues priceRange;
+  final int selectedStar;
+
+  const FilterScreen({
+    super.key,
+    this.selectedCategory = 'All',
+    this.selectedBrand = 'All',
+    this.priceRange = const RangeValues(10, 250),
+    this.selectedStar = -1,
+  });
 
   @override
   State<FilterScreen> createState() => _FilterScreenState();
@@ -18,15 +29,23 @@ class FilterScreen extends StatefulWidget {
 class _FilterScreenState extends State<FilterScreen> {
   final Color primaryColor = const Color(0xFFE63056);
   int _selectedIndex = 2;
-  String selectedCategory = 'All';
-  String selectedBrand = 'All';
-  int selectedStar = -1;
+  late String _selectedCategory;
+  late String _selectedBrand;
+  late int _selectedStar;
+  late RangeValues _priceRange;
 
   final List<String> categories = ['All', 'T-Shirt', 'Headphone', 'Shoes', 'Jeans', 'Bag', 'Watch'];
   final List<String> brands = ['All', 'Nike', 'Alibaba', 'Vans', 'Welly', 'Adidas'];
   final List<int> stars = [5, 4, 3, 2, 1];
 
-  RangeValues _priceRange = const RangeValues(50, 150);
+  @override
+  void initState() {
+    super.initState();
+    _selectedCategory = widget.selectedCategory;
+    _selectedBrand = widget.selectedBrand;
+    _priceRange = widget.priceRange;
+    _selectedStar = widget.selectedStar;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +69,8 @@ class _FilterScreenState extends State<FilterScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SearchPage()),
-            );
+            // Simply pop back, no need to navigate to SearchPage
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -74,13 +91,13 @@ class _FilterScreenState extends State<FilterScreen> {
             children: [
               const SizedBox(height: 30),
               _buildSectionTitle('Category'),
-              _buildChips(categories, selectedCategory, (val) {
-                setState(() => selectedCategory = val);
+              _buildChips(categories, _selectedCategory, (val) {
+                setState(() => _selectedCategory = val);
               }),
               const SizedBox(height: 24),
               _buildSectionTitle('Brand'),
-              _buildChips(brands, selectedBrand, (val) {
-                setState(() => selectedBrand = val);
+              _buildChips(brands, _selectedBrand, (val) {
+                setState(() => _selectedBrand = val);
               }),
               const SizedBox(height: 24),
               _buildSectionTitle('Price'),
@@ -90,7 +107,7 @@ class _FilterScreenState extends State<FilterScreen> {
               Wrap(
                 spacing: 8,
                 children: [
-                  _buildChip('All', selectedStar == -1, () => setState(() => selectedStar = -1)),
+                  _buildChip('All', _selectedStar == -1, () => setState(() => _selectedStar = -1)),
                   ...stars.map((star) => _buildStarChip(star)).toList(),
                 ],
               ),
@@ -105,7 +122,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        side: const BorderSide(color: Colors.black), // Change border color to black
+                        side: const BorderSide(color: Colors.black),
                       ),
                       child: const Text("Reset Filter", style: TextStyle(color: Colors.black)),
                     ),
@@ -114,11 +131,13 @@ class _FilterScreenState extends State<FilterScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // Apply the filters and navigate back to SearchPage
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SearchPage()),
-                        );
+                        // FIX: Pop with a return value (the filter criteria)
+                        Navigator.pop(context, {
+                          'category': _selectedCategory,
+                          'brand': _selectedBrand,
+                          'priceRange': _priceRange,
+                          'star': _selectedStar,
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryColor,
@@ -140,12 +159,25 @@ class _FilterScreenState extends State<FilterScreen> {
     );
   }
 
-
   Widget _buildSectionTitle(String title) {
-    return Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16));
+    // ... (code is unchanged)
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        if (title == 'Category' || title == 'Brand') // Only add "See All" for these titles
+          GestureDetector(
+            onTap: () {
+              // Handle "See All" tap
+            },
+            child: const Text("See All", style: TextStyle(color: Color(0xFFE63056), fontSize: 14)),
+          ),
+      ],
+    );
   }
 
   Widget _buildChips(List<String> items, String selectedItem, Function(String) onTap) {
+    // ... (code is unchanged)
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -156,6 +188,7 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildChip(String label, bool selected, VoidCallback onTap) {
+    // ... (code is unchanged)
     return GestureDetector(
       onTap: onTap,
       child: Chip(
@@ -170,10 +203,11 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildStarChip(int star) {
+    // ... (code is unchanged)
     return GestureDetector(
-      onTap: () => setState(() => selectedStar = star),
+      onTap: () => setState(() => _selectedStar = star),
       child: Chip(
-        backgroundColor: selectedStar == star ? primaryColor : Colors.grey.shade200,
+        backgroundColor: _selectedStar == star ? primaryColor : Colors.grey.shade200,
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -182,7 +216,7 @@ class _FilterScreenState extends State<FilterScreen> {
             Text(
               '$star',
               style: TextStyle(
-                color: selectedStar == star ? Colors.white : Colors.black,
+                color: _selectedStar == star ? Colors.white : Colors.black,
               ),
             ),
           ],
@@ -193,6 +227,7 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildPriceSlider() {
+    // ... (code is unchanged)
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -228,9 +263,9 @@ class _FilterScreenState extends State<FilterScreen> {
 
   void _resetFilters() {
     setState(() {
-      selectedCategory = 'All';
-      selectedBrand = 'All';
-      selectedStar = -1;
+      _selectedCategory = 'All';
+      _selectedBrand = 'All';
+      _selectedStar = -1;
       _priceRange = const RangeValues(50, 150);
     });
   }

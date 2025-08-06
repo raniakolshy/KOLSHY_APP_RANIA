@@ -1,3 +1,5 @@
+// lib/cart/OrderDetailsPage.dart
+
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
 
@@ -10,7 +12,9 @@ import '../notifications/notification_screen.dart';
 import 'ShoppingCartPage.dart';
 
 class OrderDetailsPage extends StatefulWidget {
-  const OrderDetailsPage({super.key});
+  final Map<String, dynamic> orderData;
+
+  const OrderDetailsPage({super.key, required this.orderData});
 
   @override
   State<OrderDetailsPage> createState() => _OrderDetailsPageState();
@@ -20,12 +24,20 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   int _selectedIndex = 1;
   final Color primaryColor = const Color(0xFFE63056);
 
-  final String customerName = "John Doe";
-  final String customerEmail = "john.doe@example.com";
-
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+
+    // Direct access to the top-level keys in the orderData map
+    final orderNumber = widget.orderData['orderNumber'] as String? ?? 'N/A';
+    final orderDate = widget.orderData['orderDate'] as String? ?? 'N/A';
+    final orderStatus = widget.orderData['orderStatus'] as String? ?? 'N/A';
+
+    final customerInfo = widget.orderData['customerInfo'] as Map<String, dynamic>? ?? {};
+    final items = widget.orderData['items'] as List<dynamic>? ?? [];
+    final shippingAddress = widget.orderData['shippingAddress'] as String? ?? 'N/A';
+    final paymentMethod = widget.orderData['paymentMethod'] as String? ?? 'N/A';
+    final totals = widget.orderData['totals'] as Map<String, dynamic>? ?? {};
 
     return Scaffold(
       bottomNavigationBar: BottomNavBar(
@@ -64,40 +76,37 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionTitle(localizations.orderSummary),
-            _buildSummaryRow(localizations.orderNumber, '#12345678'),
-            _buildSummaryRow(localizations.orderDate, 'July 31, 2025'),
-            _buildSummaryRow(localizations.orderStatus, localizations.statusConfirmed),
-
+            _buildSummaryRow(localizations.orderNumber, orderNumber),
+            _buildSummaryRow(localizations.orderDate, orderDate),
+            _buildSummaryRow(localizations.orderStatus, orderStatus),
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.customerInfo),
             const SizedBox(height: 8),
-            _buildCustomerInfoCard(name: customerName, email: customerEmail),
-
+            _buildCustomerInfoCard(
+              name: customerInfo['name'] as String? ?? 'N/A',
+              email: customerInfo['email'] as String? ?? 'N/A',
+            ),
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.items),
-            _buildItemCard(
-              name: 'Nike Air Max',
-              type: localizations.sneakers,
-              quantity: 2,
-              price: 139.98,
-              imagePath: 'assets/shoes.png',
-            ),
-
+            ...items.map((item) => _buildItemCard(
+              name: item['name'] as String? ?? 'N/A',
+              type: item['type'] as String? ?? 'N/A',
+              quantity: item['quantity'] as int? ?? 0,
+              price: item['price'] as double? ?? 0.0,
+              imagePath: item['imagePath'] as String? ?? 'assets/placeholder.png', // Fallback image
+            )).toList(),
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.shippingAddress),
             const SizedBox(height: 8),
-            _buildAddressCard('742 Evergreen Terrace,\nSpringfield'),
-
+            _buildAddressCard(shippingAddress),
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.paymentMethod),
             const SizedBox(height: 8),
-            _buildPaymentMethodRow('Apple Pay'),
-
+            _buildPaymentMethodRow(paymentMethod),
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.orderTotal),
             const SizedBox(height: 8),
-            _buildTotalBreakdown(localizations),
-
+            _buildTotalBreakdown(localizations, totals),
             const SizedBox(height: 60),
           ],
         ),
@@ -240,7 +249,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     );
   }
 
-  Widget _buildTotalBreakdown(AppLocalizations localizations) {
+  Widget _buildTotalBreakdown(AppLocalizations localizations, Map<String, dynamic> totals) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -252,10 +261,22 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
       ),
       child: Column(
         children: [
-          _TotalRow(label: localizations.subtotal, value: 'AED 139.98'),
-          _TotalRow(label: localizations.shipping, value: localizations.free),
+          _TotalRow(
+            label: localizations.subtotal,
+            value: 'AED ${(totals['subtotal'] as double? ?? 0.0).toStringAsFixed(2)}',
+          ),
+          _TotalRow(
+            label: localizations.shipping,
+            value: (totals['shipping'] as double? ?? 0.0) == 0.0
+                ? localizations.free
+                : 'AED ${(totals['shipping'] as double).toStringAsFixed(2)}',
+          ),
           const Divider(),
-          _TotalRow(label: localizations.total, value: 'AED 139.98', bold: true),
+          _TotalRow(
+            label: localizations.total,
+            value: 'AED ${(totals['total'] as double? ?? 0.0).toStringAsFixed(2)}',
+            bold: true,
+          ),
         ],
       ),
     );

@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onCategorySelected(int index) {
     setState(() {
-      _selectedCategoryIndex = index;  // Mettre à jour l'index de la catégorie sélectionnée
+      _selectedCategoryIndex = index;
     });
   }
 
@@ -85,15 +85,18 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(child: _buildHeader()),
             SliverToBoxAdapter(child: _buildPromoCarousel()),
             SliverToBoxAdapter(child: _buildCategoryTabs()),
-            SliverToBoxAdapter(child: _buildSectionTitle(AppLocalizations.of(context)!.bestSeller)),
-            _buildProductGrid(),
-            SliverToBoxAdapter(child: _buildSectionTitle(AppLocalizations.of(context)!.shopByCategory)),
-            // Affichage de l'image de la catégorie sélectionnée
-            SliverToBoxAdapter(
-              child: _selectedCategoryIndex == 0 ? _buildAllCategoriesImage() : _buildCategoryImage(),
-            ),
+
+            // Dynamic section that changes based on selected category
+            if (_selectedCategoryIndex == 0) ...[
+              SliverToBoxAdapter(child: _buildSectionTitle(AppLocalizations.of(context)!.shopByCategory)),
+              _buildAllCategoriesGrid(),
+            ] else ...[
+              SliverToBoxAdapter(child: _buildSectionTitle('Most Sold in ${categories[_selectedCategoryIndex]['label']!}')),
+              _buildProductGrid(categories[_selectedCategoryIndex]['label']!),
+            ],
+
             SliverToBoxAdapter(child: _buildSectionTitle(AppLocalizations.of(context)!.newArrivals)),
-            _buildProductGrid(),
+            _buildProductGrid('New Arrivals'),
             SliverToBoxAdapter(child: _buildBottomBanner()),
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
@@ -102,63 +105,76 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Affiche l'image de la catégorie sélectionnée
-  Widget _buildCategoryImage() {
-    final selectedCategory = categories[_selectedCategoryIndex];
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Image.asset(
-        selectedCategory['image']!,
-        height: 250,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  // Affiche l'image pour toutes les catégories (si "All" est sélectionné)
-  Widget _buildAllCategoriesImage() {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: categories.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1,
+  Widget _buildProductGrid(String categoryName) {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: 225,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          itemCount: 5,
+          itemBuilder: (_, i) => ProductCard(
+            imageUrl: 'assets/shoes.png',
+            title: '$categoryName Product $i',
+            price: 'AED ${(19 + i)}.00',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NewProductDetailPage()),
+              );
+            },
+          ),
         ),
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.asset(category['image']!, fit: BoxFit.cover),
-                Container(
-                  alignment: Alignment.bottomLeft,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.black.withOpacity(0.5), Colors.transparent],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
-                  ),
-                  child: Text(
-                    category['label']!,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
       ),
     );
   }
 
-  // Méthode pour afficher un titre de section
+  Widget _buildAllCategoriesGrid() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: categories.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 1,
+          ),
+          itemBuilder: (context, index) {
+            final category = categories[index];
+            return GestureDetector(
+              onTap: () => _onCategorySelected(index),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.asset(category['image']!, fit: BoxFit.cover),
+                    Container(
+                      alignment: Alignment.bottomLeft,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.black.withOpacity(0.5), Colors.transparent],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
+                      child: Text(
+                        category['label']!,
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -166,53 +182,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Méthode pour afficher une grille de produits (vous pouvez personnaliser le contenu selon vos besoins)
-  Widget _buildProductGrid() {
-    return SliverToBoxAdapter(
-      child: SizedBox(
-        height: 200,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          itemCount: 5,
-          itemBuilder: (_, i) => GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NewProductDetailPage())),
-            child: Container(
-              width: 150,
-              margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                    child: Image.asset('assets/shoes.png', height: 130, width: double.infinity, fit: BoxFit.cover),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Forem ipsum', style: TextStyle(fontWeight: FontWeight.bold)),
-                        SizedBox(height: 4),
-                        Text('AED 19.00'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Méthode pour afficher une bannière en bas de la page
   Widget _buildBottomBanner() {
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -244,16 +213,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(AppLocalizations.of(context)!.shopNowText, style: const TextStyle(color: Colors.black87)),
                     const SizedBox(height: 12),
                     ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SearchResultPage(searchTerm: '')), // Navigate to the promo result page
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      onPressed: () {},
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                        child: Text(AppLocalizations.of(context)!.shopNow, style: const TextStyle(color: Colors.white)),
-                      ),
+                      child: Text(AppLocalizations.of(context)!.promo, style: const TextStyle(color: Colors.white)),
                     ),
+
                   ],
                 ),
               ),
@@ -280,7 +252,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              // Add this navigation code
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SearchResultPage(searchTerm: '')),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -358,6 +336,57 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 12),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProductCard extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final String price;
+  final VoidCallback onTap;
+
+  const ProductCard({
+    Key? key,
+    required this.imageUrl,
+    required this.title,
+    required this.price,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 150,
+        margin: const EdgeInsets.only(right: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              child: Image.asset(imageUrl, height: 130, width: double.infinity, fit: BoxFit.cover),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(price),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

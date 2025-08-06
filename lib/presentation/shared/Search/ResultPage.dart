@@ -9,9 +9,21 @@ import '../widgets/bottom_nav_bar.dart';
 import 'FilterPage.dart';
 import 'SearchPage.dart';
 
-
 class SearchResultPage extends StatefulWidget {
-  const SearchResultPage({super.key});
+  final String searchTerm;
+  final String? selectedCategory;
+  final String? selectedBrand;
+  final RangeValues? priceRange;
+  final int? selectedStar;
+
+  const SearchResultPage({
+    super.key,
+    required this.searchTerm,
+    this.selectedCategory,
+    this.selectedBrand,
+    this.priceRange,
+    this.selectedStar,
+  });
 
   @override
   State<SearchResultPage> createState() => _SearchResultPageState();
@@ -19,8 +31,12 @@ class SearchResultPage extends StatefulWidget {
 
 class _SearchResultPageState extends State<SearchResultPage> {
   int _selectedIndex = 2;
-  String searchTerm = "T-Shirt";
-  final TextEditingController _searchController = TextEditingController();
+  late TextEditingController _searchController;
+  late String _currentSearchTerm;
+  late String _currentCategory;
+  late String _currentBrand;
+  late RangeValues _currentPriceRange;
+  late int _currentStar;
   List<bool> _isFavoriteList = [];
 
   final List<Map<String, dynamic>> products = [
@@ -28,47 +44,111 @@ class _SearchResultPageState extends State<SearchResultPage> {
       "name": "Black Winter Hoodie",
       "brand": "WonderWear",
       "description": "Autumn and Winter casual cotton-padded jacket",
-      "price": 499,
+      "price": 499.0,
       "rating": 4.5,
       "image": 'assets/avatar.png',
+      "category": "T-Shirt", // Let's use T-Shirt for example
+      "isPromo": false,
     },
     {
       "name": "Mens Starry Shirt",
       "brand": "StarWear",
       "description": "Mens Starry Sky Printed Shirt 100% Cotton Fabric",
-      "price": 399,
+      "price": 399.0,
       "rating": 4.7,
       "image": 'assets/avatar.png',
+      "category": "T-Shirt",
+      "isPromo": false,
     },
     {
       "name": "Black Dress",
       "brand": "Fashionista",
       "description": "Solid Black Dress for Women, Sexy Chain Shorts Ladies",
-      "price": 299,
+      "price": 299.0,
       "rating": 4.3,
       "image": 'assets/avatar.png',
+      "category": "Jeans", // Changed for filtering example
+      "isPromo": true,
     },
     {
       "name": "Pink Embroidered Dress",
       "brand": "Earthen",
       "description": "EARTHEN Rose Pink Embroidered Tiered Maxi Dress",
-      "price": 399,
+      "price": 399.0,
       "rating": 4.6,
       "image": 'assets/avatar.png',
+      "category": "Jeans",
+      "isPromo": true,
+    },
+    {
+      "name": "Nike Air Max",
+      "brand": "Nike",
+      "description": "Nike Air Max 270",
+      "price": 120.0,
+      "rating": 4.9,
+      "image": 'assets/shoes.png',
+      "category": "Shoes",
+      "isPromo": false,
+    },
+    {
+      "name": "Beats Headphone",
+      "brand": "Beats",
+      "description": "Beats Studio3 Wireless Noise Cancelling Headphones",
+      "price": 249.0,
+      "rating": 4.8,
+      "image": 'assets/headphone.png',
+      "category": "Headphone",
+      "isPromo": false,
     },
   ];
 
   @override
   void initState() {
     super.initState();
-    _searchController.text = searchTerm;
+    _currentSearchTerm = widget.searchTerm;
+    _searchController = TextEditingController(text: _currentSearchTerm);
+    _currentCategory = widget.selectedCategory ?? 'All';
+    _currentBrand = widget.selectedBrand ?? 'All';
+    _currentPriceRange = widget.priceRange ?? const RangeValues(0, 1000);
+    _currentStar = widget.selectedStar ?? -1;
     _isFavoriteList = List.generate(products.length, (_) => false);
+  }
+
+  @override
+  void didUpdateWidget(SearchResultPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.searchTerm != oldWidget.searchTerm ||
+        widget.selectedCategory != oldWidget.selectedCategory ||
+        widget.selectedBrand != oldWidget.selectedBrand ||
+        widget.priceRange != oldWidget.priceRange ||
+        widget.selectedStar != oldWidget.selectedStar) {
+      setState(() {
+        _currentSearchTerm = widget.searchTerm;
+        _searchController.text = _currentSearchTerm;
+        _currentCategory = widget.selectedCategory ?? 'All';
+        _currentBrand = widget.selectedBrand ?? 'All';
+        _currentPriceRange = widget.priceRange ?? const RangeValues(0, 1000);
+        _currentStar = widget.selectedStar ?? -1;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final filteredProducts = products.where((product) {
-      return product['name'].toLowerCase().contains(searchTerm.toLowerCase());
+      final nameMatches = product['name'].toLowerCase().contains(_currentSearchTerm.toLowerCase());
+      final categoryMatches = _currentCategory == 'All' || product['category'] == _currentCategory;
+      final brandMatches = _currentBrand == 'All' || product['brand'] == _currentBrand;
+      final priceMatches = product['price'] >= _currentPriceRange.start && product['price'] <= _currentPriceRange.end;
+      final ratingMatches = _currentStar == -1 || product['rating'] >= _currentStar;
+
+      return nameMatches && categoryMatches && brandMatches && priceMatches && ratingMatches;
     }).toList();
 
     return Scaffold(
@@ -93,17 +173,18 @@ class _SearchResultPageState extends State<SearchResultPage> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => SearchPage()),
+                MaterialPageRoute(builder: (context) => const SearchPage()),
               );
             }
-        ),title: const Text(
-        'Result',
-        style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.w800,
-          fontSize: 24,
         ),
-      ),
+        title: const Text(
+          'Result',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
+        ),
         centerTitle: false,
       ),
       body: SafeArea(
@@ -112,20 +193,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.arrow_back, size: 24),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    "Search Result",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
               _buildSearchBar(),
               const SizedBox(height: 16),
               _buildSearchResult(filteredProducts.length),
@@ -157,7 +224,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   child: TextField(
                     controller: _searchController,
                     onChanged: (value) {
-                      setState(() => searchTerm = value);
+                      setState(() => _currentSearchTerm = value);
                     },
                     decoration: const InputDecoration(
                       hintText: 'Search',
@@ -168,7 +235,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 GestureDetector(
                   onTap: () {
                     _searchController.clear();
-                    setState(() => searchTerm = '');
+                    setState(() => _currentSearchTerm = '');
                   },
                   child: const Icon(Icons.close, size: 20, color: Colors.grey),
                 ),
@@ -178,11 +245,19 @@ class _SearchResultPageState extends State<SearchResultPage> {
         ),
         const SizedBox(width: 12),
         GestureDetector(
-          onTap: () {
-            Navigator.push(
+          onTap: () async {
+            final result = await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const FilterScreen()),
             );
+            if (result != null) {
+              setState(() {
+                _currentCategory = result['category'];
+                _currentBrand = result['brand'];
+                _currentPriceRange = result['priceRange'];
+                _currentStar = result['star'];
+              });
+            }
           },
           child: Container(
             height: 48,
@@ -203,14 +278,14 @@ class _SearchResultPageState extends State<SearchResultPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          "$resultCount Found for \"$searchTerm\"",
+          "$resultCount Found for \"$_currentSearchTerm\"",
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         GestureDetector(
           onTap: () {
             _searchController.clear();
             setState(() {
-              searchTerm = '';
+              _currentSearchTerm = '';
               _isFavoriteList = List.generate(products.length, (_) => false);
             });
           },
@@ -256,7 +331,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(product['image'], height: 100, fit: BoxFit.cover),
+                    Image.asset('assets/shoes.png', height: 100, fit: BoxFit.cover),
                     const SizedBox(height: 8),
                     Text(product['brand'], style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),

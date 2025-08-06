@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/presentation/client/product/NewProductDetailPage.dart';
 
 import '../../client/Messages/Chat_screen.dart';
 import '../../client/cart/ShoppingCartPage.dart';
@@ -6,8 +7,8 @@ import '../../client/notifications/notification_screen.dart';
 import '../home/home_screen.dart';
 import '../settings/Settings_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
-import 'FilterPage.dart'; // Add the import for FilterPage.dart
-import 'ResultPage.dart'; // Add the import for ResultPage.dart
+import 'FilterPage.dart';
+import 'ResultPage.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -20,6 +21,44 @@ class _SearchPageState extends State<SearchPage> {
   int _selectedIndex = 2;
   final TextEditingController _searchController = TextEditingController();
   List<String> recentSearches = ['Brown Jacket', 'Nike Pegasus', 'Light Brown'];
+
+  // Add a list for recently viewed items with dummy data
+  final List<Map<String, dynamic>> _recentlyViewed = [
+    {
+      "name": "Lorem ipsum",
+      "brand": "Brand name",
+      "price": 13.99,
+      "rating": 4.9,
+      "image": 'https://placehold.co/150x150/E0E0E0/FFFFFF?text=Product1', // Placeholder image
+    },
+    {
+      "name": "Lorem ipsum",
+      "brand": "Brand name",
+      "price": 13.99,
+      "rating": 4.9,
+      "image": 'https://placehold.co/150x150/E0E0E0/FFFFFF?text=Product2', // Placeholder image
+    },
+    {
+      "name": "Lorem ipsum",
+      "brand": "Brand name",
+      "price": 13.99,
+      "rating": 4.9,
+      "image": 'https://placehold.co/150x150/E0E0E0/FFFFFF?text=Product3', // Placeholder image
+    },
+    {
+      "name": "Lorem ipsum",
+      "brand": "Brand name",
+      "price": 13.99,
+      "rating": 4.9,
+      "image": 'https://placehold.co/150x150/E0E0E0/FFFFFF?text=Product4', // Placeholder image
+    },
+  ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +84,17 @@ class _SearchPageState extends State<SearchPage> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
               );
-            }
-        ),title: const Text(
-        'Search',
-        style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.w800,
-          fontSize: 24,
+            }),
+        title: const Text(
+          'Search',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
+          ),
         ),
-      ),
         centerTitle: false,
       ),
       body: SafeArea(
@@ -107,11 +146,12 @@ class _SearchPageState extends State<SearchPage> {
                       border: InputBorder.none,
                     ),
                     onSubmitted: (query) {
-                      // When user presses Enter, navigate to the ResultPage
-                      if (query == 'T-Shirt') {
+                      if (query.isNotEmpty) {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const SearchResultPage()),
+                          MaterialPageRoute(
+                            builder: (_) => SearchResultPage(searchTerm: query),
+                          ),
                         );
                       }
                     },
@@ -132,7 +172,6 @@ class _SearchPageState extends State<SearchPage> {
         const SizedBox(width: 12),
         GestureDetector(
           onTap: () {
-            // Navigate to the FilterPage when the pink filter button is pressed
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const FilterScreen()),
@@ -178,12 +217,21 @@ class _SearchPageState extends State<SearchPage> {
           runSpacing: 8,
           children: recentSearches
               .map(
-                (term) => Chip(
-              label: Text(term),
-              deleteIcon: const Icon(Icons.close, size: 18),
-              onDeleted: () =>
-                  setState(() => recentSearches.remove(term)),
-              backgroundColor: Colors.grey.shade100,
+                (term) => GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SearchResultPage(searchTerm: term),
+                  ),
+                );
+              },
+              child: Chip(
+                label: Text(term),
+                deleteIcon: const Icon(Icons.close, size: 18),
+                onDeleted: () => setState(() => recentSearches.remove(term)),
+                backgroundColor: Colors.grey.shade100,
+              ),
             ),
           )
               .toList(),
@@ -193,58 +241,60 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildRecentlyViewedList() {
-    final items = List.generate(4, (index) => index);
-    final images = [
-      'https://via.placeholder.com/150?text=Image+1',
-      'https://via.placeholder.com/150?text=Image+2',
-      'https://via.placeholder.com/150?text=Image+3',
-      'https://via.placeholder.com/150?text=Image+4',
-    ];
-
     return ListView.separated(
-      itemCount: items.length,
+      itemCount: _recentlyViewed.length,
       separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                images[index % images.length],
-                width: 64,
-                height: 64,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
+        final item = _recentlyViewed[index];
+        return GestureDetector( // Wrap with GestureDetector
+          onTap: () {
+            // Navigate to NewProductDetailPage when a recently viewed item is tapped
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NewProductDetailPage()),
+            );
+          },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  item['image'], // Use item['image'] from the _recentlyViewed list
                   width: 64,
                   height: 64,
-                  color: Colors.grey.shade200,
-                  child: const Icon(Icons.broken_image, size: 28, color: Colors.grey),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 64,
+                    height: 64,
+                    color: Colors.grey.shade200,
+                    child: const Icon(Icons.broken_image, size: 28, color: Colors.grey),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text("Lorem ipsum", style: TextStyle(fontWeight: FontWeight.w600)),
-                  SizedBox(height: 2),
-                  Text("Brand name", style: TextStyle(color: Colors.black54, fontSize: 13)),
-                  SizedBox(height: 6),
-                  Text("AED 13.99", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item['name'], style: const TextStyle(fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 2),
+                    Text(item['brand'], style: const TextStyle(color: Colors.black54, fontSize: 13)),
+                    const SizedBox(height: 6),
+                    Text("AED ${item['price']}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Row(
+                children: [
+                  const Icon(Icons.star, color: Colors.amber, size: 18),
+                  const SizedBox(width: 4),
+                  Text("${item['rating']}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 ],
               ),
-            ),
-            const SizedBox(width: 8),
-            Row(
-              children: const [
-                Icon(Icons.star, color: Colors.amber, size: 18),
-                SizedBox(width: 4),
-                Text("4.9", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-              ],
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

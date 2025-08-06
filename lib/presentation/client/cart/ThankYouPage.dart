@@ -94,7 +94,7 @@ class _ThankYouPageState extends State<ThankYouPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const OrderDetailsPage()),
+            MaterialPageRoute(builder: (context) => const OrderDetailsPage(orderData: {},)),
           );
         },
         style: OutlinedButton.styleFrom(

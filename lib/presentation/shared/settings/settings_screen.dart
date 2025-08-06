@@ -5,6 +5,7 @@ import 'package:kolshy_app/presentation/client/notifications/notification_screen
 import 'package:kolshy_app/presentation/client/product/favorite_products_screen.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
+import 'package:kolshy_app/presentation/shared/settings/MyOrdersScreen.dart';
 import 'package:kolshy_app/presentation/shared/settings/help_and_support_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/language_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/legal_and_policies_screen.dart';
@@ -91,7 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             iconPath: 'assets/Icons/reciept.png',
             text: AppLocalizations.of(context)!.myOrders,
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderDetailsPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MyOrdersScreen()));
             },
           ),
           WhiteMenuButton(
