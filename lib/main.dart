@@ -9,7 +9,8 @@ import 'package:kolshy_app/presentation/auth/login/login_screen.dart';
 import 'package:kolshy_app/presentation/auth/login/welcome_screen.dart';
 import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
 import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
-import 'package:kolshy_app/presentation/client/cart/OrderDetailsPage.dart';
+import 'package:kolshy_app/data/models/order_model.dart';
+import 'package:kolshy_app/presentation/client/cart/orders_manager.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
@@ -39,9 +40,17 @@ void main() async {
     serverClientId: 'YOUR_ANDROID_WEB_CLIENT_ID.apps.googleusercontent.com',
     scopes: ['email'],
   );
+
   runApp(
-    ChangeNotifierProvider<LocaleProvider>.value(
-      value: localeProvider,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LocaleProvider>.value(
+          value: localeProvider,
+        ),
+        ChangeNotifierProvider<OrdersManager>(
+          create: (_) => OrdersManager(),
+        ),
+      ],
       child: const MyApp(),
     ),
   );

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/data/models/cart_item_model.dart';
-
+import 'package:kolshy_app/data/models/order_model.dart';
+import 'package:provider/provider.dart';
 import '../../shared/home/home_screen.dart';
 import '../cart/OrderDetailsPage.dart';
-
+import 'package:kolshy_app/presentation/client/cart/orders_manager.dart';
 class ThankYouPage extends StatefulWidget {
   final List<CartItem> cartItems;
 
@@ -98,8 +99,7 @@ class _ThankYouPageState extends State<ThankYouPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    OrderDetailsPage(items: widget.cartItems)),
+                builder: (context) => OrderDetailsPage(items: widget.cartItems)),
           );
         },
         style: OutlinedButton.styleFrom(
@@ -127,6 +127,10 @@ class _ThankYouPageState extends State<ThankYouPage> {
       height: 52,
       child: ElevatedButton(
         onPressed: () {
+          // Utilise Provider pour accéder au OrdersManager et ajouter la commande
+          final ordersManager = Provider.of<OrdersManager>(context, listen: false);
+          ordersManager.addOrder(widget.cartItems);
+
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
