@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:kolshy_app/core/theme/app_theme.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/providers/locale_provider.dart';
-
 import 'package:kolshy_app/presentation/auth/forgot_password/forgot_password.dart';
 import 'package:kolshy_app/presentation/auth/forgot_password/verification_code.dart';
 import 'package:kolshy_app/presentation/auth/login/login_screen.dart';
@@ -30,20 +26,18 @@ import 'package:kolshy_app/presentation/shared/settings/language_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/legal_and_policies_screen.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final localeProvider = LocaleProvider();
-  await localeProvider.loadSavedLocale(); // charge la langue enregistrée
+  await localeProvider.loadSavedLocale();
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: 'YOUR_IOS_WEB_CLIENT_ID.apps.googleusercontent.com', // Your provided Client ID
-    serverClientId: 'YOUR_ANDROID_WEB_CLIENT_ID.apps.googleusercontent.com', // Often the same Client ID, but specifically for Web app type
-    scopes: [
-      'email', // Request access to user's email
-      // 'profile', // Request access to user's basic profile info
-    ],
+    clientId: 'YOUR_IOS_WEB_CLIENT_ID.apps.googleusercontent.com',
+    serverClientId: 'YOUR_ANDROID_WEB_CLIENT_ID.apps.googleusercontent.com',
+    scopes: ['email'],
   );
   runApp(
     ChangeNotifierProvider<LocaleProvider>.value(
@@ -83,21 +77,18 @@ class MyApp extends StatelessWidget {
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/verify-code': (context) => const VerificationCodeScreen(),
         '/cart': (context) => const ShoppingCartPage(),
-        '/checkout': (context) => const CheckoutPage(),
-        '/thankyou': (context) => const ThankYouPage(),
         '/notifications': (context) => const NotificationScreen(),
         '/product-detail': (context) => const NewProductDetailPage(),
         '/favorites': (context) => const FavoriteProductsScreen(),
         '/search': (context) => const SearchPage(),
         '/filter': (context) => const FilterScreen(),
-        '/results': (context) => const SearchResultPage(searchTerm: '',),
+        '/results': (context) => const SearchResultPage(searchTerm: ''),
         '/edit-profile': (context) => const EditProfilePage(),
         '/change-password': (context) => const ChangePasswordPage(),
         '/settings': (context) => const SettingsScreen(),
         '/language': (context) => const LanguageScreen(),
         '/legal': (context) => const LegalAndPoliciesScreen(),
         '/help': (context) => const HelpAndSupportScreen(),
-        '/orderdetails': (context) => const OrderDetailsPage(orderData: {},),
         '/chat': (context) => const ChatScreen(),
       },
     );

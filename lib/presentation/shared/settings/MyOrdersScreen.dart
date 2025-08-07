@@ -1,6 +1,8 @@
 // lib/shared/settings/MyOrdersScreen.dart
 
 import 'package:flutter/material.dart';
+import 'package:kolshy_app/data/models/cart_item_model.dart';
+import 'package:kolshy_app/data/models/product_model.dart'; // Import du modèle Product
 import '../../client/cart/OrderDetailsPage.dart';
 
 class MyOrdersScreen extends StatelessWidget {
@@ -62,7 +64,7 @@ class MyOrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(
+      appBar: AppBar(
         title: Text('My Orders'),
       ),
       body: ListView.builder(
@@ -83,6 +85,20 @@ class OrderListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Conversion de la liste d'articles de la Map vers une List<CartItem>
+    final List<CartItem> cartItems = (order['items'] as List)
+        .map((item) => CartItem(
+      product: Product(
+        name: item['name'] as String? ?? 'N/A',
+        brand: item['type'] as String? ?? 'N/A', // Assumant que 'type' représente la marque ou une catégorie
+        price: item['price'] as double? ?? 0.0,
+        imageUrl: item['imagePath'] as String? ?? 'assets/placeholder.png',
+        selectedSize: 'N/A', // Non disponible dans les données fictives
+      ),
+      quantity: item['quantity'] as int? ?? 1,
+    ))
+        .toList();
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
@@ -93,7 +109,7 @@ class OrderListItem extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => OrderDetailsPage(orderData: order),
+              builder: (context) => OrderDetailsPage(items: cartItems),
             ),
           );
         },

@@ -261,8 +261,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
             : () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CheckoutPage()),
-          );
+            MaterialPageRoute(builder: (context) => CheckoutPage(cartItems: cartManager.items)),          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,

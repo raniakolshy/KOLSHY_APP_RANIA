@@ -1,20 +1,21 @@
-// lib/cart/OrderDetailsPage.dart
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
-
-import '../../shared/Search/SearchPage.dart';
-import '../../shared/home/home_screen.dart';
-import '../../shared/settings/Settings_screen.dart';
-import '../../shared/widgets/bottom_nav_bar.dart';
-import '../Messages/Chat_screen.dart';
-import '../notifications/notification_screen.dart';
-import 'ShoppingCartPage.dart';
+import 'package:kolshy_app/data/models/cart_item_model.dart';
+import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
+import 'package:kolshy_app/presentation/client/cart/cart_manager.dart';
+import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
+import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
+import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
+import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
+import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
+import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
+import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
 
 class OrderDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> orderData;
+  final List<CartItem> items;
 
-  const OrderDetailsPage({super.key, required this.orderData});
+  const OrderDetailsPage({super.key, required this.items});
 
   @override
   State<OrderDetailsPage> createState() => _OrderDetailsPageState();
@@ -24,20 +25,28 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   int _selectedIndex = 1;
   final Color primaryColor = const Color(0xFFE63056);
 
+  final String orderNumber = 'KS-123456';
+  final String orderDate = '2024-08-07';
+  final String orderStatus = 'In Progress';
+  final String customerName = 'John Doe';
+  final String customerEmail = 'johndoe@example.com';
+  final String shippingAddress = '123 Main Street, Cityville, 54321';
+  final String paymentMethod = 'Visa *** 1234';
+
+  double calculateSubtotal() {
+    double subtotal = 0.0;
+    for (var item in widget.items) {
+      subtotal += item.quantity * item.product.price;
+    }
+    return subtotal;
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-
-    // Direct access to the top-level keys in the orderData map
-    final orderNumber = widget.orderData['orderNumber'] as String? ?? 'N/A';
-    final orderDate = widget.orderData['orderDate'] as String? ?? 'N/A';
-    final orderStatus = widget.orderData['orderStatus'] as String? ?? 'N/A';
-
-    final customerInfo = widget.orderData['customerInfo'] as Map<String, dynamic>? ?? {};
-    final items = widget.orderData['items'] as List<dynamic>? ?? [];
-    final shippingAddress = widget.orderData['shippingAddress'] as String? ?? 'N/A';
-    final paymentMethod = widget.orderData['paymentMethod'] as String? ?? 'N/A';
-    final totals = widget.orderData['totals'] as Map<String, dynamic>? ?? {};
+    final subtotal = calculateSubtotal();
+    const shipping = 0.0;
+    final total = subtotal + shipping;
 
     return Scaffold(
       bottomNavigationBar: BottomNavBar(
@@ -82,19 +91,16 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.customerInfo),
             const SizedBox(height: 8),
-            _buildCustomerInfoCard(
-              name: customerInfo['name'] as String? ?? 'N/A',
-              email: customerInfo['email'] as String? ?? 'N/A',
-            ),
+            _buildCustomerInfoCard(name: customerName, email: customerEmail),
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.items),
-            ...items.map((item) => _buildItemCard(
-              name: item['name'] as String? ?? 'N/A',
-              type: item['type'] as String? ?? 'N/A',
-              quantity: item['quantity'] as int? ?? 0,
-              price: item['price'] as double? ?? 0.0,
-              imagePath: item['imagePath'] as String? ?? 'assets/placeholder.png', // Fallback image
-            )).toList(),
+            ...widget.items.map((item) => _buildItemCard(
+              name: item.product.name,
+              type: item.product.selectedSize ?? 'N/A',
+              quantity: item.quantity,
+              price: item.product.price,
+              imagePath: item.product.imageUrl,
+            )),
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.shippingAddress),
             const SizedBox(height: 8),
@@ -106,7 +112,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             const SizedBox(height: 24),
             _buildSectionTitle(localizations.orderTotal),
             const SizedBox(height: 8),
-            _buildTotalBreakdown(localizations, totals),
+            _buildTotalBreakdown(localizations, subtotal, shipping, total),
             const SizedBox(height: 60),
           ],
         ),
@@ -249,7 +255,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     );
   }
 
-  Widget _buildTotalBreakdown(AppLocalizations localizations, Map<String, dynamic> totals) {
+  Widget _buildTotalBreakdown(
+      AppLocalizations localizations, double subtotal, double shipping, double total) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -263,18 +270,18 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         children: [
           _TotalRow(
             label: localizations.subtotal,
-            value: 'AED ${(totals['subtotal'] as double? ?? 0.0).toStringAsFixed(2)}',
+            value: 'AED ${subtotal.toStringAsFixed(2)}',
           ),
           _TotalRow(
             label: localizations.shipping,
-            value: (totals['shipping'] as double? ?? 0.0) == 0.0
+            value: shipping == 0.0
                 ? localizations.free
-                : 'AED ${(totals['shipping'] as double).toStringAsFixed(2)}',
+                : 'AED ${shipping.toStringAsFixed(2)}',
           ),
           const Divider(),
           _TotalRow(
             label: localizations.total,
-            value: 'AED ${(totals['total'] as double? ?? 0.0).toStringAsFixed(2)}',
+            value: 'AED ${total.toStringAsFixed(2)}',
             bold: true,
           ),
         ],

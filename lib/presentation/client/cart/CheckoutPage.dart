@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
+import 'package:kolshy_app/data/models/cart_item_model.dart';
 import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
 import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
 import '../../shared/Search/SearchPage.dart';
@@ -11,7 +12,9 @@ import '../notifications/notification_screen.dart';
 import 'ShoppingCartPage.dart';
 
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({super.key});
+  final List<CartItem> cartItems;
+
+  const CheckoutPage({super.key, required this.cartItems});
 
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
@@ -21,7 +24,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   int _selectedIndex = 1;
   final Color primaryColor = const Color(0xFFE51742);
 
-  // User info
   String userName = "John Doe";
   String userEmail = "johndoe@example.com";
   String userPhone = "+1 234 567 8901";
@@ -30,7 +32,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!; // ✨ pour simplifier
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
@@ -185,7 +187,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
         onPressed: () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const ThankYouPage()),
+            MaterialPageRoute(
+                builder: (_) => ThankYouPage(cartItems: widget.cartItems)),
           );
         },
         style: ElevatedButton.styleFrom(

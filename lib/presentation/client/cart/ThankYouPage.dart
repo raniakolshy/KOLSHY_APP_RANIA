@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
+import 'package:kolshy_app/data/models/cart_item_model.dart';
 
 import '../../shared/home/home_screen.dart';
 import '../cart/OrderDetailsPage.dart';
 
 class ThankYouPage extends StatefulWidget {
-  const ThankYouPage({super.key});
+  final List<CartItem> cartItems;
+
+  const ThankYouPage({super.key, required this.cartItems});
 
   @override
   State<ThankYouPage> createState() => _ThankYouPageState();
@@ -94,7 +97,9 @@ class _ThankYouPageState extends State<ThankYouPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const OrderDetailsPage(orderData: {},)),
+            MaterialPageRoute(
+                builder: (context) =>
+                    OrderDetailsPage(items: widget.cartItems)),
           );
         },
         style: OutlinedButton.styleFrom(
