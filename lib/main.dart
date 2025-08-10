@@ -28,6 +28,8 @@ import 'package:kolshy_app/presentation/shared/settings/legal_and_policies_scree
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:kolshy_app/presentation/client/cart/cart_provider.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +51,10 @@ void main() async {
         ),
         ChangeNotifierProvider<OrdersManager>(
           create: (_) => OrdersManager(),
+        ),
+        // Ajout du CartProvider ici
+        ChangeNotifierProvider<CartProvider>(
+          create: (_) => CartProvider(),
         ),
       ],
       child: const MyApp(),

@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
-import 'package:kolshy_app/l10n/app_localizations_en.dart';
 
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import '../login/login_screen.dart';
 
+// Imports for social sign-up
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+
+// These should be defined once, preferably in a global theme or constants file
 const Color primaryPink = Color(0xFFE51742);
 const Color inputFill = Color(0xFFF4F4F4);
 const Color lightBorder = Color(0xFFDDDDDD);
 const Color greyText = Color(0xFF777777);
+
+// A global instance for Google Sign-In, shared with the login page
+final GoogleSignIn _googleSignIn = GoogleSignIn(
+  clientId: '524516881115-erpl9ot3g239d893kctb06o9dnb16v11.apps.googleusercontent.com',
+  serverClientId: '524516881115-erpl9ot3g239d893kctb06o9dnb16v11.apps.googleusercontent.com',
+  scopes: [
+    'email',
+  ],
+);
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -37,7 +53,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: isError ? Colors.red : Colors.green,
+        backgroundColor: isError ? Colors.red : primaryPink,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }
@@ -61,6 +80,153 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  // --- Social Sign-Up Methods (Copied from LoginScreen) ---
+
+  Future<void> _signUpWithGoogle() async {
+    _showMessage('Initiating Google Sign-Up...');
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        _showMessage('Google Sign-Up cancelled.');
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      print('Google ID Token: ${googleAuth.idToken}');
+      print('Google Access Token: ${googleAuth.accessToken}');
+
+      // Replace the login endpoint with your sign-up endpoint if different
+      final response = await http.post(
+        Uri.parse('https://kolshy.ae/sociallogin/social/callback/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'provider': 'google',
+          'idToken': googleAuth.idToken!,
+          'accessToken': googleAuth.accessToken ?? '',
+          'email': googleUser.email,
+          'displayName': googleUser.displayName ?? '',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        _showMessage('Google Sign-Up successful with backend: ${responseData['message']}');
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+      } else {
+        _showMessage('Backend authentication failed: ${response.body}');
+        print('Backend error: ${response.body}');
+      }
+    } catch (e) {
+      _showMessage('Google Sign-Up failed: ${e.toString()}');
+      print('Google Sign-Up error: $e');
+    }
+  }
+
+  Future<void> _signUpWithFacebook() async {
+    _showMessage('Initiating Facebook Sign-Up...');
+    try {
+      final LoginResult result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
+      );
+
+      if (result.status == LoginStatus.success) {
+        final AccessToken accessToken = result.accessToken!;
+        print('Facebook Access Token: ${accessToken.token}');
+        print('Facebook User ID: ${accessToken.userId}');
+
+        // Replace the login endpoint with your sign-up endpoint if different
+        final response = await http.post(
+          Uri.parse('https://kolshy.ae/sociallogin/social/callback/'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'provider': 'facebook',
+            'accessToken': accessToken.token,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          final responseData = jsonDecode(response.body);
+          _showMessage('Facebook Sign-Up successful with backend: ${responseData['message']}');
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        } else {
+          _showMessage('Backend authentication failed: ${response.body}');
+          print('Backend error: ${response.body}');
+        }
+      } else if (result.status == LoginStatus.cancelled) {
+        _showMessage('Facebook Sign-Up cancelled.');
+      } else {
+        _showMessage('Facebook Sign-Up failed: ${result.message}');
+        print('Facebook Sign-Up error: ${result.message}');
+      }
+    } catch (e) {
+      _showMessage('Facebook Sign-Up failed: ${e.toString()}');
+      print('Facebook Sign-Up error: $e');
+    }
+  }
+
+  Future<void> _signUpWithInstagram() async {
+    _showMessage('Initiating Instagram Sign-Up...');
+    try {
+      const String instagramAppId = '642270335021538';
+      const String redirectUri = 'https://kolshy.ae/sociallogin/social/callback/instagram.php';
+      const String authorizationUrl = 'https://api.instagram.com/oauth/authorize'
+          '?client_id=$instagramAppId'
+          '&redirect_uri=$redirectUri'
+          '&scope=user_profile,user_media'
+          '&response_type=code';
+
+      final result = await FlutterWebAuth2.authenticate(
+        url: authorizationUrl,
+        callbackUrlScheme: "https",
+      );
+
+      final uri = Uri.parse(result);
+      final String? code = uri.queryParameters['code'];
+      final String? error = uri.queryParameters['error'];
+
+      if (code != null) {
+        _showMessage('Instagram authorization successful. Sending code to backend.');
+        print('Instagram Authorization Code: $code');
+
+        // Replace the login endpoint with your sign-up endpoint if different
+        final response = await http.post(
+          Uri.parse('https://kolshy.ae/sociallogin/social/callback/instagram.php'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'provider': 'instagram',
+            'code': code,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          final responseData = jsonDecode(response.body);
+          _showMessage('Instagram Sign-Up successful with backend: ${responseData['message']}');
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        } else {
+          _showMessage('Backend authentication failed: ${response.body}');
+          print('Backend error: ${response.body}');
+        }
+      } else if (error != null) {
+        _showMessage('Instagram Sign-Up failed: ${uri.queryParameters['error_description']}');
+        print('Instagram error: ${uri.queryParameters['error_description']}');
+      } else {
+        _showMessage('Instagram Sign-Up cancelled.');
+      }
+    } catch (e) {
+      _showMessage('Instagram Sign-Up failed: ${e.toString()}');
+      print('Instagram Sign-Up error: $e');
+    }
+  }
+
+  // --- End Social Sign-Up Methods ---
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,26 +238,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // ou center selon ton besoin
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.createSimple, // ← "Create"
-                    style: GoogleFonts.poppins(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.anAccount, // ← "an account"
-                    style: GoogleFonts.poppins(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              )
-,
+              Text(
+                AppLocalizations.of(context)!.createSimple,
+                style: GoogleFonts.poppins(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black87,
+                ),
+              ),
+              Text(
+                AppLocalizations.of(context)!.anAccount,
+                style: GoogleFonts.poppins(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black87,
+                ),
+              ),
               const SizedBox(height: 36),
 
               _CustomInput(
@@ -148,8 +310,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Become a Seller section
-              Text(AppLocalizations.of(context)!.becomeASeller, style: TextStyle(fontSize: 16)),
+              Text(AppLocalizations.of(context)!.becomeASeller, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
               Row(
                 children: [
@@ -160,50 +321,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Checkboxes
-              CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                activeColor: primaryPink,
-                value: _isChecked,
-                onChanged: (v) => setState(() => _isChecked = v ?? false),
-                title: RichText(
-                  text:  TextSpan(
-                    style: TextStyle(color: Colors.black87),
-                    children: [
-                      TextSpan(text: AppLocalizations.of(context)!.byClickingThe ),
-                      TextSpan(
-                        text: AppLocalizations.of(context)!.signUp,
-                        style: TextStyle(
-                          color: primaryPink,
-                          fontWeight: FontWeight.bold,
-                        ),
+              // Updated checkbox section for better UX
+              Column(
+                children: [
+                  _buildCheckboxItem(
+                    title: RichText(
+                      text: TextSpan(
+                        style: GoogleFonts.poppins(color: Colors.black87),
+                        children: [
+                          TextSpan(text: '${AppLocalizations.of(context)!.byClickingThe} '),
+                          TextSpan(
+                            text: AppLocalizations.of(context)!.signUp,
+                            style: GoogleFonts.poppins(
+                              color: primaryPink,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(text: ' ${AppLocalizations.of(context)!.publicOffer}'),
+                        ],
                       ),
-                      TextSpan(text: AppLocalizations.of(context)!.publicOffer),
-                    ],
+                    ),
+                    value: _isChecked,
+                    onChanged: (v) => setState(() => _isChecked = v ?? false),
                   ),
-                ),
+                  _buildCheckboxItem(
+                    title: Text(AppLocalizations.of(context)!.newsletter),
+                    value: _newsletter,
+                    onChanged: (v) => setState(() => _newsletter = v ?? false),
+                  ),
+                  _buildCheckboxItem(
+                    title: Text(AppLocalizations.of(context)!.enableremoteshoppinghelp),
+                    value: _remoteAssist,
+                    onChanged: (v) => setState(() => _remoteAssist = v ?? false),
+                  ),
+                ],
               ),
-
-              CheckboxListTile(
-                title:  Text( AppLocalizations.of(context)!.newsletter),
-                value: _newsletter,
-                onChanged: (val) =>
-                    setState(() => _newsletter = val ?? false),
-                activeColor: primaryPink,
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-              ),
-
-              CheckboxListTile(
-                title:  Text(AppLocalizations.of(context)!.enableremoteshoppinghelp),
-                value: _remoteAssist,
-                onChanged: (val) =>
-                    setState(() => _remoteAssist = val ?? false),
-                activeColor: primaryPink,
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-              ),
+              // End of updated checkbox section
 
               const SizedBox(height: 16),
 
@@ -218,35 +371,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child:  Text(
+                  child: Text(
                     AppLocalizations.of(context)!.create,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
               ),
               const SizedBox(height: 40),
 
               Row(
-                children:  [
-                  Expanded(child: Divider()),
+                children: [
+                  const Expanded(child: Divider(color: lightBorder)),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(AppLocalizations.of(context)!.continueWith,
-                        style: TextStyle(color: greyText)),
+                        style: const TextStyle(color: greyText)),
                   ),
-                  Expanded(child: Divider()),
+                  const Expanded(child: Divider(color: lightBorder)),
                 ],
               ),
               const SizedBox(height: 24),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  SocialButton(icon: 'assets/google.png'),
-                  SizedBox(width: 20),
-                  SocialButton(icon: 'assets/apple.png'),
-                  SizedBox(width: 20),
-                  SocialButton(icon: 'assets/facebook.png'),
+                children: [
+                  SocialButton(
+                    icon: 'assets/google.png',
+                    onTap: _signUpWithGoogle,
+                  ),
+                  const SizedBox(width: 20),
+                  SocialButton(
+                    icon: 'assets/instagram.png',
+                    onTap: _signUpWithInstagram,
+                  ),
+                  const SizedBox(width: 20),
+                  SocialButton(
+                    icon: 'assets/facebook.png',
+                    onTap: _signUpWithFacebook,
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -255,7 +417,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(AppLocalizations.of(context)!.alreadyHaveAnAccount,
-                      style: TextStyle(color: greyText)),
+                      style: const TextStyle(color: greyText, fontSize: 14)),
                   GestureDetector(
                     onTap: () {
                       Navigator.pushReplacement(
@@ -263,16 +425,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         MaterialPageRoute(builder: (_) => const LoginScreen()),
                       );
                     },
-                    child: Text(
-                      AppLocalizations.of(context)!.login,
-                      style: TextStyle(
-                          color: primaryPink, fontWeight: FontWeight.w600),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                      child: Text(
+                        AppLocalizations.of(context)!.login,
+                        style: const TextStyle(
+                            color: primaryPink, fontWeight: FontWeight.w700, fontSize: 14),
+                      ),
                     ),
                   ),
                 ],
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // Custom widget to build a single checkbox item
+  Widget _buildCheckboxItem({required Widget title, required bool value, required Function(bool?) onChanged}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: InkWell(
+        onTap: () => onChanged(!value),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 24.0,
+              height: 24.0,
+              child: Checkbox(
+                value: value,
+                onChanged: onChanged,
+                activeColor: primaryPink,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                side: const BorderSide(color: lightBorder, width: 2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: title,
+            ),
+          ],
         ),
       ),
     );
@@ -285,11 +480,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       selected: selected,
       onSelected: (_) => setState(() => _sellerChoice = label),
       selectedColor: primaryPink,
-      backgroundColor: Colors.grey.shade200,
-      labelStyle: TextStyle(
+      backgroundColor: inputFill,
+      labelStyle: GoogleFonts.poppins(
         color: selected ? Colors.white : Colors.black87,
         fontWeight: FontWeight.w500,
       ),
+      side: BorderSide(color: selected ? primaryPink : lightBorder),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 }
@@ -319,11 +516,12 @@ class _CustomInput extends StatelessWidget {
       controller: controller,
       obscureText: isPassword ? obscureText : false,
       keyboardType: keyboardType,
+      style: const TextStyle(fontSize: 16, color: Colors.black87),
       decoration: InputDecoration(
         filled: true,
         fillColor: inputFill,
         hintText: hintText,
-        hintStyle: const TextStyle(color: greyText),
+        hintStyle: const TextStyle(color: greyText, fontSize: 16),
         prefixIcon: Icon(icon, color: greyText),
         suffixIcon: isPassword
             ? IconButton(
@@ -346,7 +544,7 @@ class _CustomInput extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: primaryPink),
+          borderSide: const BorderSide(color: primaryPink, width: 2),
         ),
       ),
     );
@@ -355,19 +553,33 @@ class _CustomInput extends StatelessWidget {
 
 class SocialButton extends StatelessWidget {
   final String icon;
-  const SocialButton({super.key, required this.icon});
+  final VoidCallback? onTap;
+
+  const SocialButton({super.key, required this.icon, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: primaryPink, width: 1.5),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: primaryPink, width: 1.5),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Image.asset(icon, fit: BoxFit.contain),
       ),
-      padding: const EdgeInsets.all(12),
-      child: Image.asset(icon, fit: BoxFit.contain),
     );
   }
 }

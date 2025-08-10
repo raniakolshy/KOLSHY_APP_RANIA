@@ -20,17 +20,17 @@ dependencies:
   intl: ^0.20.2
   shared_preferences: ^2.2.2
   intl_phone_field: ^3.2.0
-
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^5.0.0
   google_sign_in: ^6.1.0 # For Google Sign-In
   flutter_facebook_auth: ^6.1.0 # For Facebook Login
   sign_in_with_apple: ^6.0.0 # For Apple Sign-In
   firebase_core: ^2.24.2 # For Firebase initialization (if using Firebase Auth)
   firebase_auth: ^4.15.0 # For Firebase Authentication
+  flutter_web_auth_2: ^4.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
   uuid: ^4.4.0
 
 flutter:
