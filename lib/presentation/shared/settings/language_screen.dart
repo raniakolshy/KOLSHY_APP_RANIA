@@ -9,7 +9,7 @@ import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
 
 import '../../client/Messages/Chat_screen.dart';
-import '../../client/notifications/notification_screen.dart';
+// import '../../client/notifications/notification_screen.dart';
 import '../home/home_screen.dart';
 
 class LanguageScreen extends StatefulWidget {
@@ -42,6 +42,20 @@ class _LanguageScreenState extends State<LanguageScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+
+    // Liste de langues avec labels localisés
+    final allLanguages = [
+      _LangItem(label: localizations.english, value: 'english', flag: '🇬🇧'),
+      _LangItem(label: localizations.arabic, value: 'arabic', flag: '🇸🇦'),
+    ];
+
+    // Filtre
+    final query = _searchController.text.trim().toLowerCase();
+    final filtered = allLanguages.where((item) {
+      if (query.isEmpty) return true;
+      final haystack = '${item.label} ${item.value}'.toLowerCase();
+      return haystack.contains(query);
+    }).toList();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -85,6 +99,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   Expanded(
                     child: TextField(
                       controller: _searchController,
+                      textInputAction: TextInputAction.search,
+                      onSubmitted: (_) => FocusScope.of(context).unfocus(),
+                      onChanged: (_) => setState(() {}), // met à jour la liste
                       decoration: InputDecoration(
                         hintText: localizations.search,
                         border: InputBorder.none,
@@ -95,6 +112,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     icon: const Icon(Icons.close, color: Colors.black54),
                     onPressed: () {
                       _searchController.clear();
+                      FocusScope.of(context).unfocus();
                       setState(() {});
                     },
                   ),
@@ -102,13 +120,36 @@ class _LanguageScreenState extends State<LanguageScreen> {
               ),
             ),
           ),
-          _buildLanguageTile(localizations.english, 'english', '🇬🇧'),
-          _buildLanguageTile(localizations.arabic, 'arabic', '🇸🇦'),
+
+          // Liste filtrée ou message "aucun résultat"
+          if (filtered.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  _noResultsText(context), // <<< plus d'accès à une clé inexistante
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ),
+            )
+          else
+            ...filtered.map(
+                  (item) => _buildLanguageTile(item.label, item.value, item.flag),
+            ),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: (index) {
+          // Navigation forcée vers Settings si index == 4
+          if (index == 4) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            );
+            return;
+          }
           if (index != _selectedIndex) {
             setState(() => _selectedIndex = index);
             Navigator.pushReplacement(
@@ -128,10 +169,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
       onTap: () {
         setState(() => selectedLanguage = value);
 
-        final provider =
-        Provider.of<LocaleProvider>(context, listen: false);
-        final newLocale =
-        value == 'arabic' ? const Locale('ar') : const Locale('en');
+        final provider = Provider.of<LocaleProvider>(context, listen: false);
+        final newLocale = value == 'arabic' ? const Locale('ar') : const Locale('en');
         provider.setLocale(newLocale);
       },
       child: Container(
@@ -164,6 +203,27 @@ class _LanguageScreenState extends State<LanguageScreen> {
       ),
     );
   }
+
+  // Texte "aucun résultat" selon la langue courante
+  String _noResultsText(BuildContext context) {
+    final code = Localizations.localeOf(context).languageCode;
+    switch (code) {
+      case 'ar':
+        return 'لا توجد نتائج';
+      case 'fr':
+        return 'Aucun résultat';
+      default:
+        return 'No results';
+    }
+  }
+}
+
+// Petit type interne pour garder le code propre
+class _LangItem {
+  final String label;
+  final String value;
+  final String flag;
+  const _LangItem({required this.label, required this.value, required this.flag});
 }
 
 Widget getScreenForTab(int index) {

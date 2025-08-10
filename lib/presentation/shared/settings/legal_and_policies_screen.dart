@@ -21,8 +21,7 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
   final Color primaryColor = const Color(0xFFE51742);
   final Color tabInactiveColor = const Color(0xFFF3F3F3);
 
-  // New state variable to control which policy text is shown
-  bool _showHumanFriendlyPolicy = true; // true for 'Human-Friendly', false for 'Legal Mumbo Jumbo'
+  bool _showHumanFriendlyPolicy = true;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +51,6 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
         children: [
           Row(
             children: [
-              // Human-Friendly button
               _buildTabButton(
                 text: localizations.humanFriendly,
                 isSelected: _showHumanFriendlyPolicy,
@@ -63,7 +61,6 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
                 },
               ),
               const SizedBox(width: 10),
-              // Legal Mumbo Jumbo button
               _buildTabButton(
                 text: localizations.legalMumboJumbo,
                 isSelected: !_showHumanFriendlyPolicy,
@@ -83,16 +80,15 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              // Display content based on the selected policy
               _showHumanFriendlyPolicy
-                  ? "This is the human-friendly summary of our privacy policy. We collect minimal data, protect it fiercely, and never share it without your explicit consent. Your privacy is our priority. For more details, see the 'Legal Mumbo Jumbo' version." // TODO: Replace with localizations.humanFriendlyPolicyText
-                  : "Welcome to the labyrinthine legal document that is our Privacy Policy. This verbose tome outlines, in excruciating detail, the exhaustive methodologies by which we, the proprietors of this digital service, collect, process, store, and occasionally, with due diligence and adherence to all applicable statutes and regulations, utilize your personally identifiable information. Be advised that by continuing your engagement with this platform, you implicitly, unequivocally, and irrevocably consent to the entirety of the stipulations herein enumerated. Proceed with caution, for the legal ramifications of non-compliance are, whilst not explicitly punitive in nature, implicitly binding upon your digital persona. Enjoy the read!", // TODO: Replace with localizations.legalMumboJumboPolicyText
+                  ? AppLocalizations.of(context)!.humanFriendlyPolicyText
+                  : AppLocalizations.of(context)!.legalMumboJumboPolicyText,
               style: const TextStyle(fontSize: 15.5, height: 1.6, color: Colors.black87),
             ),
           ),
           const SizedBox(height: 12),
           Text(
-            '${localizations.lastUpdated}: June 24, 2020',
+            '${localizations.lastUpdated}: 10/08/2025',
             style: const TextStyle(fontSize: 13, color: Colors.grey),
           ),
         ],
@@ -100,6 +96,14 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: (index) {
+          // Navigation forcée vers Settings si index == 4
+          if (index == 4) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            );
+            return;
+          }
           if (index != _selectedIndex) {
             setState(() => _selectedIndex = index);
             Navigator.pushReplacement(
@@ -112,15 +116,14 @@ class _LegalAndPoliciesScreenState extends State<LegalAndPoliciesScreen> {
     );
   }
 
-  // Modified _buildTabButton to accept an onTap callback
   Widget _buildTabButton({
     required String text,
     required bool isSelected,
-    required VoidCallback onTap, // Added onTap callback
+    required VoidCallback onTap,
   }) {
     return Expanded(
-      child: GestureDetector( // GestureDetector makes the Container tappable
-        onTap: onTap, // Assign the onTap callback here
+      child: GestureDetector(
+        onTap: onTap,
         child: Container(
           height: 36,
           decoration: BoxDecoration(
