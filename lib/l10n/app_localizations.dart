@@ -719,25 +719,25 @@ abstract class AppLocalizations {
   /// No description provided for @helpTopic0.
   ///
   /// In en, this message translates to:
-  /// **'How to create an account?'**
+  /// **'How to create a profile on kolshy website?'**
   String get helpTopic0;
 
   /// No description provided for @helpTopic1.
   ///
   /// In en, this message translates to:
-  /// **'How to track my order?'**
+  /// **'Payment Methods ?'**
   String get helpTopic1;
 
   /// No description provided for @helpTopic2.
   ///
   /// In en, this message translates to:
-  /// **'How to change my password?'**
+  /// **'Track the order from the seller ?'**
   String get helpTopic2;
 
   /// No description provided for @helpTopic3.
   ///
   /// In en, this message translates to:
-  /// **'How to contact customer service?'**
+  /// **'Tracking For Customer?'**
   String get helpTopic3;
 
   /// No description provided for @helpTopic4.
@@ -749,7 +749,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpTopicContent.
   ///
   /// In en, this message translates to:
-  /// **'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'**
+  /// **' '**
   String get helpTopicContent;
 
   /// No description provided for @messages.
@@ -1208,11 +1208,23 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get chat;
 
+  /// No description provided for @howtocontactus.
+  ///
+  /// In en, this message translates to:
+  /// **'How to contact us ?'**
+  String get howtocontactus;
+
   /// No description provided for @setting.
   ///
   /// In en, this message translates to:
   /// **'Setting'**
   String get setting;
+
+  /// No description provided for @buyNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Now'**
+  String get buyNow;
 
   /// No description provided for @humanFriendlyPolicyText.
   ///

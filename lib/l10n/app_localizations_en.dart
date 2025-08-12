@@ -322,23 +322,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTopics => 'Search for topics...';
 
   @override
-  String get helpTopic0 => 'How to create an account?';
+  String get helpTopic0 => 'How to create a profile on kolshy website?';
 
   @override
-  String get helpTopic1 => 'How to track my order?';
+  String get helpTopic1 => 'Payment Methods ?';
 
   @override
-  String get helpTopic2 => 'How to change my password?';
+  String get helpTopic2 => 'Track the order from the seller ?';
 
   @override
-  String get helpTopic3 => 'How to contact customer service?';
+  String get helpTopic3 => 'Tracking For Customer?';
 
   @override
   String get helpTopic4 => 'What is your return policy?';
 
   @override
-  String get helpTopicContent =>
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.';
+  String get helpTopicContent => ' ';
 
   @override
   String get messages => 'Messages';
@@ -575,7 +574,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chat => 'Chat';
 
   @override
+  String get howtocontactus => 'How to contact us ?';
+
+  @override
   String get setting => 'Setting';
+
+  @override
+  String get buyNow => 'Buy Now';
 
   @override
   String get humanFriendlyPolicyText =>

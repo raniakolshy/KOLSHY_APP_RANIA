@@ -8,14 +8,13 @@ import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/shared/settings/Settings_screen.dart';
 import '../../client/notifications/notification_screen.dart';
 import '../../client/product/NewProductDetailPage.dart';
-import '../Search/ResultPage.dart'; // Change this import if needed
+import '../Search/ResultPage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // These should be defined once, preferably in a global theme or constants file
 const Color primaryPink = Color(0xFFE51742);
 const Color lightGrey = Color(0xFFF7F7F7);
 const Color darkGrey = Color(0xFF444444);
-const Color offWhite = Color(0xFFFBFBFB);
 const Color modernWhite = Color(0xFFFFFFFF);
 const Color modernBackground = Color(0xFFF0F0F0);
 
@@ -28,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  // Variable d'état pour la catégorie sélectionnée, '0' pour 'All'
   int _selectedCategoryIndex = 0;
   final PageController _promoPageController = PageController(viewportFraction: 0.9);
   int _currentPromoPage = 0;
@@ -83,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Fonction pour mettre à jour la catégorie sélectionnée
   void _onCategorySelected(int index) {
     setState(() {
       _selectedCategoryIndex = index;
@@ -115,29 +116,38 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(child: _buildPromoCarousel()),
             const SliverToBoxAdapter(child: SizedBox(height: 16)),
             SliverToBoxAdapter(child: _buildCategoryTabs()),
-            SliverToBoxAdapter(
-              child: _selectedCategoryIndex == 0
-                  ? _buildSectionTitle(AppLocalizations.of(context)!.shopByCategory, null)
-                  : _buildSectionTitle('Most Sold in ${categories[_selectedCategoryIndex]['label']!}', 'See All'),
-            ),
-            _selectedCategoryIndex == 0
-                ? _buildAllCategoriesGrid()
-                : _buildProductGrid(categories[_selectedCategoryIndex]['label']!),
-            SliverToBoxAdapter(child: _buildSaleBanner('assets/sale.jpg')),
-            SliverToBoxAdapter(child: _buildSectionTitle('Hot Deals', 'See All')),
-            _buildProductGrid('Hot Deals', hasDiscount: true),
-            SliverToBoxAdapter(child: _buildSectionTitle('Most Popular', 'See All')),
-            _buildProductGrid('Most Popular', hasDiscount: false),
-            SliverToBoxAdapter(child: _buildAdBanner(
-              'assets/yellow-back.jpg',
-              AppLocalizations.of(context)!.summerSale,
-              'Up to 50% Off!',
-              Colors.amber.shade100,
-            )),
-            SliverToBoxAdapter(child: _buildSectionTitle(AppLocalizations.of(context)!.newArrivals, 'See All')),
-            _buildProductGrid('New Arrivals', hasDiscount: false),
-            SliverToBoxAdapter(child: _buildSectionTitle('Special Offers', 'See All')),
-            _buildSpecialOffersGrid(),
+
+            // Logique conditionnelle pour afficher le contenu
+            if (_selectedCategoryIndex == 0) ...[
+              // Affiche toutes les sections quand "All" est sélectionné
+              SliverToBoxAdapter(child: _buildSectionTitle(AppLocalizations.of(context)!.shopByCategory, null)),
+              _buildAllCategoriesGrid(),
+              SliverToBoxAdapter(child: _buildSaleBanner('assets/sale.jpg')),
+              SliverToBoxAdapter(child: _buildSectionTitle('Hot Deals', 'See All')),
+              _buildProductList(categoryName: 'Hot Deals', hasDiscount: true),
+              SliverToBoxAdapter(child: _buildSectionTitle('Most Popular', 'See All')),
+              _buildProductList(categoryName: 'Most Popular', hasDiscount: false),
+              SliverToBoxAdapter(child: _buildAdBanner(
+                'assets/yellow-back.jpg',
+                AppLocalizations.of(context)!.summerSale,
+                'Up to 50% Off!',
+                Colors.amber.shade100,
+              )),
+              SliverToBoxAdapter(child: _buildSectionTitle(AppLocalizations.of(context)!.newArrivals, 'See All')),
+              _buildProductList(categoryName: 'New Arrivals', hasDiscount: false),
+              SliverToBoxAdapter(child: _buildSectionTitle('Special Offers', 'See All')),
+              _buildSpecialOffersGrid(),
+            ] else ...[
+              // Affiche uniquement les produits de la catégorie sélectionnée
+              SliverToBoxAdapter(
+                child: _buildSectionTitle(
+                  'Most Sold in ${categories[_selectedCategoryIndex]['label']!}',
+                  'See All',
+                ),
+              ),
+              _buildProductList(categoryName: categories[_selectedCategoryIndex]['label']!, hasDiscount: true),
+            ],
+
             SliverToBoxAdapter(child: _buildBottomBanner()),
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
@@ -146,7 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildProductGrid(String categoryName, {bool hasDiscount = true}) {
+  // Cette méthode a été renommée pour plus de clarté
+  Widget _buildProductList({required String categoryName, bool hasDiscount = true}) {
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 290,
@@ -594,6 +605,7 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (_, i) => Padding(
           padding: const EdgeInsets.only(right: 10),
           child: GestureDetector(
+            // C'est ici que le _onCategorySelected est appelé
             onTap: () => _onCategorySelected(i),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),

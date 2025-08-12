@@ -318,26 +318,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpAndSupport => 'المساعدة والدعم';
 
   @override
-  String get searchTopics => 'ابحث عن مواضيع...';
+  String get searchTopics => 'ابحث عن المواضيع...';
 
   @override
-  String get helpTopic0 => 'كيف يمكنني إنشاء حساب؟';
+  String get helpTopic0 => 'كيف يمكن إنشاء حساب على موقع كولشي؟';
 
   @override
-  String get helpTopic1 => 'كيف يمكنني تتبع طلبي؟';
+  String get helpTopic1 => 'طرق الدفع؟';
 
   @override
-  String get helpTopic2 => 'كيف أغير كلمة المرور؟';
+  String get helpTopic2 => 'تتبع الطلب من البائع؟';
 
   @override
-  String get helpTopic3 => 'كيف أتواصل مع خدمة العملاء؟';
+  String get helpTopic3 => 'تتبع الطلب للعميل؟';
 
   @override
   String get helpTopic4 => 'ما هي سياسة الإرجاع الخاصة بكم؟';
 
   @override
-  String get helpTopicContent =>
-      'لوريم إيبسوم هو ببساطة نص شكلي يستخدم في صناعة الطباعة والتنضيد. نُسِق بشكل مناسب لتجربة قراءة مريحة.';
+  String get helpTopicContent => ' ';
 
   @override
   String get messages => 'الرسائل';
@@ -572,7 +571,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chat => 'محادثة';
 
   @override
+  String get howtocontactus => 'كيف تتصل بنا ؟';
+
+  @override
   String get setting => 'الإعدادات';
+
+  @override
+  String get buyNow => 'اشتري الان';
 
   @override
   String get humanFriendlyPolicyText =>

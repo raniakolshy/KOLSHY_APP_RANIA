@@ -1,4 +1,4 @@
-// lib/presentation/shared/product_detail/NewProductDetailPage.dart
+// lib/presentation/client/product/NewProductDetailPage.dart
 
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
@@ -11,6 +11,7 @@ import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
 import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
 import 'package:kolshy_app/data/models/product_model.dart';
 import 'package:kolshy_app/presentation/client/cart/cart_manager.dart';
+import 'package:kolshy_app/presentation/client/cart/CheckoutPage.dart';
 
 class NewProductDetailPage extends StatefulWidget {
   const NewProductDetailPage({super.key});
@@ -76,6 +77,31 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     );
   }
 
+  /// Buy Now : ajoute l’article courant au panier puis ouvre CheckoutPage avec cartItems
+  void _goToCheckout() {
+    final loc = AppLocalizations.of(context)!;
+
+    // Ajoute l’article affiché avec taille & quantité choisies
+    final productToAdd = Product(
+      name: loc.productTitle,
+      brand: loc.productBrand,
+      price: 13.99,
+      imageUrl: productImages.first,
+      selectedSize: selectedSize,
+    );
+    CartManager().addProduct(productToAdd, quantity);
+
+    // Récupère les items du panier depuis CartManager (getter supposé: items)
+    final cartItems = CartManager().items;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CheckoutPage(cartItems: cartItems),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -127,7 +153,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildQuantityAndAddToCart(loc),
+          _buildQuantityAddToCartAndBuyNow(loc),
           BottomNavBar(
             selectedIndex: 2,
             onItemTapped: (index) {
@@ -269,16 +295,17 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     ],
   );
 
-  Widget _buildExpandableSection(String title, String content, bool initiallyExpanded) => ExpansionTile(
-    title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-    initiallyExpanded: initiallyExpanded,
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Text(content, style: const TextStyle(height: 1.5)),
-      ),
-    ],
-  );
+  Widget _buildExpandableSection(String title, String content, bool initiallyExpanded) =>
+      ExpansionTile(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        initiallyExpanded: initiallyExpanded,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text(content, style: const TextStyle(height: 1.5)),
+          ),
+        ],
+      );
 
   Widget _buildCustomerReviews() => Column(
     children: customerReviews.map((review) {
@@ -345,7 +372,8 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     ),
   );
 
-  Widget _buildQuantityAndAddToCart(AppLocalizations loc) => Padding(
+  /// quantité + Add to Cart + Buy Now
+  Widget _buildQuantityAddToCartAndBuyNow(AppLocalizations loc) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
     child: Row(
       children: [
@@ -372,6 +400,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
           ),
         ),
         const SizedBox(width: 12),
+        // Add to Cart
         Expanded(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -381,6 +410,19 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
             ),
             onPressed: _addToCart,
             child: Text(loc.addToCart, style: const TextStyle(color: Colors.white, fontSize: 16)),
+          ),
+        ),
+        const SizedBox(width: 8),
+        // Buy Now (vert) -> CheckoutPage(cartItems: ...)
+        Expanded(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            onPressed: _goToCheckout,
+            child: Text(AppLocalizations.of(context)!.buyNow, style: TextStyle(color: Colors.white, fontSize: 16)),
           ),
         ),
       ],
