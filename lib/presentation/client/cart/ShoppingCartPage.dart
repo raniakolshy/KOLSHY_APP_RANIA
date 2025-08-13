@@ -1,10 +1,10 @@
-// lib/presentation/client/cart/shopping_cart_page.dart
+
+import 'package:kolshy_app/presentation/client/cart/cart_manager.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/data/models/cart_item_model.dart';
-import 'package:kolshy_app/presentation/client/cart/cart_manager.dart';
 import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
@@ -30,7 +30,6 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final cartItems = cartManager.items;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
@@ -70,17 +69,17 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
         child: Column(
           children: [
             Expanded(
-              child: cartItems.isEmpty
+              child: cartManager.items.isEmpty
                   ? Center(child: Text(t.cartEmpty, style: const TextStyle(fontSize: 18)))
                   : ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: cartItems.length,
+                itemCount: cartManager.items.length,
                 itemBuilder: (context, index) {
-                  return _buildCartItem(cartItems[index], index);
+                  return _buildCartItem(cartManager.items[index], index);
                 },
               ),
             ),
-            if (cartItems.isNotEmpty)
+            if (cartManager.items.isNotEmpty)
               Container(
                 color: Colors.white,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),

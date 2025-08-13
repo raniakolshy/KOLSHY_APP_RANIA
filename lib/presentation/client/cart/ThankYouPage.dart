@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../shared/home/home_screen.dart';
 import '../cart/OrderDetailsPage.dart';
 import 'package:kolshy_app/presentation/client/cart/orders_manager.dart';
+
 class ThankYouPage extends StatefulWidget {
   final List<CartItem> cartItems;
 
@@ -127,9 +128,8 @@ class _ThankYouPageState extends State<ThankYouPage> {
       height: 52,
       child: ElevatedButton(
         onPressed: () {
-          // Utilise Provider pour accéder au OrdersManager et ajouter la commande
-          final ordersManager = Provider.of<OrdersManager>(context, listen: false);
-          ordersManager.addOrder(widget.cartItems);
+          // L'ajout de la commande a été supprimé ici pour éviter les doublons.
+          // Cette logique doit se trouver sur la page "Place Order".
 
           Navigator.pushAndRemoveUntil(
             context,

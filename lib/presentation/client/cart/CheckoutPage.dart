@@ -1,8 +1,13 @@
+
+import 'package:kolshy_app/presentation/client/cart/cart_manager.dart';
+import '../../client/cart/orders_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:kolshy_app/l10n/app_localizations.dart';
 import 'package:kolshy_app/data/models/cart_item_model.dart';
 import 'package:kolshy_app/presentation/shared/profile/profile_edit.dart';
 import 'package:kolshy_app/presentation/client/cart/ThankYouPage.dart';
+import 'package:provider/provider.dart';
+
 import '../../shared/Search/SearchPage.dart';
 import '../../shared/home/home_screen.dart';
 import '../../shared/settings/Settings_screen.dart';
@@ -185,10 +190,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
       height: 56,
       child: ElevatedButton(
         onPressed: () {
+          // Crée une COPIE de la liste d'articles avant de vider le panier
+          final List<CartItem> orderItems = List.from(widget.cartItems);
+
+          // Ajoute la commande D'ABORD en utilisant la copie
+          final ordersManager = Provider.of<OrdersManager>(context, listen: false);
+          ordersManager.addOrder(orderItems);
+
+          // Vide le panier en utilisant le singleton
+          CartManager().clearCart();
+
+          // Navigue vers la page de remerciement en utilisant la COPIE
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (_) => ThankYouPage(cartItems: widget.cartItems)),
+                builder: (_) => ThankYouPage(cartItems: orderItems)),
           );
         },
         style: ElevatedButton.styleFrom(

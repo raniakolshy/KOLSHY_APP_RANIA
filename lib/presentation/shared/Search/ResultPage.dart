@@ -47,7 +47,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
       "price": 499.0,
       "rating": 4.5,
       "image": 'assets/avatar.png',
-      "category": "T-Shirt", // Let's use T-Shirt for example
+      "category": "T-Shirt",
       "isPromo": false,
     },
     {
@@ -67,7 +67,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
       "price": 299.0,
       "rating": 4.3,
       "image": 'assets/avatar.png',
-      "category": "Jeans", // Changed for filtering example
+      "category": "Jeans",
       "isPromo": true,
     },
     {
@@ -109,7 +109,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
     _searchController = TextEditingController(text: _currentSearchTerm);
     _currentCategory = widget.selectedCategory ?? 'All';
     _currentBrand = widget.selectedBrand ?? 'All';
-    _currentPriceRange = widget.priceRange ?? const RangeValues(0, 1000);
+    _currentPriceRange = widget.priceRange ?? const RangeValues(10, 250);
     _currentStar = widget.selectedStar ?? -1;
     _isFavoriteList = List.generate(products.length, (_) => false);
   }
@@ -125,10 +125,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
       setState(() {
         _currentSearchTerm = widget.searchTerm;
         _searchController.text = _currentSearchTerm;
-        _currentCategory = widget.selectedCategory ?? 'All';
-        _currentBrand = widget.selectedBrand ?? 'All';
-        _currentPriceRange = widget.priceRange ?? const RangeValues(0, 1000);
-        _currentStar = widget.selectedStar ?? -1;
+        _currentCategory = widget.selectedCategory ?? _currentCategory;
+        _currentBrand = widget.selectedBrand ?? _currentBrand;
+        _currentPriceRange = widget.priceRange ?? _currentPriceRange;
+        _currentStar = widget.selectedStar ?? _currentStar;
       });
     }
   }
@@ -169,13 +169,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const SearchPage()),
-              );
-            }
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         title: const Text(
           'Result',
@@ -223,8 +220,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    onChanged: (value) {
-                      setState(() => _currentSearchTerm = value);
+                    onSubmitted: (value) {
+                      if (value.isNotEmpty) {
+                        setState(() => _currentSearchTerm = value);
+                      }
                     },
                     decoration: const InputDecoration(
                       hintText: 'Search',
@@ -248,7 +247,14 @@ class _SearchResultPageState extends State<SearchResultPage> {
           onTap: () async {
             final result = await Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const FilterScreen()),
+              MaterialPageRoute(
+                builder: (context) => FilterScreen(
+                  selectedCategory: _currentCategory,
+                  selectedBrand: _currentBrand,
+                  priceRange: _currentPriceRange,
+                  selectedStar: _currentStar,
+                ),
+              ),
             );
             if (result != null) {
               setState(() {
@@ -286,6 +292,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
             _searchController.clear();
             setState(() {
               _currentSearchTerm = '';
+              _currentCategory = 'All';
+              _currentBrand = 'All';
+              _currentPriceRange = const RangeValues(10, 250);
+              _currentStar = -1;
               _isFavoriteList = List.generate(products.length, (_) => false);
             });
           },

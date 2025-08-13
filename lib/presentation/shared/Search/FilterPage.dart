@@ -69,7 +69,6 @@ class _FilterScreenState extends State<FilterScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
-            // Simply pop back, no need to navigate to SearchPage
             Navigator.pop(context);
           },
         ),
@@ -131,7 +130,7 @@ class _FilterScreenState extends State<FilterScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // FIX: Pop with a return value (the filter criteria)
+                        // Retourne les critères de filtre à la page précédente
                         Navigator.pop(context, {
                           'category': _selectedCategory,
                           'brand': _selectedBrand,
@@ -160,16 +159,13 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildSectionTitle(String title) {
-    // ... (code is unchanged)
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        if (title == 'Category' || title == 'Brand') // Only add "See All" for these titles
+        if (title == 'Category' || title == 'Brand')
           GestureDetector(
-            onTap: () {
-              // Handle "See All" tap
-            },
+            onTap: () {},
             child: const Text("See All", style: TextStyle(color: Color(0xFFE63056), fontSize: 14)),
           ),
       ],
@@ -177,7 +173,6 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildChips(List<String> items, String selectedItem, Function(String) onTap) {
-    // ... (code is unchanged)
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -188,7 +183,6 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildChip(String label, bool selected, VoidCallback onTap) {
-    // ... (code is unchanged)
     return GestureDetector(
       onTap: onTap,
       child: Chip(
@@ -203,7 +197,6 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildStarChip(int star) {
-    // ... (code is unchanged)
     return GestureDetector(
       onTap: () => setState(() => _selectedStar = star),
       child: Chip(
@@ -227,7 +220,6 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 
   Widget _buildPriceSlider() {
-    // ... (code is unchanged)
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -266,7 +258,7 @@ class _FilterScreenState extends State<FilterScreen> {
       _selectedCategory = 'All';
       _selectedBrand = 'All';
       _selectedStar = -1;
-      _priceRange = const RangeValues(50, 150);
+      _priceRange = const RangeValues(10, 250);
     });
   }
 }

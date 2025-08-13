@@ -22,35 +22,35 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
   List<String> recentSearches = ['Brown Jacket', 'Nike Pegasus', 'Light Brown'];
 
-  // Add a list for recently viewed items with dummy data
+  // Liste d'articles récemment vus avec des données factices
   final List<Map<String, dynamic>> _recentlyViewed = [
     {
-      "name": "Lorem ipsum",
-      "brand": "Brand name",
-      "price": 13.99,
+      "name": "Black Winter Hoodie",
+      "brand": "WonderWear",
+      "price": 499.0,
+      "rating": 4.5,
+      "image": 'assets/shoes.png',
+    },
+    {
+      "name": "Nike Air Max",
+      "brand": "Nike",
+      "price": 120.0,
       "rating": 4.9,
-      "image": 'https://placehold.co/150x150/E0E0E0/FFFFFF?text=Product1', // Placeholder image
+      "image": 'assets/shoes.png',
+    },
+    {
+      "name": "Beats Headphone",
+      "brand": "Beats",
+      "price": 249.0,
+      "rating": 4.8,
+      "image": 'assets/shoes.png',
     },
     {
       "name": "Lorem ipsum",
       "brand": "Brand name",
       "price": 13.99,
       "rating": 4.9,
-      "image": 'https://placehold.co/150x150/E0E0E0/FFFFFF?text=Product2', // Placeholder image
-    },
-    {
-      "name": "Lorem ipsum",
-      "brand": "Brand name",
-      "price": 13.99,
-      "rating": 4.9,
-      "image": 'https://placehold.co/150x150/E0E0E0/FFFFFF?text=Product3', // Placeholder image
-    },
-    {
-      "name": "Lorem ipsum",
-      "brand": "Brand name",
-      "price": 13.99,
-      "rating": 4.9,
-      "image": 'https://placehold.co/150x150/E0E0E0/FFFFFF?text=Product4', // Placeholder image
+      "image": 'assets/shoes.png',
     },
   ];
 
@@ -80,13 +80,14 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
-              );
-            }),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
+        ),
         title: const Text(
           'Search',
           style: TextStyle(
@@ -153,6 +154,15 @@ class _SearchPageState extends State<SearchPage> {
                             builder: (_) => SearchResultPage(searchTerm: query),
                           ),
                         );
+                        // Ajoute le terme de recherche aux recherches récentes
+                        setState(() {
+                          if (!recentSearches.contains(query)) {
+                            recentSearches.insert(0, query);
+                            if (recentSearches.length > 5) {
+                              recentSearches.removeLast();
+                            }
+                          }
+                        });
                       }
                     },
                   ),
@@ -246,9 +256,8 @@ class _SearchPageState extends State<SearchPage> {
       separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         final item = _recentlyViewed[index];
-        return GestureDetector( // Wrap with GestureDetector
+        return GestureDetector(
           onTap: () {
-            // Navigate to NewProductDetailPage when a recently viewed item is tapped
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const NewProductDetailPage()),
@@ -259,8 +268,8 @@ class _SearchPageState extends State<SearchPage> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  item['image'], // Use item['image'] from the _recentlyViewed list
+                child: Image.asset(
+                  item['image'],
                   width: 64,
                   height: 64,
                   fit: BoxFit.cover,
@@ -281,17 +290,9 @@ class _SearchPageState extends State<SearchPage> {
                     const SizedBox(height: 2),
                     Text(item['brand'], style: const TextStyle(color: Colors.black54, fontSize: 13)),
                     const SizedBox(height: 6),
-                    Text("AED ${item['price']}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text("AED ${item['price']}", style: const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
-              ),
-              const SizedBox(width: 8),
-              Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.amber, size: 18),
-                  const SizedBox(width: 4),
-                  Text("${item['rating']}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-                ],
               ),
             ],
           ),
@@ -300,7 +301,6 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
-
 Widget getScreenForTab(int index) {
   switch (index) {
     case 0:

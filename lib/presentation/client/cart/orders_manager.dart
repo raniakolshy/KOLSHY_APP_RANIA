@@ -2,7 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:kolshy_app/data/models/cart_item_model.dart';
-import 'package:kolshy_app/data/models/order_model.dart'; // Vous aurez besoin de ce modèle
+import 'package:kolshy_app/data/models/order_model.dart';
 import 'package:uuid/uuid.dart';
 
 class OrdersManager extends ChangeNotifier {
@@ -14,7 +14,7 @@ class OrdersManager extends ChangeNotifier {
     const uuid = Uuid();
     final newOrder = OrderModel(
       orderNumber: '#${uuid.v4().substring(0, 8).toUpperCase()}',
-      orderDate: DateTime.now().toString().substring(0, 10), // Format YYYY-MM-DD
+      orderDate: DateTime.now().toString().substring(0, 10),
       orderStatus: 'Confirmed',
       items: items,
       subtotal: _calculateSubtotal(items),
@@ -23,7 +23,7 @@ class OrdersManager extends ChangeNotifier {
     );
 
     _myOrders.add(newOrder);
-    notifyListeners(); // Notifie tous les widgets qui écoutent ce manager
+    notifyListeners();
   }
 
   double _calculateSubtotal(List<CartItem> items) {
