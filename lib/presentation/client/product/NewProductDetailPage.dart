@@ -6,6 +6,7 @@ import 'package:kolshy_app/presentation/shared/home/home_screen.dart';
 import 'package:kolshy_app/presentation/client/cart/ShoppingCartPage.dart';
 import 'package:kolshy_app/presentation/shared/Search/SearchPage.dart';
 import 'package:kolshy_app/presentation/client/notifications/notification_screen.dart';
+import 'package:kolshy_app/presentation/shared/profile/View_profile.dart';
 import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 import 'package:kolshy_app/presentation/shared/widgets/bottom_nav_bar.dart';
 import 'package:kolshy_app/presentation/client/Messages/Chat_screen.dart';
@@ -34,6 +35,17 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     'assets/product_image.png',
     'assets/product_image.png',
   ];
+
+  /// Vendor for this product
+  final Vendor vendor = const Vendor(
+    id: 'vendor_001',
+    name: 'Aliana',
+    shopName: 'Aliana Shop',
+    avatarUrl: null,
+    rating: 4.7,
+    productsCount: 128,
+    followers: 2530,
+  );
 
   final List<Map<String, dynamic>> customerReviews = [
     {
@@ -70,18 +82,17 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$quantity ${loc.productTitle} ajouté(s) au panier.'),
+        content: Text('$quantity ${loc.productTitle} added to cart.'),
         backgroundColor: Colors.green,
         duration: const Duration(seconds: 2),
       ),
     );
   }
 
-  /// Buy Now : ajoute l’article courant au panier puis ouvre CheckoutPage avec cartItems
+  /// Buy Now: add current item to cart then open CheckoutPage
   void _goToCheckout() {
     final loc = AppLocalizations.of(context)!;
 
-    // Ajoute l’article affiché avec taille & quantité choisies
     final productToAdd = Product(
       name: loc.productTitle,
       brand: loc.productBrand,
@@ -91,13 +102,22 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     );
     CartManager().addProduct(productToAdd, quantity);
 
-    // Récupère les items du panier depuis CartManager (getter supposé: items)
     final cartItems = CartManager().items;
 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => CheckoutPage(cartItems: cartItems),
+      ),
+    );
+  }
+
+  /// Open vendor profile page
+  void _openVendorProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => VendorProfileScreen(vendor: vendor),
       ),
     );
   }
@@ -126,6 +146,11 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
                 _buildRating(),
                 const SizedBox(height: 16),
                 const Text('AED 13.99', style: TextStyle(fontSize: 20, color: Color(0xFFE63056), fontWeight: FontWeight.w600)),
+                const SizedBox(height: 16),
+
+                /// VENDOR BLOCK (shop name only + button in English)
+                _buildVendorBlock(),
+
                 const SizedBox(height: 16),
                 _buildSizeSelection(),
                 const SizedBox(height: 16),
@@ -236,6 +261,66 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     ],
   );
 
+  /// Shop name only + "View profile" button (English)
+  Widget _buildVendorBlock() {
+    return InkWell(
+      onTap: _openVendorProfile,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 26,
+              backgroundImage: vendor.avatarUrl != null
+                  ? (vendor.avatarUrl!.startsWith('http')
+                  ? NetworkImage(vendor.avatarUrl!)
+                  : AssetImage(vendor.avatarUrl!) as ImageProvider)
+                  : null,
+              child: vendor.avatarUrl == null
+                  ? Text(
+                vendor.shopName.isNotEmpty ? vendor.shopName[0].toUpperCase() : '?',
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                vendor.shopName, // ONLY the shop name
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: _openVendorProfile,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black87,
+                elevation: 0,
+                side: BorderSide(color: Colors.grey.shade400),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              ),
+              child: const Text('View profile'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSizeSelection() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -268,7 +353,6 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
   Widget _buildAvailability(AppLocalizations loc) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const SizedBox(height: 10),
       Row(
         children: [
           const Icon(Icons.check_circle, color: Color(0xFF4A9F62), size: 16),
@@ -372,7 +456,6 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
     ),
   );
 
-  /// quantité + Add to Cart + Buy Now
   Widget _buildQuantityAddToCartAndBuyNow(AppLocalizations loc) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
     child: Row(
@@ -400,7 +483,6 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
           ),
         ),
         const SizedBox(width: 12),
-        // Add to Cart
         Expanded(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -413,7 +495,6 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
           ),
         ),
         const SizedBox(width: 8),
-        // Buy Now (vert) -> CheckoutPage(cartItems: ...)
         Expanded(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -422,7 +503,7 @@ class _NewProductDetailPageState extends State<NewProductDetailPage> {
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
             onPressed: _goToCheckout,
-            child: Text(AppLocalizations.of(context)!.buyNow, style: TextStyle(color: Colors.white, fontSize: 16)),
+            child: Text(AppLocalizations.of(context)!.buyNow, style: const TextStyle(color: Colors.white, fontSize: 16)),
           ),
         ),
       ],
@@ -444,9 +525,8 @@ class ProductCard extends StatelessWidget {
             width: 150,
             decoration: BoxDecoration(
               image: const DecorationImage(
-                image: AssetImage('assets/product_image.png'),
-                fit: BoxFit.cover,
-              ),
+                  image: AssetImage('assets/product_image.png'),
+                  fit: BoxFit.cover),
               borderRadius: BorderRadius.circular(12),
             ),
           ),

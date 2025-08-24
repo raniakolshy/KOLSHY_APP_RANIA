@@ -194,7 +194,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applePay => 'Apple Pay';
 
   @override
-  String get cardholderName => 'card holder name';
+  String get cardholderName => 'Cardholder Name';
 
   @override
   String get cardNumber => 'Card Number';
@@ -589,4 +589,169 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get legalMumboJumboPolicyText =>
       '• 1. No collection of children\'s data\nThis platform is intended for adults only, in accordance with applicable laws defining the age of majority.\nThe platform is not in any way targeted at individuals under the legal age.\nHowever, we cannot always prevent some users, including minors, from providing false information about their age to access the platform.\nIf you are a parent or legal guardian and believe that we have inadvertently collected personal information about your child, please contact us immediately using the contact methods specified in Clause 12 of this Privacy Policy.\n\n• 2. What personal data do we collect from or about you?\nWe collect your personal data to continuously provide and improve our services and platform.\n\"Personal data\" means any information that can be used to identify you as an individual through direct or indirect identifiers.\nPersonal data does not include information that has been anonymized (where all identifiers have been removed).\nWe collect, store, use, and transfer various types of personal data, which can be classified as follows:\n1. Identity data: first name, middle name, last name, username or similar identifiers, gender, title, nationality, and date of birth.\n2. Contact data: residential address, email address, and phone number.\n3. Transaction data: details of payments received or made, payment methods used, and data about products or services purchased from us.\n4. Technical data: IP address, login information, browser type and version, operating system, mobile app version, time zone settings, location data, device type, advertising identifiers (e.g., in iOS), and other internet usage information. This may be collected using cookies, sessions, web beacons, and other tracking tools.\n5. Profile data: username, password, your interests and preferences, comments, preferred language, and responses to surveys.\n6. Purchase data: all previous orders, account purchases, refund information, fulfillment details, and browsing records of products and services.\n7. Interaction data: related to how you interact with our website, products, and services.\n8. Marketing and communication data: preferences for receiving promotional offers or marketing messages from us or third parties, and your preferred communication method.\nAdditionally, we may collect, use, and share statistical or demographic data known as \"aggregated data.\" These are derived from your personal data but do not reveal your identity after removing all identifiers.\nExample: we may use aggregated browsing data to analyze the percentage of users engaging with a specific feature on the platform.\n\n3. How do we collect your personal data?\nWe collect your personal data through three main methods:\n1. Directly from you:\nWe collect your data directly when you:\n- Register on the platform or log in via social media or any other registration method.\n- Make payments, request refunds, or select your preferred payment method.\n- Participate in competitions, promotions, or special programs.\n- Provide comments, reviews, or testimonials.\n- Submit support requests or complaints related to services.\n- Communicate with us via phone, email, or other channels (where correspondence is recorded).\n- Browse or engage in any activity within the platform.\n2. Indirectly:\nWe may obtain your personal data from third parties or related parties, such as:\n- Friends or relatives making purchases for you or on your behalf.\n- Partner vendors or service providers, such as logistics and fulfillment partners, marketing providers, and payment processors.\n- Interactions via platforms like Facebook, Google, etc.\nIf you share personal data about others (e.g., friends or family), you confirm you have their consent to share it under this Privacy Policy.\n3. Automatically:\nWe collect some data automatically while you use the platform, using technologies such as:\n- Log files: including IP address, browser type, pages visited, operating system, timestamps, and other technical details.\n- Cookies & sessions: small files stored on your device to improve your experience by enabling platform features, remembering your preferences, understanding your interactions, showing personalized ads, and analyzing traffic.\nIf you do not agree to the use of cookies, you may disable them in your browser settings or stop using the platform. However, disabling some data types may affect your full experience of our services.\n\n4. Why do we collect your personal data?\nWe collect and use your personal data to enhance your experience with us, including:\n1. Providing information and services.\n2. Location-based services.\n3. Fulfilling contractual obligations.\n4. Improving services and communication.\n5. Optimizing content display.\n6. Offering personalized services for special occasions.\n7. Notifying you about updates.\n8. Improving your overall experience.\n9. Managing reward programs.\n10. Improving technical performance.\n11. Complying with local laws.\n12. Preventing fraud and ensuring security.\n\n5. How do we use your personal data?\nWe use your personal data only when necessary, including:\n1. Contract execution.\n2. Legal compliance.\n3. Legitimate interests.\n4. Marketing and communication (with opt-out options).\n\n6. Who do we share your personal data with?\n1. Affiliates and service providers.\n2. Third parties for specific purposes.\n3. In case of merger or transfer of ownership.\n4. Legal compliance and protection of rights.\n\n7. How do we store your personal data and for how long?\nWe store your data only for as long as necessary for the purposes stated or as required by law. Factors considered include data sensitivity, risk level, purpose achievement, and legal requirements.\nWe may anonymize data for indefinite research or statistical use.\n\n8. What security measures do we apply?\nWe use commercially reasonable technical, administrative, and physical safeguards, such as encryption, firewalls, restricted access, and PCI DSS compliance.\nYou are also responsible for protecting your account information.\n\n9. Your rights regarding your personal data:\n1. Right to information.\n2. Right to access.\n3. Right to request deletion.\n4. Right to withdraw consent or object.\n5. Right to correct data.\n6. No fee for exercising rights (unless legally required).\n\n10. How do we update our Privacy Policy?\nWe may update it to reflect changes in our operations. Updates will be posted on the platform and become effective upon posting (or a stated effective date).\n\n11. Contact us:\nFor any inquiries:\n• WhatsApp: +971551228825\n• Email: info@kolshy.ae\nPlease include details in your message for faster assistance.';
+
+  @override
+  String get editProfileTitle => 'Edit profile';
+
+  @override
+  String get stepPersonalInfo => 'Personal Info';
+
+  @override
+  String get stepShippingAddress => 'Shipping Address';
+
+  @override
+  String get stepPaymentMethod => 'Payment Method';
+
+  @override
+  String get personalInfoTitle => 'Personal Info';
+
+  @override
+  String get shippingAddressTitle => 'Shipping Address';
+
+  @override
+  String get paymentMethodTitle => 'Payment Method';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get expiryMmYy => 'Expiry (MM/YY)';
+
+  @override
+  String get cvv => 'CVV';
+
+  @override
+  String get paymentMethodCard => 'Card';
+
+  @override
+  String get paymentMethodPayPal => 'PayPal';
+
+  @override
+  String get paymentMethodApplePay => 'Apple Pay';
+
+  @override
+  String get paymentMethodTabby => 'Tabby ';
+
+  @override
+  String get paymentMethodTamara => 'Tamara ';
+
+  @override
+  String get payNowCard => 'Pay now (Card)';
+
+  @override
+  String get continueWithPayPal => 'Continue with PayPal';
+
+  @override
+  String get payWithApplePay => 'Pay with Apple Pay';
+
+  @override
+  String get continueWithTabby => 'Continue with Tabby';
+
+  @override
+  String get continueWithTamara => 'Continue with Tamara';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get invalidEmail => 'Invalid email';
+
+  @override
+  String get invalidZipCode => 'Invalid code';
+
+  @override
+  String get invalidCardNumber16Digits => '16 digits needed';
+
+  @override
+  String get invalidExpiryMmYy => 'Use MM/YY format';
+
+  @override
+  String get invalidCvv => 'Invalid CVV';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profile updated successfully!';
+
+  @override
+  String get pleaseCompleteRequiredInformation =>
+      'Please complete the required information.';
+
+  @override
+  String get pleaseCompleteCardDetails => 'Please complete your card details.';
+
+  @override
+  String paymentDialogTitle(Object method) {
+    return '$method payment';
+  }
+
+  @override
+  String paymentSuccessfulSnack(Object method) {
+    return '$method: payment successful';
+  }
+
+  @override
+  String paymentSuccessMessage(Object method) {
+    return '$method payment successful.';
+  }
+
+  @override
+  String paymentFailedMessage(Object method) {
+    return '$method payment failed.';
+  }
+
+  @override
+  String paymentError(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get missingPayPalApproveUrl => 'Missing PayPal approve URL';
+
+  @override
+  String get missingTabbyCheckoutUrl => 'Missing Tabby checkoutUrl';
+
+  @override
+  String get missingTamaraRedirectUrl => 'Missing Tamara redirectUrl';
+
+  @override
+  String couldNotOpen(Object what) {
+    return 'Could not open $what';
+  }
+
+  @override
+  String get deleteAccountConfirmTitle => 'Delete Account';
+
+  @override
+  String get deleteAccountConfirmContent =>
+      'Are you sure you want to delete your account? This action cannot be undone.';
+
+  @override
+  String get accountDeletedSuccessfully => 'Account deleted successfully!';
+
+  @override
+  String get vendorAboutTitle => 'About Us';
+
+  @override
+  String get vendorProductsTitle => 'Our Products';
+
+  @override
+  String get vendorEditProfile => 'Edit Profile';
+
+  @override
+  String get vendorBio =>
+      'We are a leading provider of high-quality electronics and adventure gear. Our mission is to bring you the best products to enhance your daily life and outdoor experiences.';
+
+  @override
+  String get vendorLocation => 'New York, USA';
+
+  @override
+  String get categoryElectronics => 'Electronics';
+
+  @override
+  String get categoryAccessories => 'Accessories';
 }

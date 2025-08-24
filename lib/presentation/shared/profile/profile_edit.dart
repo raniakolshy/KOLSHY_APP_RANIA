@@ -12,7 +12,7 @@ import '../../client/cart/ShoppingCartPage.dart';
 import '../../client/notifications/notification_screen.dart';
 import '../Search/SearchPage.dart';
 import '../home/home_screen.dart';
-import '../settings/Settings_screen.dart';
+import 'package:kolshy_app/presentation/shared/settings/settings_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
 
 /// ====== CONFIG (à adapter) ======
@@ -93,6 +93,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   /// ===== NAV bouton "Next" =====
   void _onNext() {
+    final l10n = AppLocalizations.of(context)!;
     bool isValid = false;
     if (_currentPage == 0) {
       isValid = _personalInfoFormKey.currentState!.validate();
@@ -111,22 +112,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } else {
         _submit();
       }
+    } else {
+      // feedback optionnel déjà géré dans les validators/snackbars
     }
   }
 
   bool _validatePaymentStepForNext() {
-    // si card => valider les champs carte, sinon OK
     if (_selectedPaymentMethod == "Card") {
       return _paymentFormKey.currentState?.validate() ?? false;
     }
-    // pas de champs requis pour les autres moyens
     return true;
   }
 
   void _submit() {
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Profile updated successfully!"),
+      SnackBar(
+        content: Text(l10n.profileUpdatedSuccessfully),
         backgroundColor: Colors.green,
       ),
     );
@@ -134,16 +136,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: (index) {
           if (index != _selectedIndex) {
             setState(() => _selectedIndex = index);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => getScreenForTab(index)),
-            );
+
+            if (index == 4) {
+              // 🔹 Redirige vers la route nommée "settings"
+              Navigator.pushNamed(context, 'settings');
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => getScreenForTab(index)),
+              );
+            }
           }
         },
       ),
@@ -155,9 +165,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Edit profile',
-          style: TextStyle(
+        title: Text(
+          l10n.editProfileTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.w800,
             fontSize: 24,
@@ -197,15 +207,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   // --- Vertical Stepper Column ---
   Widget _buildVerticalStepperColumn() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       width: 140,
       padding: const EdgeInsets.only(left: 20, top: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStepperItem(0, "Personal Info"),
-          _buildStepperItem(1, "Shipping Address"),
-          _buildStepperItem(2, "Payment Method"),
+          _buildStepperItem(0, l10n.stepPersonalInfo),
+          _buildStepperItem(1, l10n.stepShippingAddress),
+          _buildStepperItem(2, l10n.stepPaymentMethod),
         ],
       ),
     );
@@ -282,6 +294,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   // --- Form Sections ---
   Widget _buildPersonalInfoForm() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _personalInfoFormKey,
       child: SingleChildScrollView(
@@ -289,16 +303,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Personal Info",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+            Text(
+              l10n.personalInfoTitle,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
             const SizedBox(height: 24),
-            _buildInput(controller: _firstNameController, label: "First Name"),
-            _buildInput(controller: _lastNameController, label: "Last Name"),
+            _buildInput(controller: _firstNameController, label: l10n.firstName),
+            _buildInput(controller: _lastNameController, label: l10n.lastName),
             IntlPhoneField(
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.phone, // existant
+                labelText: AppLocalizations.of(context)!.phone,
                 labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
                 filled: true,
                 fillColor: Colors.grey[100],
@@ -312,15 +326,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
               initialCountryCode: 'US',
               onChanged: (phone) => print(phone.completeNumber),
               onSaved: (phone) => _phoneNumberController.text = phone!.completeNumber,
-              validator: (phone) => (phone == null || phone.number.isEmpty) ? 'Required' : null,
+              validator: (phone) => (phone == null || phone.number.isEmpty) ? l10n.required : null,
             ),
             _buildInput(
               controller: _emailController,
-              label: "Email",
+              label: l10n.email,
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
-                if (value == null || value.isEmpty) return 'Required';
-                if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) return 'Invalid email';
+                if (value == null || value.isEmpty) return l10n.required;
+                if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) return l10n.invalidEmail;
                 return null;
               },
             ),
@@ -339,7 +353,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   minimumSize: Size.zero,
                 ),
                 child: Text(
-                  "Change Password",
+                  l10n.changePassword,
                   style: TextStyle(
                     color: primaryColor,
                     fontWeight: FontWeight.w600,
@@ -365,9 +379,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text(
-                  'Delete Account',
-                  style: TextStyle(
+                child: Text(
+                  l10n.deleteAccount,
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     decoration: TextDecoration.underline,
@@ -383,6 +397,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget _buildShippingForm() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _shippingFormKey,
       child: SingleChildScrollView(
@@ -390,24 +406,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Shipping Address",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+            Text(
+              l10n.shippingAddressTitle,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
             const SizedBox(height: 24),
-            _buildInput(controller: _addressController, label: "Street Address"),
-            _buildInput(controller: _cityController, label: "City"),
+            _buildInput(controller: _addressController, label: l10n.streetAddress),
+            _buildInput(controller: _cityController, label: l10n.city),
             _buildInput(
               controller: _zipController,
-              label: "ZIP / Postal Code",
+              label: l10n.zipPostalCode,
               keyboardType: TextInputType.number,
               validator: (value) {
-                if (value == null || value.isEmpty) return 'Required';
-                if (!RegExp(r'^[0-9]+$').hasMatch(value)) return 'Invalid code';
+                if (value == null || value.isEmpty) return l10n.required;
+                if (!RegExp(r'^[0-9]+$').hasMatch(value)) return l10n.invalidZipCode;
                 return null;
               },
             ),
-            _buildInput(controller: _countryController, label: "Country"),
+            _buildInput(controller: _countryController, label: l10n.country),
             const SizedBox(height: 16),
           ],
         ),
@@ -417,6 +433,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   /// ===== PAYMENT (5 moyens) =====
   Widget _buildPaymentMethodForm() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Form(
       key: _paymentFormKey,
       child: SingleChildScrollView(
@@ -424,29 +442,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Payment Method",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+            Text(
+              l10n.paymentMethodTitle,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
             const SizedBox(height: 24),
 
-            _buildPaymentMethodOption("Card", Icons.credit_card),
-            _buildPaymentMethodOption("PayPal", Icons.account_balance_wallet),
-            _buildPaymentMethodOption("Apple Pay", Icons.phone_iphone),
-            _buildPaymentMethodOption("Tabby (BNPL)", Icons.payments_outlined),
-            _buildPaymentMethodOption("Tamara (BNPL)", Icons.payments),
+            _buildPaymentMethodOption(l10n.paymentMethodCard, Icons.credit_card),
+            _buildPaymentMethodOption(l10n.paymentMethodPayPal, Icons.account_balance_wallet),
+            _buildPaymentMethodOption(l10n.paymentMethodApplePay, Icons.phone_iphone),
+            _buildPaymentMethodOption(l10n.paymentMethodTabby, Icons.payments_outlined),
+            _buildPaymentMethodOption(l10n.paymentMethodTamara, Icons.payments),
 
             const SizedBox(height: 24),
 
             if (_selectedPaymentMethod == "Card") ...[
-              _buildInput(controller: _cardHolderNameController, label: "Cardholder Name"),
+              _buildInput(controller: _cardHolderNameController, label: l10n.cardholderName),
               _buildInput(
                 controller: _cardNumberController,
-                label: "Card Number",
+                label: l10n.cardNumber,
                 keyboardType: TextInputType.number,
                 validator: (value) {
-                  if (value == null || value.isEmpty) return 'Required';
-                  if (value.replaceAll(' ', '').length != 16) return '16 digits needed';
+                  if (value == null || value.isEmpty) return l10n.required;
+                  if (value.replaceAll(' ', '').length != 16) return l10n.invalidCardNumber16Digits;
                   return null;
                 },
               ),
@@ -455,11 +473,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Expanded(
                     child: _buildInput(
                       controller: _expiryDateController,
-                      label: "Expiry (MM/YY)",
+                      label: l10n.expiryMmYy,
                       keyboardType: TextInputType.datetime,
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'Required';
-                        if (!RegExp(r'^(0[1-9]|1[0-2])\/?([0-9]{2})$').hasMatch(value)) return 'MM/YY';
+                        if (value == null || value.isEmpty) return l10n.required;
+                        if (!RegExp(r'^(0[1-9]|1[0-2])\/?([0-9]{2})$').hasMatch(value)) return l10n.invalidExpiryMmYy;
                         return null;
                       },
                     ),
@@ -468,11 +486,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Expanded(
                     child: _buildInput(
                       controller: _cvvController,
-                      label: "CVV",
+                      label: l10n.cvv,
                       keyboardType: TextInputType.number,
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'Required';
-                        if (value.length < 3 || value.length > 4) return 'Invalid CVV';
+                        if (value == null || value.isEmpty) return l10n.required;
+                        if (value.length < 3 || value.length > 4) return l10n.invalidCvv;
                         return null;
                       },
                     ),
@@ -480,15 +498,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ],
               ),
               const SizedBox(height: 8),
-              _primaryButton("Pay now (Card)", _payWithCard),
+              _primaryButton(l10n.payNowCard, _payWithCard),
             ] else if (_selectedPaymentMethod == "PayPal") ...[
-              _primaryButton("Continue with PayPal", _payWithPayPal),
+              _primaryButton(l10n.continueWithPayPal, _payWithPayPal),
             ] else if (_selectedPaymentMethod == "Apple Pay") ...[
-              _primaryButton("Pay with Apple Pay", _payWithApplePay),
+              _primaryButton(l10n.payWithApplePay, _payWithApplePay),
             ] else if (_selectedPaymentMethod == "Tabby (BNPL)") ...[
-              _primaryButton("Continue with Tabby", _startTabbyCheckout),
+              _primaryButton(l10n.continueWithTabby, _startTabbyCheckout),
             ] else if (_selectedPaymentMethod == "Tamara (BNPL)") ...[
-              _primaryButton("Continue with Tamara", _startTamaraCheckout),
+              _primaryButton(l10n.continueWithTamara, _startTamaraCheckout),
             ],
 
             const SizedBox(height: 16),
@@ -506,6 +524,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     bool isPassword = false,
     String? Function(String?)? validator,
   }) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
@@ -530,27 +550,41 @@ class _EditProfilePageState extends State<EditProfilePage> {
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: primaryColor, width: 2),
           ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.red, width: 1),
+          errorBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: Colors.red, width: 1),
           ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.red, width: 2),
+          focusedErrorBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: Colors.red, width: 2),
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
           isDense: true,
         ),
-        validator: validator ?? (value) => (value == null || value.isEmpty) ? 'Required' : null,
+        validator: validator ?? (value) => (value == null || value.isEmpty) ? l10n.required : null,
         style: const TextStyle(fontSize: 15),
       ),
     );
   }
 
   Widget _buildPaymentMethodOption(String label, IconData icon) {
-    bool isSelected = _selectedPaymentMethod == label;
+    // La logique de sélection originale s'appuie sur des valeurs en clair.
+    // On conserve l’état avec les clés anglaises d’origine pour éviter
+    // de casser le comportement, d’où ce mapping simple :
+    String canonicalLabel(String l) {
+      final l10n = AppLocalizations.of(context)!;
+      if (l == l10n.paymentMethodCard) return "Card";
+      if (l == l10n.paymentMethodPayPal) return "PayPal";
+      if (l == l10n.paymentMethodApplePay) return "Apple Pay";
+      if (l == l10n.paymentMethodTabby) return "Tabby (BNPL)";
+      if (l == l10n.paymentMethodTamara) return "Tamara (BNPL)";
+      return l; // fallback
+    }
+
+    final isSelected = _selectedPaymentMethod == canonicalLabel(label);
+
     return GestureDetector(
-      onTap: () => setState(() => _selectedPaymentMethod = label),
+      onTap: () => setState(() => _selectedPaymentMethod = canonicalLabel(label)),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -602,15 +636,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   // --- Helpers génériques ---
-  /// ✅ Validation générique :
-  /// - Personal & Shipping toujours requis
-  /// - Payment: Card => champs requis ; autres => pas de champs requis
   bool _validateAllFormsBeforePayment({required bool requireCardFields}) {
+    final l10n = AppLocalizations.of(context)!;
+
     final p1 = _personalInfoFormKey.currentState?.validate() ?? false;
     final p2 = _shippingFormKey.currentState?.validate() ?? false;
     if (!p1 || !p2) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please complete the required information.")),
+        SnackBar(content: Text(l10n.pleaseCompleteRequiredInformation)),
       );
       return false;
     }
@@ -618,7 +651,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final p3 = _paymentFormKey.currentState?.validate() ?? false;
       if (!p3) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please complete your card details.")),
+          SnackBar(content: Text(l10n.pleaseCompleteCardDetails)),
         );
         return false;
       }
@@ -639,10 +672,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _showPaymentResultDialog({required String title, required bool success, required String message}) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("$title payment"),
+        title: Text(l10n.paymentDialogTitle(title)),
         content: Text(message),
         actions: [
           TextButton(
@@ -650,12 +685,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Navigator.of(context).pop();
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("$title: payment successful"), backgroundColor: Colors.green),
+                  SnackBar(content: Text(l10n.paymentSuccessfulSnack(title)), backgroundColor: Colors.green),
                 );
                 // TODO: clear cart / navigate
               }
             },
-            child: const Text("OK"),
+            child: Text(l10n.ok),
           )
         ],
       ),
@@ -701,7 +736,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   // --- 1) CARD ---
   Future<void> _payWithCard() async {
-    // Card => champs carte OBLIGATOIRES
+    final l10n = AppLocalizations.of(context)!;
+
     if (!_validateAllFormsBeforePayment(requireCardFields: true)) return;
 
     _showLoading(true);
@@ -721,19 +757,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       _showLoading(false);
       _showPaymentResultDialog(
-        title: "Card",
+        title: l10n.paymentMethodCard,
         success: success,
-        message: success ? "Card payment successful." : "Card payment failed.",
+        message: success
+            ? l10n.paymentSuccessMessage(l10n.paymentMethodCard)
+            : l10n.paymentFailedMessage(l10n.paymentMethodCard),
       );
     } catch (e) {
       _showLoading(false);
-      _showPaymentResultDialog(title: "Card", success: false, message: "Error: $e");
+      _showPaymentResultDialog(
+        title: l10n.paymentMethodCard,
+        success: false,
+        message: l10n.paymentError(e.toString()),
+      );
     }
   }
 
   // --- 2) PAYPAL ---
   Future<void> _payWithPayPal() async {
-    // Non-card => pas de champs carte requis
+    final l10n = AppLocalizations.of(context)!;
+
     if (!_validateAllFormsBeforePayment(requireCardFields: false)) return;
 
     _showLoading(true);
@@ -741,25 +784,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final res = await _postJson('/payments/paypal/create-order', _commonPayload());
       _showLoading(false);
 
-      final approveUrl = (res['approveUrl'] ?? res['links']?.firstWhere(
-            (l) => l['rel'] == 'approve',
-        orElse: () => null,
-      )?['href']) as String?;
+      final approveUrl = (res['approveUrl'] ??
+          res['links']?.firstWhere(
+                (l) => l['rel'] == 'approve',
+            orElse: () => null,
+          )?['href']) as String?;
 
-      if (approveUrl == null) throw Exception('Missing PayPal approve URL');
+      if (approveUrl == null) throw Exception(l10n.missingPayPalApproveUrl);
 
-      // 👉 ouvre la page PayPal
       final launched = await launchUrlString(approveUrl, mode: LaunchMode.externalApplication);
-      if (!launched) throw Exception('Could not open PayPal');
-
+      if (!launched) throw Exception(l10n.couldNotOpen(l10n.paymentMethodPayPal));
     } catch (e) {
       _showLoading(false);
-      _showPaymentResultDialog(title: "PayPal", success: false, message: "Error: $e");
+      _showPaymentResultDialog(
+        title: l10n.paymentMethodPayPal,
+        success: false,
+        message: l10n.paymentError(e.toString()),
+      );
     }
   }
 
   // --- 3) APPLE PAY ---
   Future<void> _payWithApplePay() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (!_validateAllFormsBeforePayment(requireCardFields: false)) return;
 
     _showLoading(true);
@@ -770,23 +818,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final url = res['fallbackUrl'] as String?;
       if (url != null) {
         final ok = await launchUrlString(url, mode: LaunchMode.externalApplication);
-        if (!ok) throw Exception('Could not open Apple Pay fallback');
+        if (!ok) throw Exception(l10n.couldNotOpen(l10n.paymentMethodApplePay));
       } else {
         final success = (res['status'] == 'succeeded' || res['success'] == true);
         _showPaymentResultDialog(
-          title: "Apple Pay",
+          title: l10n.paymentMethodApplePay,
           success: success,
-          message: success ? "Apple Pay successful." : "Apple Pay failed.",
+          message: success
+              ? l10n.paymentSuccessMessage(l10n.paymentMethodApplePay)
+              : l10n.paymentFailedMessage(l10n.paymentMethodApplePay),
         );
       }
     } catch (e) {
       _showLoading(false);
-      _showPaymentResultDialog(title: "Apple Pay", success: false, message: "Error: $e");
+      _showPaymentResultDialog(
+        title: l10n.paymentMethodApplePay,
+        success: false,
+        message: l10n.paymentError(e.toString()),
+      );
     }
   }
 
   // --- 4) TABBY ---
   Future<void> _startTabbyCheckout() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (!_validateAllFormsBeforePayment(requireCardFields: false)) return;
 
     _showLoading(true);
@@ -795,20 +851,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _showLoading(false);
 
       final checkoutUrl = res['checkoutUrl'] as String?;
-      if (checkoutUrl == null) throw Exception('Missing Tabby checkoutUrl');
+      if (checkoutUrl == null) throw Exception(l10n.missingTabbyCheckoutUrl);
 
-      // 👉 ouvre la page Tabby
       final ok = await launchUrlString(checkoutUrl, mode: LaunchMode.externalApplication);
-      if (!ok) throw Exception('Could not open Tabby');
-
+      if (!ok) throw Exception(l10n.couldNotOpen(l10n.paymentMethodTabby));
     } catch (e) {
       _showLoading(false);
-      _showPaymentResultDialog(title: "Tabby", success: false, message: "Error: $e");
+      _showPaymentResultDialog(
+        title: l10n.paymentMethodTabby,
+        success: false,
+        message: l10n.paymentError(e.toString()),
+      );
     }
   }
 
   // --- 5) TAMARA ---
   Future<void> _startTamaraCheckout() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (!_validateAllFormsBeforePayment(requireCardFields: false)) return;
 
     _showLoading(true);
@@ -817,19 +877,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _showLoading(false);
 
       final redirectUrl = res['redirectUrl'] as String?;
-      if (redirectUrl == null) throw Exception('Missing Tamara redirectUrl');
+      if (redirectUrl == null) throw Exception(l10n.missingTamaraRedirectUrl);
 
-      // 👉 ouvre la page Tamara
       final ok = await launchUrlString(redirectUrl, mode: LaunchMode.externalApplication);
-      if (!ok) throw Exception('Could not open Tamara');
-
+      if (!ok) throw Exception(l10n.couldNotOpen(l10n.paymentMethodTamara));
     } catch (e) {
       _showLoading(false);
-      _showPaymentResultDialog(title: "Tamara", success: false, message: "Error: $e");
+      _showPaymentResultDialog(
+        title: l10n.paymentMethodTamara,
+        success: false,
+        message: l10n.paymentError(e.toString()),
+      );
     }
   }
 
   Widget _buildControlButtons() {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -862,7 +926,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text("Back", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                child: Text(l10n.back, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
               ),
             ),
           SizedBox(width: _currentPage > 0 ? 14 : 0),
@@ -879,7 +943,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 elevation: 4,
               ),
               child: Text(
-                _currentPage < 2 ? "Next" : "Save",
+                _currentPage < 2 ? l10n.next : l10n.save,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
@@ -889,29 +953,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  // Delete Account dialog (english notifications)
+  // Delete Account dialog
   void _showDeleteConfirmationDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Delete Account"),
-          content: const Text("Are you sure you want to delete your account? This action cannot be undone."),
+          title: Text(l10n.deleteAccountConfirmTitle),
+          content: Text(l10n.deleteAccountConfirmContent),
           actions: <Widget>[
             TextButton(
-              child: const Text("Cancel"),
+              child: Text(l10n.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text("Delete", style: TextStyle(color: Colors.red)),
+              child: Text(l10n.delete, style: const TextStyle(color: Colors.red)),
               onPressed: () {
                 // Your deletion logic
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Account deleted successfully!"),
+                  SnackBar(
+                    content: Text(l10n.accountDeletedSuccessfully),
                     backgroundColor: Colors.red,
                   ),
                 );
@@ -939,6 +1005,7 @@ Widget getScreenForTab(int index) {
     case 3:
       return const ChatScreen();
     case 4:
+    // Garde un fallback au cas où, mais non utilisé si la route nommée est configurée.
       return const SettingsScreen();
     default:
       return const HomeScreen();
